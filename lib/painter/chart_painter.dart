@@ -93,7 +93,7 @@ class ChartPainter extends BaseChartPainter {
       fixedDecimalsLength: fixedLength,
       chartStyle: chartStyle,
       timelineHorizontalScale: scaleX,
-      maDayList: maDayList,
+      maFactorsForTitles: maDayList,
     );
 
     if (mVolRect != null) {

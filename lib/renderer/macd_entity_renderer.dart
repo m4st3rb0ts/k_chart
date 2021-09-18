@@ -6,6 +6,7 @@ import '../entity/macd_entity.dart';
 import '../k_chart_widget.dart' show SecondaryIndicator;
 import 'base_chart_renderer.dart';
 
+/// MACD indicator
 class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
   MACDEntityRenderer({
     required final Rect displayRect,
@@ -100,14 +101,14 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     final currentMacdValue = currentValue.data.macd ?? 0;
     final currentMacdValueNormalized =
         getVerticalPositionForPoint(value: currentMacdValue);
-    final width = chartStyle.macdWidth * 0.5;
+    final macdMidWidth = chartStyle.macdWidth * 0.5;
     final zeroy = getVerticalPositionForPoint(value: 0);
     if (currentMacdValue > 0) {
       canvas.drawRect(
         Rect.fromLTRB(
-          currentValue.x - width,
+          currentValue.x - macdMidWidth,
           currentMacdValueNormalized,
-          currentValue.x + width,
+          currentValue.x + macdMidWidth,
           zeroy,
         ),
         chartPaint..color = chartStyle.colors.upColor,
@@ -115,9 +116,9 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     } else {
       canvas.drawRect(
         Rect.fromLTRB(
-          currentValue.x - width,
+          currentValue.x - macdMidWidth,
           zeroy,
-          currentValue.x + width,
+          currentValue.x + macdMidWidth,
           currentMacdValueNormalized,
         ),
         chartPaint..color = chartStyle.colors.dnColor,
@@ -320,7 +321,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
       Offset(displayRect.width, displayRect.bottom),
       gridPaint,
     );
-    final columnSpace = displayRect.width / chartStyle.gridColumns;
+    final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
     for (var column = 0; column <= columnSpace; column++) {
       canvas.drawLine(
         Offset(columnSpace * column, displayRect.top - contentTopPadding),

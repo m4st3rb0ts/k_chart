@@ -61,8 +61,8 @@ abstract class BaseChartPainter extends CustomPainter {
     mTopPadding = this.chartStyle.topPadding;
     mBottomPadding = this.chartStyle.bottomPadding;
     mChildPadding = this.chartStyle.childPadding;
-    mGridRows = this.chartStyle.gridRows;
-    mGridColumns = this.chartStyle.gridColumns;
+    mGridRows = this.chartStyle.numberOfGridRows;
+    mGridColumns = this.chartStyle.numberOfGridColumns;
     mDataLen = mItemCount * mPointWidth;
     initFormats();
   }

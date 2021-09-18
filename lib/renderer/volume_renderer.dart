@@ -5,6 +5,7 @@ import 'package:k_chart/flutter_k_chart.dart';
 
 import 'base_chart_renderer.dart';
 
+/// Volume indicator
 class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
   VolumeRenderer({
     required final Rect displayRect,
@@ -29,7 +30,7 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     required final Size size,
     required final Canvas canvas,
   }) {
-    final volumeBarWidth = chartStyle.volWidth * 0.5;
+    final volumeBarMidWidth = chartStyle.volWidth * 0.5;
     final volumeBarTop = (maxVerticalValue - currentValue.data.vol) *
             (displayRect.height / maxVerticalValue) +
         displayRect.top;
@@ -37,9 +38,9 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     if (currentValue.data.vol != 0) {
       canvas.drawRect(
           Rect.fromLTRB(
-            currentValue.x - volumeBarWidth,
+            currentValue.x - volumeBarMidWidth,
             volumeBarTop,
-            currentValue.x + volumeBarWidth,
+            currentValue.x + volumeBarMidWidth,
             volumeBarBottom,
           ),
           chartPaint
@@ -146,7 +147,7 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
       Offset(displayRect.width, displayRect.bottom),
       gridPaint,
     );
-    final columnSpace = displayRect.width / chartStyle.gridColumns;
+    final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
     for (var column = 0; column <= columnSpace; column++) {
       canvas.drawLine(
           Offset(columnSpace * column, displayRect.top - contentTopPadding),
