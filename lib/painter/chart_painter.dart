@@ -8,10 +8,10 @@ import '../entity/info_window_entity.dart';
 import '../entity/k_line_entity.dart';
 import '../utils/date_format_util.dart';
 import 'base_chart_painter.dart';
-import 'base_chart_renderer.dart';
-import 'candle_entity_renderer.dart';
-import 'macd_entity_renderer.dart';
-import 'volume_renderer.dart';
+import '../renderer/base_chart_renderer.dart';
+import '../renderer/candle_entity_renderer.dart';
+import '../renderer/macd_entity_renderer.dart';
+import '../renderer/volume_renderer.dart';
 
 class ChartPainter extends BaseChartPainter {
   static get maxScrollX => BaseChartPainter.maxScrollX;
