@@ -65,29 +65,29 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   @override
   void drawText({
     required final Canvas canvas,
-    required final CandleEntity data,
+    required final CandleEntity value,
     required final double leftOffset,
   }) {
     if (isLine == true) return;
     TextSpan? span;
     if (state == MainState.MA) {
       span = TextSpan(
-        children: _createMATextSpan(data: data),
+        children: _createMATextSpan(data: value),
       );
     } else if (state == MainState.BOLL) {
       span = TextSpan(
         children: [
-          if (data.up != 0)
+          if (value.up != 0)
             TextSpan(
-                text: "BOLL:${format(n: data.mb)}    ",
+                text: "BOLL:${format(n: value.mb)}    ",
                 style: getTextStyle(color: chartStyle.colors.ma5Color)),
-          if (data.mb != 0)
+          if (value.mb != 0)
             TextSpan(
-                text: "UB:${format(n: data.up)}    ",
+                text: "UB:${format(n: value.up)}    ",
                 style: getTextStyle(color: chartStyle.colors.ma10Color)),
-          if (data.dn != 0)
+          if (value.dn != 0)
             TextSpan(
-                text: "LB:${format(n: data.dn)}    ",
+                text: "LB:${format(n: value.dn)}    ",
                 style: getTextStyle(color: chartStyle.colors.ma30Color)),
         ],
       );
@@ -301,12 +301,12 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   void drawRightText({
     required final Canvas canvas,
     required final textStyle,
-    required final int gridRows,
+    required final int numberOfRows,
   }) {
-    double rowSpace = displayRect.height / gridRows;
-    for (var i = 0; i <= gridRows; ++i) {
+    double rowSpace = displayRect.height / numberOfRows;
+    for (var i = 0; i <= numberOfRows; ++i) {
       double value =
-          (gridRows - i) * rowSpace / verticalScale + minVerticalValue;
+          (numberOfRows - i) * rowSpace / verticalScale + minVerticalValue;
       TextSpan span = TextSpan(text: "${format(n: value)}", style: textStyle);
       TextPainter tp =
           TextPainter(text: span, textDirection: TextDirection.ltr);

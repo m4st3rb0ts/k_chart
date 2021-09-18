@@ -135,7 +135,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
   @override
   void drawText({
     required final Canvas canvas,
-    required final MACDEntity data,
+    required final MACDEntity value,
     required final double leftOffset,
   }) {
     List<TextSpan>? children;
@@ -145,17 +145,17 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
           TextSpan(
               text: "MACD(12,26,9)    ",
               style: getTextStyle(color: chartStyle.colors.defaultTextColor)),
-          if (data.macd != 0)
+          if (value.macd != 0)
             TextSpan(
-                text: "MACD:${format(n: data.macd)}    ",
+                text: "MACD:${format(n: value.macd)}    ",
                 style: getTextStyle(color: chartStyle.colors.macdColor)),
-          if (data.dif != 0)
+          if (value.dif != 0)
             TextSpan(
-                text: "DIF:${format(n: data.dif)}    ",
+                text: "DIF:${format(n: value.dif)}    ",
                 style: getTextStyle(color: chartStyle.colors.difColor)),
-          if (data.dea != 0)
+          if (value.dea != 0)
             TextSpan(
-                text: "DEA:${format(n: data.dea)}    ",
+                text: "DEA:${format(n: value.dea)}    ",
                 style: getTextStyle(color: chartStyle.colors.deaColor)),
         ];
         break;
@@ -164,38 +164,38 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
           TextSpan(
               text: "KDJ(9,1,3)    ",
               style: getTextStyle(color: chartStyle.colors.defaultTextColor)),
-          if (data.macd != 0)
+          if (value.macd != 0)
             TextSpan(
-                text: "K:${format(n: data.k)}    ",
+                text: "K:${format(n: value.k)}    ",
                 style: getTextStyle(color: chartStyle.colors.kColor)),
-          if (data.dif != 0)
+          if (value.dif != 0)
             TextSpan(
-                text: "D:${format(n: data.d)}    ",
+                text: "D:${format(n: value.d)}    ",
                 style: getTextStyle(color: chartStyle.colors.dColor)),
-          if (data.dea != 0)
+          if (value.dea != 0)
             TextSpan(
-                text: "J:${format(n: data.j)}    ",
+                text: "J:${format(n: value.j)}    ",
                 style: getTextStyle(color: chartStyle.colors.jColor)),
         ];
         break;
       case SecondaryState.RSI:
         children = [
           TextSpan(
-              text: "RSI(14):${format(n: data.rsi)}    ",
+              text: "RSI(14):${format(n: value.rsi)}    ",
               style: getTextStyle(color: chartStyle.colors.rsiColor)),
         ];
         break;
       case SecondaryState.WR:
         children = [
           TextSpan(
-              text: "WR(14):${format(n: data.r)}    ",
+              text: "WR(14):${format(n: value.r)}    ",
               style: getTextStyle(color: chartStyle.colors.rsiColor)),
         ];
         break;
       case SecondaryState.CCI:
         children = [
           TextSpan(
-              text: "CCI(14):${format(n: data.cci)}    ",
+              text: "CCI(14):${format(n: value.cci)}    ",
               style: getTextStyle(color: chartStyle.colors.rsiColor)),
         ];
         break;
@@ -213,7 +213,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
   void drawRightText({
     required final Canvas canvas,
     required final textStyle,
-    required final int gridRows,
+    required final int numberOfRows,
   }) {
     TextPainter maxTp = TextPainter(
         text:

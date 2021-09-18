@@ -5,24 +5,21 @@ import 'package:k_chart/flutter_k_chart.dart';
 
 class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
   VolumeRenderer({
-    required final Rect mainRect,
-    required final double maxValue,
-    required final double minValue,
-    required final double topPadding,
-    required final int fixedLength,
+    required final Rect displayRect,
+    required final double maxVerticalValue,
+    required final double minVerticalValue,
+    required final double contentTopPadding,
+    required final int fixedDecimalsLength,
     required this.chartStyle,
   }) : super(
-          displayRect: mainRect,
-          maxVerticalValue: maxValue,
-          minVerticalValue: minValue,
-          contentTopPadding: topPadding,
-          fixedDecimalsLength: fixedLength,
+          displayRect: displayRect,
+          maxVerticalValue: maxVerticalValue,
+          minVerticalValue: minVerticalValue,
+          contentTopPadding: contentTopPadding,
+          fixedDecimalsLength: fixedDecimalsLength,
           gridColor: chartStyle.colors.gridColor,
-        ) {
-    mVolWidth = this.chartStyle.volWidth;
-  }
+        );
 
-  late double mVolWidth;
   final ChartStyle chartStyle;
 
   @override
@@ -32,12 +29,19 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     required final Size size,
     required final Canvas canvas,
   }) {
-    double r = mVolWidth / 2;
-    double top = getVolY(currentValue.data.vol);
-    double bottom = displayRect.bottom;
+    final volumeBarWidth = chartStyle.volWidth / 2;
+    final volumeBarTop = (maxVerticalValue - currentValue.data.vol) *
+            (displayRect.height / maxVerticalValue) +
+        displayRect.top;
+    final volumeBarBottom = displayRect.bottom;
     if (currentValue.data.vol != 0) {
       canvas.drawRect(
-          Rect.fromLTRB(currentValue.x - r, top, currentValue.x + r, bottom),
+          Rect.fromLTRB(
+            currentValue.x - volumeBarWidth,
+            volumeBarTop,
+            currentValue.x + volumeBarWidth,
+            volumeBarBottom,
+          ),
           chartPaint
             ..color = currentValue.data.close > currentValue.data.open
                 ? chartStyle.colors.upColor
@@ -56,59 +60,79 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
 
     if (lastValue.data.MA10Volume != 0) {
       drawLine(
-        lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.MA10Volume),
-        currentValue:
-            RenderPoint(x: currentValue.x, y: currentValue.data.MA10Volume),
+        lastValue: RenderPoint(
+          x: lastValue.x,
+          y: lastValue.data.MA10Volume,
+        ),
+        currentValue: RenderPoint(
+          x: currentValue.x,
+          y: currentValue.data.MA10Volume,
+        ),
         canvas: canvas,
         color: chartStyle.colors.ma10Color,
       );
     }
   }
 
-  double getVolY(double value) =>
-      (maxVerticalValue - value) * (displayRect.height / maxVerticalValue) +
-      displayRect.top;
-
   @override
   void drawText({
     required final Canvas canvas,
-    required final VolumeEntity data,
+    required final VolumeEntity value,
     required final double leftOffset,
   }) {
-    TextSpan span = TextSpan(
+    final TextSpan span = TextSpan(
       children: [
         TextSpan(
-            text: "VOL:${NumberUtil.format(data.vol)}    ",
-            style: getTextStyle(color: chartStyle.colors.volColor)),
-        if (data.MA5Volume.notNullOrZero)
+          text: "VOL:${NumberUtil.format(value.vol)}    ",
+          style: getTextStyle(color: chartStyle.colors.volColor),
+        ),
+        if (value.MA5Volume.notNullOrZero)
           TextSpan(
-              text: "MA5:${NumberUtil.format(data.MA5Volume!)}    ",
-              style: getTextStyle(color: chartStyle.colors.ma5Color)),
-        if (data.MA10Volume.notNullOrZero)
+            text: "MA5:${NumberUtil.format(value.MA5Volume!)}    ",
+            style: getTextStyle(color: chartStyle.colors.ma5Color),
+          ),
+        if (value.MA10Volume.notNullOrZero)
           TextSpan(
-              text: "MA10:${NumberUtil.format(data.MA10Volume!)}    ",
-              style: getTextStyle(color: chartStyle.colors.ma10Color)),
+            text: "MA10:${NumberUtil.format(value.MA10Volume!)}    ",
+            style: getTextStyle(color: chartStyle.colors.ma10Color),
+          ),
       ],
     );
-    TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
+    final TextPainter tp = TextPainter(
+      text: span,
+      textDirection: TextDirection.ltr,
+    );
     tp.layout();
-    tp.paint(canvas, Offset(leftOffset, displayRect.top - contentTopPadding));
+    tp.paint(
+        canvas,
+        Offset(
+          leftOffset,
+          displayRect.top - contentTopPadding,
+        ));
   }
 
   @override
   void drawRightText({
     required final Canvas canvas,
     required final textStyle,
-    required final int gridRows,
+    required final int numberOfRows,
   }) {
-    TextSpan span = TextSpan(
-        text: "${NumberUtil.format(maxVerticalValue)}", style: textStyle);
-    TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
+    final TextSpan span = TextSpan(
+      text: "${NumberUtil.format(maxVerticalValue)}",
+      style: textStyle,
+    );
+    final TextPainter tp = TextPainter(
+      text: span,
+      textDirection: TextDirection.ltr,
+    );
     tp.layout();
     tp.paint(
-        canvas,
-        Offset(
-            displayRect.width - tp.width, displayRect.top - contentTopPadding));
+      canvas,
+      Offset(
+        displayRect.width - tp.width,
+        displayRect.top - contentTopPadding,
+      ),
+    );
   }
 
   @override
@@ -117,11 +141,13 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     required final int numberOfRows,
     required final int numberOfColumns,
   }) {
-    canvas.drawLine(Offset(0, displayRect.bottom),
-        Offset(displayRect.width, displayRect.bottom), gridPaint);
-    double columnSpace = displayRect.width / numberOfColumns;
-    for (int i = 0; i <= columnSpace; i++) {
-      //vol垂直线
+    canvas.drawLine(
+      Offset(0, displayRect.bottom),
+      Offset(displayRect.width, displayRect.bottom),
+      gridPaint,
+    );
+    final columnSpace = displayRect.width / numberOfColumns;
+    for (var i = 0; i <= columnSpace; i++) {
       canvas.drawLine(
           Offset(columnSpace * i, displayRect.top - contentTopPadding),
           Offset(columnSpace * i, displayRect.bottom),

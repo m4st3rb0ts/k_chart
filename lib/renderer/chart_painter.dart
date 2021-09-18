@@ -98,11 +98,11 @@ class ChartPainter extends BaseChartPainter {
 
     if (mVolRect != null) {
       mVolRenderer = VolumeRenderer(
-        mainRect: mVolRect!,
-        maxValue: mVolMaxValue,
-        minValue: mVolMinValue,
-        topPadding: mChildPadding,
-        fixedLength: fixedLength,
+        displayRect: mVolRect!,
+        maxVerticalValue: mVolMaxValue,
+        minVerticalValue: mVolMinValue,
+        contentTopPadding: mChildPadding,
+        fixedDecimalsLength: fixedLength,
         chartStyle: chartStyle,
       );
     }
@@ -209,12 +209,12 @@ class ChartPainter extends BaseChartPainter {
     var textStyle = getTextStyle(chartStyle.colors.defaultTextColor);
     if (!hideGrid) {
       mMainRenderer.drawRightText(
-          canvas: canvas, textStyle: textStyle, gridRows: mGridRows);
+          canvas: canvas, textStyle: textStyle, numberOfRows: mGridRows);
     }
     mVolRenderer?.drawRightText(
-        canvas: canvas, textStyle: textStyle, gridRows: mGridRows);
+        canvas: canvas, textStyle: textStyle, numberOfRows: mGridRows);
     mSecondaryRenderer?.drawRightText(
-        canvas: canvas, textStyle: textStyle, gridRows: mGridRows);
+        canvas: canvas, textStyle: textStyle, numberOfRows: mGridRows);
   }
 
   @override
@@ -323,9 +323,9 @@ class ChartPainter extends BaseChartPainter {
       data = getItem(index);
     }
     //松开显示最后一条数据
-    mMainRenderer.drawText(canvas: canvas, data: data, leftOffset: x);
-    mVolRenderer?.drawText(canvas: canvas, data: data, leftOffset: x);
-    mSecondaryRenderer?.drawText(canvas: canvas, data: data, leftOffset: x);
+    mMainRenderer.drawText(canvas: canvas, value: data, leftOffset: x);
+    mVolRenderer?.drawText(canvas: canvas, value: data, leftOffset: x);
+    mSecondaryRenderer?.drawText(canvas: canvas, value: data, leftOffset: x);
   }
 
   @override

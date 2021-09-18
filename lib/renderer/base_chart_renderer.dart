@@ -80,7 +80,7 @@ abstract class BaseChartRenderer<T> {
   /// @x the left offset where the text will be painted
   void drawText({
     required final Canvas canvas,
-    required T data,
+    required T value,
     required double leftOffset,
   });
 
@@ -91,7 +91,7 @@ abstract class BaseChartRenderer<T> {
   void drawRightText({
     required final Canvas canvas,
     required final textStyle,
-    required int gridRows,
+    required int numberOfRows,
   });
 
   /// Draws the chart

@@ -46,12 +46,11 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isChangeUI = false;
 
   ChartStyle chartStyle = ChartStyle();
-  ChartColors chartColors = ChartColors();
 
   @override
   void initState() {
     super.initState();
-    getData('1day');
+    getData(period: '1day');
     rootBundle.loadString('assets/depth.json').then((result) {
       final parseJson = json.decode(result);
       final tick = parseJson['tick'] as Map<String, dynamic>;
@@ -101,9 +100,8 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 450,
             width: double.infinity,
             child: KChartWidget(
-              datas,
-              chartStyle,
-              chartColors,
+              datas: datas,
+              chartStyle: chartStyle,
               isLine: isLine,
               mainState: _mainState,
               volHidden: _volHidden,
@@ -130,7 +128,11 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             height: 230,
             width: double.infinity,
-            child: DepthChart(_bids!, _asks!, chartColors),
+            child: DepthChart(
+              bids: _bids!,
+              asks: _asks!,
+              chartStyle: chartStyle,
+            ),
           )
       ],
     );
@@ -145,12 +147,18 @@ class _MyHomePageState extends State<MyHomePage> {
         button("Line:MA", onPressed: () => _mainState = MainState.MA),
         button("Line:BOLL", onPressed: () => _mainState = MainState.BOLL),
         button("Hide Line", onPressed: () => _mainState = MainState.NONE),
-        button("Secondary Chart:MACD", onPressed: () => _secondaryState = SecondaryState.MACD),
-        button("Secondary Chart:KDJ", onPressed: () => _secondaryState = SecondaryState.KDJ),
-        button("Secondary Chart:RSI", onPressed: () => _secondaryState = SecondaryState.RSI),
-        button("Secondary Chart:WR", onPressed: () => _secondaryState = SecondaryState.WR),
-        button("Secondary Chart:CCI", onPressed: () => _secondaryState = SecondaryState.CCI),
-        button("Secondary Chart:Hide", onPressed: () => _secondaryState = SecondaryState.NONE),
+        button("Secondary Chart:MACD",
+            onPressed: () => _secondaryState = SecondaryState.MACD),
+        button("Secondary Chart:KDJ",
+            onPressed: () => _secondaryState = SecondaryState.KDJ),
+        button("Secondary Chart:RSI",
+            onPressed: () => _secondaryState = SecondaryState.RSI),
+        button("Secondary Chart:WR",
+            onPressed: () => _secondaryState = SecondaryState.WR),
+        button("Secondary Chart:CCI",
+            onPressed: () => _secondaryState = SecondaryState.CCI),
+        button("Secondary Chart:Hide",
+            onPressed: () => _secondaryState = SecondaryState.NONE),
         button(_volHidden ? "Show Vol" : "Hide Vol",
             onPressed: () => _volHidden = !_volHidden),
         button("Change Language", onPressed: () => isChinese = !isChinese),
@@ -161,16 +169,16 @@ class _MyHomePageState extends State<MyHomePage> {
         button("Customize UI", onPressed: () {
           setState(() {
             this.isChangeUI = !this.isChangeUI;
-            if(this.isChangeUI) {
-              chartColors.selectBorderColor = Colors.red;
-              chartColors.selectFillColor = Colors.red;
-              chartColors.lineFillColor = Colors.red;
-              chartColors.kLineColor = Colors.yellow;
+            if (this.isChangeUI) {
+              chartStyle.colors.selectBorderColor = Colors.red;
+              chartStyle.colors.selectFillColor = Colors.red;
+              chartStyle.colors.lineFillColor = Colors.red;
+              chartStyle.colors.kLineColor = Colors.yellow;
             } else {
-              chartColors.selectBorderColor = Color(0xff6C7A86);
-              chartColors.selectFillColor = Color(0xff0D1722);
-              chartColors.lineFillColor = Color(0x554C86CD);
-              chartColors.kLineColor = Color(0xff4C86CD);
+              chartStyle.colors.selectBorderColor = Color(0xff6C7A86);
+              chartStyle.colors.selectFillColor = Color(0xff0D1722);
+              chartStyle.colors.lineFillColor = Color(0x554C86CD);
+              chartStyle.colors.kLineColor = Color(0xff4C86CD);
             }
           });
         }),
@@ -199,7 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void getData(String period) {
+  void getData({required final String period}) {
     final Future<String> future = getIPAddress(period);
     future.then((String result) {
       final Map parseJson = json.decode(result) as Map<dynamic, dynamic>;
