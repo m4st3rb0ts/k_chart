@@ -92,7 +92,7 @@ class ChartPainter extends BaseChartPainter {
       isTimeLineMode: isLine,
       fixedDecimalsLength: fixedLength,
       chartStyle: chartStyle,
-      scaleX: scaleX,
+      timelineHorizontalScale: scaleX,
       maDayList: maDayList,
     );
 
