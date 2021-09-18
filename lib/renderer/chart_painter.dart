@@ -108,12 +108,12 @@ class ChartPainter extends BaseChartPainter {
     }
     if (mSecondaryRect != null) {
       mSecondaryRenderer = MACDEntityRenderer(
-        mainRect: mSecondaryRect!,
-        maxValue: mSecondaryMaxValue,
-        minValue: mSecondaryMinValue,
-        topPadding: mChildPadding,
+        displayRect: mSecondaryRect!,
+        maxVerticalValue: mSecondaryMaxValue,
+        minVerticalValue: mSecondaryMinValue,
+        contentTopPadding: mChildPadding,
         state: secondaryState,
-        fixedLength: fixedLength,
+        fixedDecimalsLength: fixedLength,
         chartStyle: chartStyle,
       );
     }

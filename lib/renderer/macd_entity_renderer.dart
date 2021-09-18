@@ -8,25 +8,22 @@ import 'base_chart_renderer.dart';
 
 class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
   MACDEntityRenderer({
-    required final Rect mainRect,
-    required final double maxValue,
-    required final double minValue,
-    required final double topPadding,
+    required final Rect displayRect,
+    required final double maxVerticalValue,
+    required final double minVerticalValue,
+    required final double contentTopPadding,
     required this.state,
-    required final int fixedLength,
+    required final int fixedDecimalsLength,
     required this.chartStyle,
   }) : super(
-          displayRect: mainRect,
-          maxVerticalValue: maxValue,
-          minVerticalValue: minValue,
-          contentTopPadding: topPadding,
-          fixedDecimalsLength: fixedLength,
+          displayRect: displayRect,
+          maxVerticalValue: maxVerticalValue,
+          minVerticalValue: minVerticalValue,
+          contentTopPadding: contentTopPadding,
+          fixedDecimalsLength: fixedDecimalsLength,
           gridColor: chartStyle.colors.gridColor,
-        ) {
-    mMACDWidth = chartStyle.macdWidth;
-  }
+        );
 
-  late double mMACDWidth;
   final SecondaryState state;
   final ChartStyle chartStyle;
 
@@ -69,27 +66,29 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
         break;
       case SecondaryState.RSI:
         drawLine(
-            lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.rsi),
-            currentValue:
-                RenderPoint(x: currentValue.x, y: currentValue.data.rsi),
-            canvas: canvas,
-            color: chartStyle.colors.rsiColor);
+          lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.rsi),
+          currentValue:
+              RenderPoint(x: currentValue.x, y: currentValue.data.rsi),
+          canvas: canvas,
+          color: chartStyle.colors.rsiColor,
+        );
         break;
       case SecondaryState.WR:
         drawLine(
-            lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.r),
-            currentValue:
-                RenderPoint(x: currentValue.x, y: currentValue.data.r),
-            canvas: canvas,
-            color: chartStyle.colors.rsiColor);
+          lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.r),
+          currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.r),
+          canvas: canvas,
+          color: chartStyle.colors.rsiColor,
+        );
         break;
       case SecondaryState.CCI:
         drawLine(
-            lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.cci),
-            currentValue:
-                RenderPoint(x: currentValue.x, y: currentValue.data.cci),
-            canvas: canvas,
-            color: chartStyle.colors.rsiColor);
+          lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.cci),
+          currentValue:
+              RenderPoint(x: currentValue.x, y: currentValue.data.cci),
+          canvas: canvas,
+          color: chartStyle.colors.rsiColor,
+        );
         break;
       default:
         break;
@@ -104,15 +103,29 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     required final double lastX,
   }) {
     final macd = curPoint.macd ?? 0;
-    double macdY = getVerticalPositionForPoint(value: macd);
-    double r = mMACDWidth / 2;
-    double zeroy = getVerticalPositionForPoint(value: 0);
+    final macdY = getVerticalPositionForPoint(value: macd);
+    final r = chartStyle.macdWidth / 2;
+    final zeroy = getVerticalPositionForPoint(value: 0);
     if (macd > 0) {
-      canvas.drawRect(Rect.fromLTRB(curX - r, macdY, curX + r, zeroy),
-          chartPaint..color = chartStyle.colors.upColor);
+      canvas.drawRect(
+        Rect.fromLTRB(
+          curX - r,
+          macdY,
+          curX + r,
+          zeroy,
+        ),
+        chartPaint..color = chartStyle.colors.upColor,
+      );
     } else {
-      canvas.drawRect(Rect.fromLTRB(curX - r, zeroy, curX + r, macdY),
-          chartPaint..color = chartStyle.colors.dnColor);
+      canvas.drawRect(
+        Rect.fromLTRB(
+          curX - r,
+          zeroy,
+          curX + r,
+          macdY,
+        ),
+        chartPaint..color = chartStyle.colors.dnColor,
+      );
     }
     if (lastPoint.dif != 0) {
       drawLine(
@@ -143,68 +156,104 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
       case SecondaryState.MACD:
         children = [
           TextSpan(
-              text: "MACD(12,26,9)    ",
-              style: getTextStyle(color: chartStyle.colors.defaultTextColor)),
+            text: "MACD(12,26,9)    ",
+            style: getTextStyle(
+              color: chartStyle.colors.defaultTextColor,
+            ),
+          ),
           if (value.macd != 0)
             TextSpan(
-                text: "MACD:${format(n: value.macd)}    ",
-                style: getTextStyle(color: chartStyle.colors.macdColor)),
+              text: "MACD:${format(n: value.macd)}    ",
+              style: getTextStyle(
+                color: chartStyle.colors.macdColor,
+              ),
+            ),
           if (value.dif != 0)
             TextSpan(
-                text: "DIF:${format(n: value.dif)}    ",
-                style: getTextStyle(color: chartStyle.colors.difColor)),
+              text: "DIF:${format(n: value.dif)}    ",
+              style: getTextStyle(
+                color: chartStyle.colors.difColor,
+              ),
+            ),
           if (value.dea != 0)
             TextSpan(
-                text: "DEA:${format(n: value.dea)}    ",
-                style: getTextStyle(color: chartStyle.colors.deaColor)),
+              text: "DEA:${format(n: value.dea)}    ",
+              style: getTextStyle(
+                color: chartStyle.colors.deaColor,
+              ),
+            ),
         ];
         break;
       case SecondaryState.KDJ:
         children = [
           TextSpan(
-              text: "KDJ(9,1,3)    ",
-              style: getTextStyle(color: chartStyle.colors.defaultTextColor)),
+            text: "KDJ(9,1,3)    ",
+            style: getTextStyle(
+              color: chartStyle.colors.defaultTextColor,
+            ),
+          ),
           if (value.macd != 0)
             TextSpan(
-                text: "K:${format(n: value.k)}    ",
-                style: getTextStyle(color: chartStyle.colors.kColor)),
+              text: "K:${format(n: value.k)}    ",
+              style: getTextStyle(
+                color: chartStyle.colors.kColor,
+              ),
+            ),
           if (value.dif != 0)
             TextSpan(
-                text: "D:${format(n: value.d)}    ",
-                style: getTextStyle(color: chartStyle.colors.dColor)),
+              text: "D:${format(n: value.d)}    ",
+              style: getTextStyle(
+                color: chartStyle.colors.dColor,
+              ),
+            ),
           if (value.dea != 0)
             TextSpan(
-                text: "J:${format(n: value.j)}    ",
-                style: getTextStyle(color: chartStyle.colors.jColor)),
+              text: "J:${format(n: value.j)}    ",
+              style: getTextStyle(
+                color: chartStyle.colors.jColor,
+              ),
+            ),
         ];
         break;
       case SecondaryState.RSI:
         children = [
           TextSpan(
-              text: "RSI(14):${format(n: value.rsi)}    ",
-              style: getTextStyle(color: chartStyle.colors.rsiColor)),
+            text: "RSI(14):${format(n: value.rsi)}    ",
+            style: getTextStyle(
+              color: chartStyle.colors.rsiColor,
+            ),
+          ),
         ];
         break;
       case SecondaryState.WR:
         children = [
           TextSpan(
-              text: "WR(14):${format(n: value.r)}    ",
-              style: getTextStyle(color: chartStyle.colors.rsiColor)),
+            text: "WR(14):${format(n: value.r)}    ",
+            style: getTextStyle(
+              color: chartStyle.colors.rsiColor,
+            ),
+          ),
         ];
         break;
       case SecondaryState.CCI:
         children = [
           TextSpan(
-              text: "CCI(14):${format(n: value.cci)}    ",
-              style: getTextStyle(color: chartStyle.colors.rsiColor)),
+            text: "CCI(14):${format(n: value.cci)}    ",
+            style: getTextStyle(
+              color: chartStyle.colors.rsiColor,
+            ),
+          ),
         ];
         break;
       default:
         break;
     }
-    TextPainter tp = TextPainter(
-        text: TextSpan(children: children ?? []),
-        textDirection: TextDirection.ltr);
+    final TextPainter tp = TextPainter(
+      text: TextSpan(
+        children: children ?? [],
+      ),
+      textDirection: TextDirection.ltr,
+    );
     tp.layout();
     tp.paint(canvas, Offset(leftOffset, displayRect.top - contentTopPadding));
   }
@@ -215,25 +264,37 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     required final textStyle,
     required final int numberOfRows,
   }) {
-    TextPainter maxTp = TextPainter(
-        text:
-            TextSpan(text: "${format(n: maxVerticalValue)}", style: textStyle),
-        textDirection: TextDirection.ltr);
+    final TextPainter maxTp = TextPainter(
+      text: TextSpan(
+        text: "${format(n: maxVerticalValue)}",
+        style: textStyle,
+      ),
+      textDirection: TextDirection.ltr,
+    );
     maxTp.layout();
-    TextPainter minTp = TextPainter(
-        text:
-            TextSpan(text: "${format(n: minVerticalValue)}", style: textStyle),
-        textDirection: TextDirection.ltr);
+    final TextPainter minTp = TextPainter(
+      text: TextSpan(
+        text: "${format(n: minVerticalValue)}",
+        style: textStyle,
+      ),
+      textDirection: TextDirection.ltr,
+    );
     minTp.layout();
 
     maxTp.paint(
-        canvas,
-        Offset(displayRect.width - maxTp.width,
-            displayRect.top - contentTopPadding));
+      canvas,
+      Offset(
+        displayRect.width - maxTp.width,
+        displayRect.top - contentTopPadding,
+      ),
+    );
     minTp.paint(
-        canvas,
-        Offset(displayRect.width - minTp.width,
-            displayRect.bottom - minTp.height));
+      canvas,
+      Offset(
+        displayRect.width - minTp.width,
+        displayRect.bottom - minTp.height,
+      ),
+    );
   }
 
   @override
@@ -242,12 +303,18 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     required final int numberOfRows,
     required final int numberOfColumns,
   }) {
-    canvas.drawLine(Offset(0, displayRect.top),
-        Offset(displayRect.width, displayRect.top), gridPaint);
-    canvas.drawLine(Offset(0, displayRect.bottom),
-        Offset(displayRect.width, displayRect.bottom), gridPaint);
-    double columnSpace = displayRect.width / numberOfColumns;
-    for (int i = 0; i <= columnSpace; i++) {
+    canvas.drawLine(
+      Offset(0, displayRect.top),
+      Offset(displayRect.width, displayRect.top),
+      gridPaint,
+    );
+    canvas.drawLine(
+      Offset(0, displayRect.bottom),
+      Offset(displayRect.width, displayRect.bottom),
+      gridPaint,
+    );
+    final columnSpace = displayRect.width / numberOfColumns;
+    for (var i = 0; i <= columnSpace; i++) {
       //mSecondaryRect垂直线
       canvas.drawLine(
           Offset(columnSpace * i, displayRect.top - contentTopPadding),

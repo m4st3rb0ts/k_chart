@@ -86,20 +86,17 @@ abstract class BaseChartRenderer<T> {
 
   /// Draws a text on the right of the chart
   /// @canvas surface to paint
-  /// @textStyle
+  /// @textStyle style for displaying the text
   /// @gridRows the number of the row which the text will be painted
   void drawRightText({
     required final Canvas canvas,
-    required final textStyle,
+    required final TextStyle textStyle,
     required int numberOfRows,
   });
 
   /// Draws the chart
-  /// @lastPoint
-  /// @curPoint
-  /// @lastX
-  /// @curX
-  /// @size
+  /// @lastValue last value in data
+  /// @currentValue current value in data
   /// @canvas surface to paint
   void drawChart({
     required final RenderData<T> lastValue,
@@ -109,11 +106,9 @@ abstract class BaseChartRenderer<T> {
   });
 
   /// Draws a line
-  /// @lastPrice
-  /// @curPrice
+  /// @lastValue from
+  /// @currentValue to
   /// @canvas surface to paint
-  /// @lastX
-  /// @curX
   /// @color The color of the line
   void drawLine({
     required final RenderPoint lastValue,
@@ -143,12 +138,14 @@ abstract class BaseChartRenderer<T> {
   }
 }
 
+/// class for drawing points in current render
 class RenderPoint {
   const RenderPoint({required this.x, this.y});
   final double x;
   final double? y;
 }
 
+/// class for drawing data in current render
 class RenderData<T> {
   const RenderData({required this.data, required this.x});
   final T data;
