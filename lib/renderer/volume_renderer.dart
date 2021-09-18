@@ -80,7 +80,7 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     required final VolumeEntity value,
     required final double leftOffset,
   }) {
-    final TextSpan span = TextSpan(
+    final titles = TextSpan(
       children: [
         TextSpan(
           //TODO: Localize
@@ -101,12 +101,12 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
           ),
       ],
     );
-    final TextPainter tp = TextPainter(
-      text: span,
+    final titlesPainter = TextPainter(
+      text: titles,
       textDirection: TextDirection.ltr,
     );
-    tp.layout();
-    tp.paint(
+    titlesPainter.layout();
+    titlesPainter.paint(
         canvas,
         Offset(
           leftOffset,
@@ -119,19 +119,19 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     required final Canvas canvas,
     required final TextStyle textStyle,
   }) {
-    final TextSpan span = TextSpan(
+    final rightText = TextSpan(
       text: "${NumberUtil.format(maxVerticalValue)}",
       style: textStyle,
     );
-    final TextPainter tp = TextPainter(
-      text: span,
+    final rightTextPainter = TextPainter(
+      text: rightText,
       textDirection: TextDirection.ltr,
     );
-    tp.layout();
-    tp.paint(
+    rightTextPainter.layout();
+    rightTextPainter.paint(
       canvas,
       Offset(
-        displayRect.width - tp.width,
+        displayRect.width - rightTextPainter.width,
         displayRect.top - contentTopPadding,
       ),
     );
@@ -147,10 +147,10 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
       gridPaint,
     );
     final columnSpace = displayRect.width / chartStyle.gridColumns;
-    for (var i = 0; i <= columnSpace; i++) {
+    for (var column = 0; column <= columnSpace; column++) {
       canvas.drawLine(
-          Offset(columnSpace * i, displayRect.top - contentTopPadding),
-          Offset(columnSpace * i, displayRect.bottom),
+          Offset(columnSpace * column, displayRect.top - contentTopPadding),
+          Offset(columnSpace * column, displayRect.bottom),
           gridPaint);
     }
   }

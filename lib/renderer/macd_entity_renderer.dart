@@ -36,11 +36,9 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     switch (indicator) {
       case SecondaryIndicator.MACD:
         drawMACD(
-          curPoint: currentValue.data,
+          lastValue: lastValue,
+          currentValue: currentValue,
           canvas: canvas,
-          curX: currentValue.x,
-          lastPoint: lastValue.data,
-          lastX: lastValue.x,
         );
         break;
       case SecondaryIndicator.KDJ:
@@ -95,22 +93,21 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
   }
 
   void drawMACD({
-    required final MACDEntity curPoint,
+    required final RenderData<MACDEntity> lastValue,
+    required final RenderData<MACDEntity> currentValue,
     required final Canvas canvas,
-    required final double curX,
-    required final MACDEntity lastPoint,
-    required final double lastX,
   }) {
-    final macd = curPoint.macd ?? 0;
-    final macdY = getVerticalPositionForPoint(value: macd);
-    final r = chartStyle.macdWidth * 0.5;
+    final currentMacdValue = currentValue.data.macd ?? 0;
+    final currentMacdValueNormalized =
+        getVerticalPositionForPoint(value: currentMacdValue);
+    final width = chartStyle.macdWidth * 0.5;
     final zeroy = getVerticalPositionForPoint(value: 0);
-    if (macd > 0) {
+    if (currentMacdValue > 0) {
       canvas.drawRect(
         Rect.fromLTRB(
-          curX - r,
-          macdY,
-          curX + r,
+          currentValue.x - width,
+          currentMacdValueNormalized,
+          currentValue.x + width,
           zeroy,
         ),
         chartPaint..color = chartStyle.colors.upColor,
@@ -118,26 +115,26 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     } else {
       canvas.drawRect(
         Rect.fromLTRB(
-          curX - r,
+          currentValue.x - width,
           zeroy,
-          curX + r,
-          macdY,
+          currentValue.x + width,
+          currentMacdValueNormalized,
         ),
         chartPaint..color = chartStyle.colors.dnColor,
       );
     }
-    if (lastPoint.dif != 0) {
+    if (lastValue.data.dif != 0) {
       drawLine(
-        lastValue: RenderPoint(x: lastX, y: lastPoint.dif),
-        currentValue: RenderPoint(x: curX, y: curPoint.dif),
+        lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.dif),
+        currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.dif),
         canvas: canvas,
         color: chartStyle.colors.difColor,
       );
     }
-    if (lastPoint.dea != 0) {
+    if (lastValue.data.dea != 0) {
       drawLine(
-        lastValue: RenderPoint(x: lastX, y: lastPoint.dea),
-        currentValue: RenderPoint(x: curX, y: curPoint.dea),
+        lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.dea),
+        currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.dea),
         canvas: canvas,
         color: chartStyle.colors.deaColor,
       );
@@ -150,10 +147,10 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     required final MACDEntity value,
     required final double leftOffset,
   }) {
-    List<TextSpan>? children;
+    var titles = <TextSpan>[];
     switch (indicator) {
       case SecondaryIndicator.MACD:
-        children = [
+        titles = [
           TextSpan(
             //TODO: Localize
             text: "MACD(12,26,9)    ",
@@ -188,7 +185,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
         ];
         break;
       case SecondaryIndicator.KDJ:
-        children = [
+        titles = [
           TextSpan(
             //TODO: Localize
             text: "KDJ(9,1,3)    ",
@@ -223,7 +220,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
         ];
         break;
       case SecondaryIndicator.RSI:
-        children = [
+        titles = [
           TextSpan(
             //TODO: Localize
             text: "RSI(14):${format(n: value.rsi)}    ",
@@ -234,7 +231,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
         ];
         break;
       case SecondaryIndicator.WR:
-        children = [
+        titles = [
           TextSpan(
             //TODO: Localize
             text: "WR(14):${format(n: value.r)}    ",
@@ -245,7 +242,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
         ];
         break;
       case SecondaryIndicator.CCI:
-        children = [
+        titles = [
           TextSpan(
             //TODO: Localize
             text: "CCI(14):${format(n: value.cci)}    ",
@@ -258,14 +255,15 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
       default:
         break;
     }
-    final TextPainter tp = TextPainter(
+    final titlesPainter = TextPainter(
       text: TextSpan(
-        children: children ?? [],
+        children: titles,
       ),
       textDirection: TextDirection.ltr,
     );
-    tp.layout();
-    tp.paint(canvas, Offset(leftOffset, displayRect.top - contentTopPadding));
+    titlesPainter.layout();
+    titlesPainter.paint(
+        canvas, Offset(leftOffset, displayRect.top - contentTopPadding));
   }
 
   @override
@@ -273,35 +271,37 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     required final Canvas canvas,
     required final TextStyle textStyle,
   }) {
-    final TextPainter maxTp = TextPainter(
+    final maxVerticalValuePainter = TextPainter(
       text: TextSpan(
         text: "${format(n: maxVerticalValue)}",
         style: textStyle,
       ),
       textDirection: TextDirection.ltr,
     );
-    maxTp.layout();
-    final TextPainter minTp = TextPainter(
+
+    final minVerticalValuePainter = TextPainter(
       text: TextSpan(
         text: "${format(n: minVerticalValue)}",
         style: textStyle,
       ),
       textDirection: TextDirection.ltr,
     );
-    minTp.layout();
 
-    maxTp.paint(
+    maxVerticalValuePainter.layout();
+    minVerticalValuePainter.layout();
+
+    maxVerticalValuePainter.paint(
       canvas,
       Offset(
-        displayRect.width - maxTp.width,
+        displayRect.width - maxVerticalValuePainter.width,
         displayRect.top - contentTopPadding,
       ),
     );
-    minTp.paint(
+    minVerticalValuePainter.paint(
       canvas,
       Offset(
-        displayRect.width - minTp.width,
-        displayRect.bottom - minTp.height,
+        displayRect.width - minVerticalValuePainter.width,
+        displayRect.bottom - minVerticalValuePainter.height,
       ),
     );
   }
@@ -321,11 +321,12 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
       gridPaint,
     );
     final columnSpace = displayRect.width / chartStyle.gridColumns;
-    for (var i = 0; i <= columnSpace; i++) {
+    for (var column = 0; column <= columnSpace; column++) {
       canvas.drawLine(
-          Offset(columnSpace * i, displayRect.top - contentTopPadding),
-          Offset(columnSpace * i, displayRect.bottom),
-          gridPaint);
+        Offset(columnSpace * column, displayRect.top - contentTopPadding),
+        Offset(columnSpace * column, displayRect.bottom),
+        gridPaint,
+      );
     }
   }
 }
