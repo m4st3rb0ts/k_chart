@@ -18,7 +18,6 @@ abstract class BaseChartRenderer<T> {
     }
     verticalScale = displayRect.height / (maxVerticalValue - minVerticalValue);
     gridPaint.color = gridColor;
-    // print("maxValue=====" + maxValue.toString() + "====minValue===" + minValue.toString() + "==scaleY==" + scaleY.toString());
   }
 
   /// Max y value of the chart
