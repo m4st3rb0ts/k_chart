@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../chart_style.dart';
 import '../entity/candle_entity.dart';
 import '../k_chart_widget.dart' show PrimaryIndicator;
 import 'base_chart_renderer.dart';

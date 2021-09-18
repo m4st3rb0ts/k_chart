@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:k_chart/chart_style.dart';
 
-export '../chart_style.dart';
+import '../chart_style.dart';
 
 /// Base class for adding chart renders
 abstract class BaseChartRenderer<T> {

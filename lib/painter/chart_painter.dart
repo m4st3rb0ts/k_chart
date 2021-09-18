@@ -1,11 +1,11 @@
 import 'dart:async' show StreamSink;
 
 import 'package:flutter/material.dart';
-import 'package:k_chart/entity/index.dart';
 import 'package:k_chart/utils/number_util.dart';
 
 import '../entity/info_window_entity.dart';
 import '../entity/k_line_entity.dart';
+import '../flutter_k_chart.dart';
 import '../utils/date_format_util.dart';
 import 'base_chart_painter.dart';
 import '../renderer/base_chart_renderer.dart';

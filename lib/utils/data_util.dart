@@ -1,8 +1,7 @@
 import 'dart:math';
 
-import 'package:k_chart/utils/number_util.dart';
-
-import '../entity/index.dart';
+import '../entity/k_line_entity.dart';
+import 'number_util.dart';
 
 // ignore_for_file: non_constant_identifier_names,library_prefixes,unused_import,camel_case_types
 class DataUtil {
@@ -190,7 +189,7 @@ class DataUtil {
       var rsv = (cur - low) * 100.0 / (high - low);
       rsv = rsv.isNaN ? 0 : rsv;
       final k = (2 * preK + rsv) / 3.0;
-      final d = (2 * preD + k)/ 3.0;
+      final d = (2 * preD + k) / 3.0;
       final j = 3 * k - 2 * d;
       preK = k;
       preD = d;
@@ -243,7 +242,8 @@ class DataUtil {
       final ma = amount / len;
       amount = 0.0;
       for (int n = start; n <= i; n++) {
-        amount += (ma - (dataList[n].high + dataList[n].low + dataList[n].close) / 3)
+        amount +=
+            (ma - (dataList[n].high + dataList[n].low + dataList[n].close) / 3)
                 .abs();
       }
       final md = amount / len;
