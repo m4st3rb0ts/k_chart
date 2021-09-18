@@ -15,14 +15,13 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
     required this.state,
     required final int fixedLength,
     required this.chartStyle,
-    required this.chartColors,
   }) : super(
           chartRect: mainRect,
           maxYValue: maxValue,
           minYValue: minValue,
           topPadding: topPadding,
           fixedDecimalsLength: fixedLength,
-          gridColor: chartColors.gridColor,
+          gridColor: chartStyle.colors.gridColor,
         ) {
     mMACDWidth = chartStyle.macdWidth;
   }
@@ -30,7 +29,6 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
   late double mMACDWidth;
   final SecondaryState state;
   final ChartStyle chartStyle;
-  final ChartColors chartColors;
 
   @override
   void drawChart(
@@ -56,7 +54,7 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
           canvas: canvas,
           lastX: lastX,
           curX: curX,
-          color: chartColors.kColor,
+          color: chartStyle.colors.kColor,
         );
         drawLine(
           lastPrice: lastPoint.d,
@@ -64,7 +62,7 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
           canvas: canvas,
           lastX: lastX,
           curX: curX,
-          color: chartColors.dColor,
+          color: chartStyle.colors.dColor,
         );
         drawLine(
           lastPrice: lastPoint.j,
@@ -72,7 +70,7 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
           canvas: canvas,
           lastX: lastX,
           curX: curX,
-          color: chartColors.jColor,
+          color: chartStyle.colors.jColor,
         );
         break;
       case SecondaryState.RSI:
@@ -82,7 +80,7 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
             canvas: canvas,
             lastX: lastX,
             curX: curX,
-            color: chartColors.rsiColor);
+            color: chartStyle.colors.rsiColor);
         break;
       case SecondaryState.WR:
         drawLine(
@@ -91,7 +89,7 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
             canvas: canvas,
             lastX: lastX,
             curX: curX,
-            color: chartColors.rsiColor);
+            color: chartStyle.colors.rsiColor);
         break;
       case SecondaryState.CCI:
         drawLine(
@@ -100,7 +98,7 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
             canvas: canvas,
             lastX: lastX,
             curX: curX,
-            color: chartColors.rsiColor);
+            color: chartStyle.colors.rsiColor);
         break;
       default:
         break;
@@ -120,10 +118,10 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
     double zeroy = getVerticalPositionForPoint(value: 0);
     if (macd > 0) {
       canvas.drawRect(Rect.fromLTRB(curX - r, macdY, curX + r, zeroy),
-          chartPaint..color = this.chartColors.upColor);
+          chartPaint..color = chartStyle.colors.upColor);
     } else {
       canvas.drawRect(Rect.fromLTRB(curX - r, zeroy, curX + r, macdY),
-          chartPaint..color = this.chartColors.dnColor);
+          chartPaint..color = chartStyle.colors.dnColor);
     }
     if (lastPoint.dif != 0) {
       drawLine(
@@ -132,7 +130,7 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
         canvas: canvas,
         lastX: lastX,
         curX: curX,
-        color: chartColors.difColor,
+        color: chartStyle.colors.difColor,
       );
     }
     if (lastPoint.dea != 0) {
@@ -142,7 +140,7 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
         canvas: canvas,
         lastX: lastX,
         curX: curX,
-        color: chartColors.deaColor,
+        color: chartStyle.colors.deaColor,
       );
     }
   }
@@ -159,59 +157,59 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
         children = [
           TextSpan(
               text: "MACD(12,26,9)    ",
-              style: getTextStyle(color: chartColors.defaultTextColor)),
+              style: getTextStyle(color: chartStyle.colors.defaultTextColor)),
           if (data.macd != 0)
             TextSpan(
                 text: "MACD:${format(n: data.macd)}    ",
-                style: getTextStyle(color: chartColors.macdColor)),
+                style: getTextStyle(color: chartStyle.colors.macdColor)),
           if (data.dif != 0)
             TextSpan(
                 text: "DIF:${format(n: data.dif)}    ",
-                style: getTextStyle(color: chartColors.difColor)),
+                style: getTextStyle(color: chartStyle.colors.difColor)),
           if (data.dea != 0)
             TextSpan(
                 text: "DEA:${format(n: data.dea)}    ",
-                style: getTextStyle(color: chartColors.deaColor)),
+                style: getTextStyle(color: chartStyle.colors.deaColor)),
         ];
         break;
       case SecondaryState.KDJ:
         children = [
           TextSpan(
               text: "KDJ(9,1,3)    ",
-              style: getTextStyle(color: chartColors.defaultTextColor)),
+              style: getTextStyle(color: chartStyle.colors.defaultTextColor)),
           if (data.macd != 0)
             TextSpan(
                 text: "K:${format(n: data.k)}    ",
-                style: getTextStyle(color: chartColors.kColor)),
+                style: getTextStyle(color: chartStyle.colors.kColor)),
           if (data.dif != 0)
             TextSpan(
                 text: "D:${format(n: data.d)}    ",
-                style: getTextStyle(color: chartColors.dColor)),
+                style: getTextStyle(color: chartStyle.colors.dColor)),
           if (data.dea != 0)
             TextSpan(
                 text: "J:${format(n: data.j)}    ",
-                style: getTextStyle(color: chartColors.jColor)),
+                style: getTextStyle(color: chartStyle.colors.jColor)),
         ];
         break;
       case SecondaryState.RSI:
         children = [
           TextSpan(
               text: "RSI(14):${format(n: data.rsi)}    ",
-              style: getTextStyle(color: chartColors.rsiColor)),
+              style: getTextStyle(color: chartStyle.colors.rsiColor)),
         ];
         break;
       case SecondaryState.WR:
         children = [
           TextSpan(
               text: "WR(14):${format(n: data.r)}    ",
-              style: getTextStyle(color: chartColors.rsiColor)),
+              style: getTextStyle(color: chartStyle.colors.rsiColor)),
         ];
         break;
       case SecondaryState.CCI:
         children = [
           TextSpan(
               text: "CCI(14):${format(n: data.cci)}    ",
-              style: getTextStyle(color: chartColors.rsiColor)),
+              style: getTextStyle(color: chartStyle.colors.rsiColor)),
         ];
         break;
       default:

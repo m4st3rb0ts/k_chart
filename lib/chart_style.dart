@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' show Color;
 
-class ChartColors {
+class _ChartColors {
   List<Color> bgColor = [Color(0xff18191d), Color(0xff18191d)];
 
   Color kLineColor = Color(0xff4C86CD);
@@ -108,4 +108,6 @@ class ChartStyle {
 
   //下方時間客製化
   List<String>? dateTimeFormat;
+
+  final _ChartColors colors = _ChartColors();
 }

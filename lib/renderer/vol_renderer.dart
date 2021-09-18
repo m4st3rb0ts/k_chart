@@ -11,21 +11,19 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
     required final double topPadding,
     required final int fixedLength,
     required this.chartStyle,
-    required this.chartColors,
   }) : super(
           chartRect: mainRect,
           maxYValue: maxValue,
           minYValue: minValue,
           topPadding: topPadding,
           fixedDecimalsLength: fixedLength,
-          gridColor: chartColors.gridColor,
+          gridColor: chartStyle.colors.gridColor,
         ) {
     mVolWidth = this.chartStyle.volWidth;
   }
 
   late double mVolWidth;
   final ChartStyle chartStyle;
-  final ChartColors chartColors;
 
   @override
   void drawChart({
@@ -44,8 +42,8 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
           Rect.fromLTRB(curX - r, top, curX + r, bottom),
           chartPaint
             ..color = curPoint.close > curPoint.open
-                ? chartColors.upColor
-                : chartColors.dnColor);
+                ? chartStyle.colors.upColor
+                : chartStyle.colors.dnColor);
     }
 
     if (lastPoint.MA5Volume != 0) {
@@ -55,7 +53,7 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
         canvas: canvas,
         lastX: lastX,
         curX: curX,
-        color: chartColors.ma5Color,
+        color: chartStyle.colors.ma5Color,
       );
     }
 
@@ -66,7 +64,7 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
         canvas: canvas,
         lastX: lastX,
         curX: curX,
-        color: chartColors.ma10Color,
+        color: chartStyle.colors.ma10Color,
       );
     }
   }
@@ -84,15 +82,15 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
       children: [
         TextSpan(
             text: "VOL:${NumberUtil.format(data.vol)}    ",
-            style: getTextStyle(color: chartColors.volColor)),
+            style: getTextStyle(color: chartStyle.colors.volColor)),
         if (data.MA5Volume.notNullOrZero)
           TextSpan(
               text: "MA5:${NumberUtil.format(data.MA5Volume!)}    ",
-              style: getTextStyle(color: chartColors.ma5Color)),
+              style: getTextStyle(color: chartStyle.colors.ma5Color)),
         if (data.MA10Volume.notNullOrZero)
           TextSpan(
               text: "MA10:${NumberUtil.format(data.MA10Volume!)}    ",
-              style: getTextStyle(color: chartColors.ma10Color)),
+              style: getTextStyle(color: chartStyle.colors.ma10Color)),
       ],
     );
     TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);

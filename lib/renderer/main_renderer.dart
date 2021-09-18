@@ -14,7 +14,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     required this.isLine,
     required final int fixedLength,
     required this.chartStyle,
-    required this.chartColors,
     required this.scaleX,
     this.maDayList = const [5, 10, 20],
   }) : super(
@@ -23,14 +22,14 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
             minYValue: minValue,
             topPadding: topPadding,
             fixedDecimalsLength: fixedLength,
-            gridColor: chartColors.gridColor) {
-    mCandleWidth = this.chartStyle.candleWidth;
-    mCandleLineWidth = this.chartStyle.candleLineWidth;
+            gridColor: chartStyle.colors.gridColor) {
+    mCandleWidth = chartStyle.candleWidth;
+    mCandleLineWidth = chartStyle.candleLineWidth;
     mLinePaint = Paint()
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke
       ..strokeWidth = mLineStrokeWidth
-      ..color = this.chartColors.kLineColor;
+      ..color = chartStyle.colors.kLineColor;
     _contentRect = Rect.fromLTRB(
         chartRect.left,
         chartRect.top + _contentPadding,
@@ -53,7 +52,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final double _contentPadding = 5.0;
   List<int> maDayList;
   final ChartStyle chartStyle;
-  final ChartColors chartColors;
   final double mLineStrokeWidth = 1.0;
   double scaleX;
   late Paint mLinePaint;
@@ -82,15 +80,15 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           if (data.up != 0)
             TextSpan(
                 text: "BOLL:${format(n: data.mb)}    ",
-                style: getTextStyle(color: chartColors.ma5Color)),
+                style: getTextStyle(color: chartStyle.colors.ma5Color)),
           if (data.mb != 0)
             TextSpan(
                 text: "UB:${format(n: data.up)}    ",
-                style: getTextStyle(color: chartColors.ma10Color)),
+                style: getTextStyle(color: chartStyle.colors.ma10Color)),
           if (data.dn != 0)
             TextSpan(
                 text: "LB:${format(n: data.dn)}    ",
-                style: getTextStyle(color: chartColors.ma30Color)),
+                style: getTextStyle(color: chartStyle.colors.ma30Color)),
         ],
       );
     }
@@ -106,7 +104,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       if (data.maValueList?[i] != 0) {
         var item = TextSpan(
             text: "MA${maDayList[i]}:${format(n: data.maValueList![i])}    ",
-            style: getTextStyle(color: chartColors.getMAColor(i)));
+            style: getTextStyle(color: chartStyle.colors.getMAColor(i)));
         result.add(item);
       }
     }
@@ -187,7 +185,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       tileMode: TileMode.clamp,
-      colors: [this.chartColors.lineFillColor, Colors.transparent],
+      colors: [chartStyle.colors.lineFillColor, Colors.transparent],
     ).createShader(Rect.fromLTRB(
         chartRect.left, chartRect.top, chartRect.right, chartRect.bottom));
     mLineFillPaint..shader = mLineFillShader;
@@ -232,7 +230,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas: canvas,
           lastX: lastX,
           curX: curX,
-          color: chartColors.getMAColor(i),
+          color: chartStyle.colors.getMAColor(i),
         );
       }
     }
@@ -252,7 +250,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas: canvas,
           lastX: lastX,
           curX: curX,
-          color: chartColors.ma10Color);
+          color: chartStyle.colors.ma10Color);
     }
     if (lastPoint.mb != 0) {
       drawLine(
@@ -261,7 +259,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas: canvas,
           lastX: lastX,
           curX: curX,
-          color: chartColors.ma5Color);
+          color: chartStyle.colors.ma5Color);
     }
     if (lastPoint.dn != 0) {
       drawLine(
@@ -270,7 +268,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas: canvas,
           lastX: lastX,
           curX: curX,
-          color: chartColors.ma30Color);
+          color: chartStyle.colors.ma30Color);
     }
   }
 
@@ -290,7 +288,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       if (open - close < mCandleLineWidth) {
         open = close + mCandleLineWidth;
       }
-      chartPaint.color = this.chartColors.upColor;
+      chartPaint.color = chartStyle.colors.upColor;
       canvas.drawRect(
           Rect.fromLTRB(curX - r, close, curX + r, open), chartPaint);
       canvas.drawRect(
@@ -300,7 +298,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       if (close - open < mCandleLineWidth) {
         open = close - mCandleLineWidth;
       }
-      chartPaint.color = this.chartColors.dnColor;
+      chartPaint.color = chartStyle.colors.dnColor;
       canvas.drawRect(
           Rect.fromLTRB(curX - r, open, curX + r, close), chartPaint);
       canvas.drawRect(

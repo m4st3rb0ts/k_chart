@@ -49,13 +49,11 @@ class KChartWidget extends StatefulWidget {
   final double flingRatio;
   final Curve flingCurve;
   final Function(bool)? isOnDrag;
-  final ChartColors chartColors;
   final ChartStyle chartStyle;
 
-  KChartWidget(
-    this.datas,
-    this.chartStyle,
-    this.chartColors, {
+  const KChartWidget({
+    required this.datas,
+    required this.chartStyle,
     this.mainState = MainState.MA,
     this.secondaryState = SecondaryState.MACD,
     this.onSecondaryTap,
@@ -122,7 +120,6 @@ class _KChartWidgetState extends State<KChartWidget>
     }
     final _painter = ChartPainter(
       chartStyle: widget.chartStyle,
-      chartColors: widget.chartColors,
       datas: widget.datas,
       scaleX: mScaleX,
       scrollX: mScrollX,
@@ -290,13 +287,17 @@ class _KChartWidgetState extends State<KChartWidget>
           ];
           return Container(
             margin: EdgeInsets.only(
-                left: snapshot.data!.isLeft ? 4 : mWidth - mWidth / 3 - 4,
-                top: 25),
+              left: snapshot.data!.isLeft ? 4 : mWidth - mWidth / 3 - 4,
+              top: 25,
+            ),
             width: mWidth / 3,
             decoration: BoxDecoration(
-                color: widget.chartColors.selectFillColor,
-                border: Border.all(
-                    color: widget.chartColors.selectBorderColor, width: 0.5)),
+              color: widget.chartStyle.colors.selectFillColor,
+              border: Border.all(
+                color: widget.chartStyle.colors.selectBorderColor,
+                width: 0.5,
+              ),
+            ),
             child: ListView.builder(
               padding: EdgeInsets.all(4),
               itemCount: infos.length,
@@ -318,27 +319,39 @@ class _KChartWidgetState extends State<KChartWidget>
   }
 
   Widget _buildItem(String info, String infoName) {
-    Color color = widget.chartColors.infoWindowNormalColor;
+    Color color = widget.chartStyle.colors.infoWindowNormalColor;
     if (info.startsWith("+"))
-      color = widget.chartColors.infoWindowUpColor;
-    else if (info.startsWith("-")) color = widget.chartColors.infoWindowDnColor;
+      color = widget.chartStyle.colors.infoWindowUpColor;
+    else if (info.startsWith("-"))
+      color = widget.chartStyle.colors.infoWindowDnColor;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Expanded(
-            child: Text("$infoName",
-                style: TextStyle(
-                    color: widget.chartColors.infoWindowTitleColor,
-                    fontSize: 10.0))),
-        Text(info, style: TextStyle(color: color, fontSize: 10.0)),
+          child: Text(
+            "$infoName",
+            style: TextStyle(
+              color: widget.chartStyle.colors.infoWindowTitleColor,
+              fontSize: 10.0,
+            ),
+          ),
+        ),
+        Text(
+          info,
+          style: TextStyle(
+            color: color,
+            fontSize: 10.0,
+          ),
+        ),
       ],
     );
   }
 
   String getDate(int? date) => dateFormat(
       DateTime.fromMillisecondsSinceEpoch(
-          date ?? DateTime.now().millisecondsSinceEpoch),
+        date ?? DateTime.now().millisecondsSinceEpoch,
+      ),
       widget.timeFormat);
 }
