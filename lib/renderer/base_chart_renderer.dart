@@ -9,7 +9,6 @@ abstract class BaseChartRenderer<T> {
     required this.displayRect,
     required this.maxVerticalValue,
     required this.minVerticalValue,
-    required this.contentTopPadding,
     required this.fixedDecimalsLength,
     required this.chartStyle,
   })  : chartPaint = Paint()
@@ -37,9 +36,6 @@ abstract class BaseChartRenderer<T> {
 
   /// Factor for scaling the graph (zoom)
   late double verticalScale;
-
-  /// Margin of the maxYValue of the graph with the top
-  final double contentTopPadding;
 
   /// Full chart rect size where all content will be drawed
   final Rect displayRect;

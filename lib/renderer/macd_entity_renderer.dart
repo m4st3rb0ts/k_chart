@@ -12,7 +12,6 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     required final Rect displayRect,
     required final double maxVerticalValue,
     required final double minVerticalValue,
-    required final double contentTopPadding,
     required this.indicator,
     required final int fixedDecimalsLength,
     required final ChartStyle chartStyle,
@@ -20,7 +19,6 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
           displayRect: displayRect,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
-          contentTopPadding: contentTopPadding,
           fixedDecimalsLength: fixedDecimalsLength,
           chartStyle: chartStyle,
         );
@@ -264,7 +262,12 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     );
     titlesPainter.layout();
     titlesPainter.paint(
-        canvas, Offset(leftOffset, displayRect.top - contentTopPadding));
+      canvas,
+      Offset(
+        leftOffset,
+        displayRect.top - chartStyle.childPadding,
+      ),
+    );
   }
 
   @override
@@ -295,7 +298,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
       canvas,
       Offset(
         displayRect.width - maxVerticalValuePainter.width,
-        displayRect.top - contentTopPadding,
+        displayRect.top - chartStyle.childPadding,
       ),
     );
     minVerticalValuePainter.paint(
@@ -324,7 +327,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
     for (var column = 0; column <= columnSpace; column++) {
       canvas.drawLine(
-        Offset(columnSpace * column, displayRect.top - contentTopPadding),
+        Offset(columnSpace * column, displayRect.top - chartStyle.childPadding),
         Offset(columnSpace * column, displayRect.bottom),
         gridPaint,
       );

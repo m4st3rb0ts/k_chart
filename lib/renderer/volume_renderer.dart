@@ -11,14 +11,12 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     required final Rect displayRect,
     required final double maxVerticalValue,
     required final double minVerticalValue,
-    required final double contentTopPadding,
     required final int fixedDecimalsLength,
     required final ChartStyle chartStyle,
   }) : super(
           displayRect: displayRect,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
-          contentTopPadding: contentTopPadding,
           fixedDecimalsLength: fixedDecimalsLength,
           chartStyle: chartStyle,
         );
@@ -111,7 +109,7 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
         canvas,
         Offset(
           leftOffset,
-          displayRect.top - contentTopPadding,
+          displayRect.top - chartStyle.childPadding,
         ));
   }
 
@@ -133,7 +131,7 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
       canvas,
       Offset(
         displayRect.width - rightTextPainter.width,
-        displayRect.top - contentTopPadding,
+        displayRect.top - chartStyle.childPadding,
       ),
     );
   }
@@ -150,7 +148,8 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
     for (var column = 0; column <= columnSpace; column++) {
       canvas.drawLine(
-          Offset(columnSpace * column, displayRect.top - contentTopPadding),
+          Offset(
+              columnSpace * column, displayRect.top - chartStyle.childPadding),
           Offset(columnSpace * column, displayRect.bottom),
           gridPaint);
     }

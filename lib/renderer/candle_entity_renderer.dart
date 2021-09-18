@@ -10,7 +10,6 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     required final Rect displayRect,
     required double maxVerticalValue,
     required double minVerticalValue,
-    required final double contentTopPadding,
     required this.indicator,
     required this.isTimeLineMode,
     required final int fixedDecimalsLength,
@@ -21,7 +20,6 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
           displayRect: displayRect,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
-          contentTopPadding: contentTopPadding,
           fixedDecimalsLength: fixedDecimalsLength,
           chartStyle: chartStyle,
         ) {
@@ -119,7 +117,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
       canvas,
       Offset(
         leftOffset,
-        displayRect.top - contentTopPadding,
+        displayRect.top - chartStyle.topPadding,
       ),
     );
   }
@@ -372,7 +370,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
           canvas,
           Offset(
             0,
-            contentTopPadding,
+            chartStyle.topPadding,
           ),
         );
       } else {
@@ -380,7 +378,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
           canvas,
           Offset(
             0,
-            rowSpace * row - rightTextPainter.height + contentTopPadding,
+            rowSpace * row - rightTextPainter.height + chartStyle.topPadding,
           ),
         );
       }
@@ -394,15 +392,15 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     final rowSpace = displayRect.height / chartStyle.numberOfGridRows;
     for (var row = 0; row <= chartStyle.numberOfGridRows; row++) {
       canvas.drawLine(
-        Offset(0, rowSpace * row + contentTopPadding),
-        Offset(displayRect.width, rowSpace * row + contentTopPadding),
+        Offset(0, rowSpace * row + chartStyle.topPadding),
+        Offset(displayRect.width, rowSpace * row + chartStyle.topPadding),
         gridPaint,
       );
     }
     final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
     for (var i = 0; i <= columnSpace; i++) {
       canvas.drawLine(
-        Offset(columnSpace * i, contentTopPadding / 3),
+        Offset(columnSpace * i, chartStyle.topPadding / 3),
         Offset(columnSpace * i, displayRect.bottom),
         gridPaint,
       );

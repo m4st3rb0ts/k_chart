@@ -56,9 +56,9 @@ class ChartPainter extends BaseChartPainter {
           scrollX: scrollX,
           isLongPress: isLongPass,
           selectX: selectX,
-          mainState: mainState,
+          primaryIndicator: mainState,
           volHidden: volHidden,
-          secondaryState: secondaryState,
+          secondaryIndicator: secondaryState,
           isLine: isLine,
         ) {
     selectPointPaint = Paint()
@@ -87,8 +87,7 @@ class ChartPainter extends BaseChartPainter {
       displayRect: mMainRect,
       maxVerticalValue: mMainMaxValue,
       minVerticalValue: mMainMinValue,
-      contentTopPadding: mTopPadding,
-      indicator: mainState,
+      indicator: primaryIndicator,
       isTimeLineMode: isLine,
       fixedDecimalsLength: fixedLength,
       chartStyle: chartStyle,
@@ -101,7 +100,6 @@ class ChartPainter extends BaseChartPainter {
         displayRect: mVolRect!,
         maxVerticalValue: mVolMaxValue,
         minVerticalValue: mVolMinValue,
-        contentTopPadding: mChildPadding,
         fixedDecimalsLength: fixedLength,
         chartStyle: chartStyle,
       );
@@ -111,8 +109,7 @@ class ChartPainter extends BaseChartPainter {
         displayRect: mSecondaryRect!,
         maxVerticalValue: mSecondaryMaxValue,
         minVerticalValue: mSecondaryMinValue,
-        contentTopPadding: mChildPadding,
-        indicator: secondaryState,
+        indicator: secondaryIndicator,
         fixedDecimalsLength: fixedLength,
         chartStyle: chartStyle,
       );
@@ -127,26 +124,29 @@ class ChartPainter extends BaseChartPainter {
       end: Alignment.topCenter,
       colors: bgColor ?? chartStyle.colors.bgColor,
     );
-    Rect mainRect =
-        Rect.fromLTRB(0, 0, mMainRect.width, mMainRect.height + mTopPadding);
+    Rect mainRect = Rect.fromLTRB(
+        0, 0, mMainRect.width, mMainRect.height + chartStyle.topPadding);
     canvas.drawRect(
         mainRect, mBgPaint..shader = mBgGradient.createShader(mainRect));
 
     if (mVolRect != null) {
-      Rect volRect = Rect.fromLTRB(
-          0, mVolRect!.top - mChildPadding, mVolRect!.width, mVolRect!.bottom);
+      Rect volRect = Rect.fromLTRB(0, mVolRect!.top - chartStyle.childPadding,
+          mVolRect!.width, mVolRect!.bottom);
       canvas.drawRect(
           volRect, mBgPaint..shader = mBgGradient.createShader(volRect));
     }
 
     if (mSecondaryRect != null) {
-      Rect secondaryRect = Rect.fromLTRB(0, mSecondaryRect!.top - mChildPadding,
-          mSecondaryRect!.width, mSecondaryRect!.bottom);
+      Rect secondaryRect = Rect.fromLTRB(
+          0,
+          mSecondaryRect!.top - chartStyle.childPadding,
+          mSecondaryRect!.width,
+          mSecondaryRect!.bottom);
       canvas.drawRect(secondaryRect,
           mBgPaint..shader = mBgGradient.createShader(secondaryRect));
     }
-    Rect dateRect =
-        Rect.fromLTRB(0, size.height - mBottomPadding, size.width, size.height);
+    Rect dateRect = Rect.fromLTRB(
+        0, size.height - chartStyle.bottomPadding, size.width, size.height);
     canvas.drawRect(
         dateRect, mBgPaint..shader = mBgGradient.createShader(dateRect));
   }
@@ -209,12 +209,12 @@ class ChartPainter extends BaseChartPainter {
   void drawDate(Canvas canvas, Size size) {
     if (datas == null) return;
 
-    double columnSpace = size.width / mGridColumns;
-    double startX = getX(mStartIndex) - mPointWidth / 2;
-    double stopX = getX(mStopIndex) + mPointWidth / 2;
+    double columnSpace = size.width / chartStyle.numberOfGridColumns;
+    double startX = getX(mStartIndex) - chartStyle.pointWidth * 0.5;
+    double stopX = getX(mStopIndex) + chartStyle.pointWidth * 0.5;
     double x = 0.0;
     double y = 0.0;
-    for (var i = 0; i <= mGridColumns; ++i) {
+    for (var i = 0; i <= chartStyle.numberOfGridColumns; ++i) {
       double translateX = xToTranslateX(columnSpace * i);
 
       if (translateX >= startX && translateX <= stopX) {
@@ -222,7 +222,9 @@ class ChartPainter extends BaseChartPainter {
 
         if (datas?[index] == null) continue;
         TextPainter tp = getTextPainter(getDate(datas![index].time), null);
-        y = size.height - (mBottomPadding - tp.height) / 2 - tp.height;
+        y = size.height -
+            (chartStyle.bottomPadding - tp.height) / 2 -
+            tp.height;
         x = columnSpace * i - tp.width / 2;
         // Prevent date text out of canvas
         if (x < 0) x = 0;
@@ -281,7 +283,7 @@ class ChartPainter extends BaseChartPainter {
     textWidth = dateTp.width;
     r = textHeight / 2;
     x = translateXtoX(getX(index));
-    y = size.height - mBottomPadding;
+    y = size.height - chartStyle.bottomPadding;
 
     if (x < textWidth + 2 * w1) {
       x = 1 + textWidth / 2 + w1;
@@ -400,8 +402,8 @@ class ChartPainter extends BaseChartPainter {
     double x = getX(index);
     double y = getMainY(point.close);
     // k线图竖线
-    canvas.drawLine(Offset(x, mTopPadding),
-        Offset(x, size.height - mBottomPadding), paintY);
+    canvas.drawLine(Offset(x, chartStyle.topPadding),
+        Offset(x, size.height - chartStyle.bottomPadding), paintY);
 
     Paint paintX = Paint()
       ..color = chartStyle.colors.hCrossColor
