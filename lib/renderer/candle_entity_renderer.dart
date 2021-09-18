@@ -4,8 +4,8 @@ import '../entity/candle_entity.dart';
 import '../k_chart_widget.dart' show MainState;
 import 'base_chart_renderer.dart';
 
-class MainRenderer extends BaseChartRenderer<CandleEntity> {
-  MainRenderer({
+class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
+  CandleEntityRender({
     required final Rect mainRect,
     required double maxValue,
     required double minValue,

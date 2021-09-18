@@ -9,9 +9,9 @@ import '../entity/k_line_entity.dart';
 import '../utils/date_format_util.dart';
 import 'base_chart_painter.dart';
 import 'base_chart_renderer.dart';
-import 'main_renderer.dart';
-import 'secondary_renderer.dart';
-import 'vol_renderer.dart';
+import 'candle_entity_renderer.dart';
+import 'macd_entity_renderer.dart';
+import 'volume_renderer.dart';
 
 class ChartPainter extends BaseChartPainter {
   static get maxScrollX => BaseChartPainter.maxScrollX;
@@ -83,7 +83,7 @@ class ChartPainter extends BaseChartPainter {
           NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
     }
 
-    mMainRenderer = MainRenderer(
+    mMainRenderer = CandleEntityRender(
       mainRect: mMainRect,
       maxValue: mMainMaxValue,
       minValue: mMainMinValue,
@@ -97,7 +97,7 @@ class ChartPainter extends BaseChartPainter {
     );
 
     if (mVolRect != null) {
-      mVolRenderer = VolRenderer(
+      mVolRenderer = VolumeRenderer(
         mainRect: mVolRect!,
         maxValue: mVolMaxValue,
         minValue: mVolMinValue,
@@ -107,7 +107,7 @@ class ChartPainter extends BaseChartPainter {
       );
     }
     if (mSecondaryRect != null) {
-      mSecondaryRenderer = SecondaryRenderer(
+      mSecondaryRenderer = MACDEntityRenderer(
         mainRect: mSecondaryRect!,
         maxValue: mSecondaryMaxValue,
         minValue: mSecondaryMinValue,

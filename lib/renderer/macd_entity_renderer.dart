@@ -6,8 +6,8 @@ import '../entity/macd_entity.dart';
 import '../k_chart_widget.dart' show SecondaryState;
 import 'base_chart_renderer.dart';
 
-class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
-  SecondaryRenderer({
+class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
+  MACDEntityRenderer({
     required final Rect mainRect,
     required final double maxValue,
     required final double minValue,

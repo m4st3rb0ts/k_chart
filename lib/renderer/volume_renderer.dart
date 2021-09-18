@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 
-class VolRenderer extends BaseChartRenderer<VolumeEntity> {
-  VolRenderer({
+class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
+  VolumeRenderer({
     required final Rect mainRect,
     required final double maxValue,
     required final double minValue,
