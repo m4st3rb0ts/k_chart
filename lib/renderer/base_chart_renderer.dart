@@ -65,7 +65,7 @@ abstract class BaseChartRenderer<T> {
   /// @n the number to format
   String format({final double? n}) {
     if (n == null || n.isNaN) {
-      return "0.00";
+      return '0.00';
     } else {
       return n.toStringAsFixed(fixedDecimalsLength);
     }

@@ -84,19 +84,19 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
       children: [
         TextSpan(
           //TODO: Localize
-          text: "VOL:${NumberUtil.format(value.vol)}    ",
+          text: 'VOL:${NumberUtil.format(value.vol)}    ',
           style: getTextStyle(color: chartStyle.colors.volColor),
         ),
         if (value.MA5Volume.notNullOrZero)
           TextSpan(
             //TODO: Localize
-            text: "MA5:${NumberUtil.format(value.MA5Volume!)}    ",
+            text: 'MA5:${NumberUtil.format(value.MA5Volume!)}    ',
             style: getTextStyle(color: chartStyle.colors.ma5Color),
           ),
         if (value.MA10Volume.notNullOrZero)
           TextSpan(
             //TODO: Localize
-            text: "MA10:${NumberUtil.format(value.MA10Volume!)}    ",
+            text: 'MA10:${NumberUtil.format(value.MA10Volume!)}    ',
             style: getTextStyle(color: chartStyle.colors.ma10Color),
           ),
       ],
@@ -120,7 +120,7 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     required final TextStyle textStyle,
   }) {
     final rightText = TextSpan(
-      text: "${NumberUtil.format(maxVerticalValue)}",
+      text: '${NumberUtil.format(maxVerticalValue)}',
       style: textStyle,
     );
     final rightTextPainter = TextPainter(

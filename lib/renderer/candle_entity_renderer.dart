@@ -85,7 +85,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
           if (value.up != 0)
             TextSpan(
               // TODO: Localize
-              text: "BOLL:${format(n: value.mb)}    ",
+              text: 'BOLL:${format(n: value.mb)}    ',
               style: getTextStyle(
                 color: chartStyle.colors.ma5Color,
               ),
@@ -93,7 +93,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
           if (value.mb != 0)
             TextSpan(
               // TODO: Localize
-              text: "UB:${format(n: value.up)}    ",
+              text: 'UB:${format(n: value.up)}    ',
               style: getTextStyle(
                 color: chartStyle.colors.ma10Color,
               ),
@@ -101,7 +101,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
           if (value.dn != 0)
             TextSpan(
               // TODO: Localize
-              text: "LB:${format(n: value.dn)}    ",
+              text: 'LB:${format(n: value.dn)}    ',
               style: getTextStyle(
                 color: chartStyle.colors.ma30Color,
               ),
@@ -132,7 +132,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
       if (data.maValueList?[i] != 0) {
         final item = TextSpan(
           //Localize
-          text: "MA${maDayList[i]}:${format(n: data.maValueList![i])}    ",
+          text: 'MA${maDayList[i]}:${format(n: data.maValueList![i])}    ',
           style: getTextStyle(
             color: chartStyle.colors.getMAColor(i),
           ),
@@ -339,7 +339,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
       final value = (chartStyle.gridRows - i) * rowSpace / verticalScale +
           minVerticalValue;
       final textSpan = TextSpan(
-        text: "${format(n: value)}",
+        text: '${format(n: value)}',
         style: textStyle,
       );
       final textPainter = TextPainter(
