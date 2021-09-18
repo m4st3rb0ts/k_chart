@@ -83,16 +83,19 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     final TextSpan span = TextSpan(
       children: [
         TextSpan(
+          //TODO: Localize
           text: "VOL:${NumberUtil.format(value.vol)}    ",
           style: getTextStyle(color: chartStyle.colors.volColor),
         ),
         if (value.MA5Volume.notNullOrZero)
           TextSpan(
+            //TODO: Localize
             text: "MA5:${NumberUtil.format(value.MA5Volume!)}    ",
             style: getTextStyle(color: chartStyle.colors.ma5Color),
           ),
         if (value.MA10Volume.notNullOrZero)
           TextSpan(
+            //TODO: Localize
             text: "MA10:${NumberUtil.format(value.MA10Volume!)}    ",
             style: getTextStyle(color: chartStyle.colors.ma10Color),
           ),
