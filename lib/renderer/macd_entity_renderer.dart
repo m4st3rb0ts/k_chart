@@ -104,7 +104,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
   }) {
     final macd = curPoint.macd ?? 0;
     final macdY = getVerticalPositionForPoint(value: macd);
-    final r = chartStyle.macdWidth / 2;
+    final r = chartStyle.macdWidth * 0.5;
     final zeroy = getVerticalPositionForPoint(value: 0);
     if (macd > 0) {
       canvas.drawRect(
@@ -326,7 +326,6 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     );
     final columnSpace = displayRect.width / numberOfColumns;
     for (var i = 0; i <= columnSpace; i++) {
-      //mSecondaryRect垂直线
       canvas.drawLine(
           Offset(columnSpace * i, displayRect.top - contentTopPadding),
           Offset(columnSpace * i, displayRect.bottom),

@@ -31,7 +31,7 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     required final Size size,
     required final Canvas canvas,
   }) {
-    final volumeBarWidth = chartStyle.volWidth / 2;
+    final volumeBarWidth = chartStyle.volWidth * 0.5;
     final volumeBarTop = (maxVerticalValue - currentValue.data.vol) *
             (displayRect.height / maxVerticalValue) +
         displayRect.top;

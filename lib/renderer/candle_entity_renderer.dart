@@ -160,9 +160,9 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
       getVerticalPositionForPoint(value: lastValue.data.close),
     );
     mLinePath!.cubicTo(
-      (lastXValue + currentValue.x) / 2,
+      (lastXValue + currentValue.x) * 0.5,
       getVerticalPositionForPoint(value: lastValue.data.close),
-      (lastXValue + currentValue.x) / 2,
+      (lastXValue + currentValue.x) * 0.5,
       getVerticalPositionForPoint(value: currentValue.data.close),
       currentValue.x,
       getVerticalPositionForPoint(value: currentValue.data.close),
@@ -186,9 +186,9 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
       getVerticalPositionForPoint(value: lastValue.data.close),
     );
     mLineFillPath!.cubicTo(
-      (lastXValue + currentValue.x) / 2,
+      (lastXValue + currentValue.x) * 0.5,
       getVerticalPositionForPoint(value: lastValue.data.close),
-      (lastXValue + currentValue.x) / 2,
+      (lastXValue + currentValue.x) * 0.5,
       getVerticalPositionForPoint(value: currentValue.data.close),
       currentValue.x,
       getVerticalPositionForPoint(value: currentValue.data.close),
@@ -262,8 +262,8 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     final low = getVerticalPositionForPoint(value: candle.data.low);
     var open = getVerticalPositionForPoint(value: candle.data.open);
     final close = getVerticalPositionForPoint(value: candle.data.close);
-    final r = chartStyle.candleWidth / 2;
-    final lineR = chartStyle.candleLineWidth / 2;
+    final r = chartStyle.candleWidth * 0.5;
+    final lineR = chartStyle.candleLineWidth * 0.5;
     if (open >= close) {
       // 实体高度>= CandleLineWidth
       if (open - close < chartStyle.candleLineWidth) {
