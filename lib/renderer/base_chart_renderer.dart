@@ -48,8 +48,10 @@ abstract class BaseChartRenderer<T> {
   /// Fixed number of decimals
   final int fixedDecimalsLength;
 
+  /// Custom paint for the chart
   final Paint chartPaint;
 
+  /// Custom paint for the grid
   final Paint gridPaint;
 
   /// Gets the vertical position in the chart given a y value
@@ -57,6 +59,8 @@ abstract class BaseChartRenderer<T> {
   double getVerticalPositionForPoint({required final double value}) =>
       (maxVerticalValue - value) * verticalScale + displayRect.top;
 
+  /// Format a number to a fixed number of decimals
+  /// @n the number to format
   String format({final double? n}) {
     if (n == null || n.isNaN) {
       return "0.00";

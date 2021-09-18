@@ -46,7 +46,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   /// Display candle or lines
   final bool isLine;
 
-  /// chart style
+  /// Chart style
   final ChartStyle chartStyle;
 
   /// Draw content area
@@ -82,14 +82,17 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
         children: [
           if (value.up != 0)
             TextSpan(
+                // TODO: Localize
                 text: "BOLL:${format(n: value.mb)}    ",
                 style: getTextStyle(color: chartStyle.colors.ma5Color)),
           if (value.mb != 0)
             TextSpan(
+                // TODO: Localize
                 text: "UB:${format(n: value.up)}    ",
                 style: getTextStyle(color: chartStyle.colors.ma10Color)),
           if (value.dn != 0)
             TextSpan(
+                // TODO: Localize
                 text: "LB:${format(n: value.dn)}    ",
                 style: getTextStyle(color: chartStyle.colors.ma30Color)),
         ],
