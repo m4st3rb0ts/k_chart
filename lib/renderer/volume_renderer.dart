@@ -23,10 +23,10 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
 
   @override
   void drawChart({
+    required final Canvas canvas,
     required final RenderData<VolumeEntity> lastValue,
     required final RenderData<VolumeEntity> currentValue,
     required final Size size,
-    required final Canvas canvas,
   }) {
     final volumeBarMidWidth = chartStyle.volWidth * 0.5;
     final volumeBarTop = (maxVerticalValue - currentValue.data.vol) *

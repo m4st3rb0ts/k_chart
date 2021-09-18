@@ -142,10 +142,10 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
 
   @override
   void drawChart({
+    required final Canvas canvas,
     required final RenderData<CandleEntity> lastValue,
     required final RenderData<CandleEntity> currentValue,
     required final Size size,
-    required final Canvas canvas,
   }) {
     if (!isTimeLineMode) {
       drawCandle(candle: currentValue, canvas: canvas);
@@ -172,9 +172,9 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   }
 
   void drawPolyline({
+    required final Canvas canvas,
     required final RenderData<CandleEntity> lastValue,
     required final RenderData<CandleEntity> currentValue,
-    required final Canvas canvas,
   }) {
     // Start filling point
     final lastXValue = lastValue.x == currentValue.x ? 0.0 : lastValue.x;
@@ -232,9 +232,9 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   }
 
   void drawMaLine({
+    required final Canvas canvas,
     required final RenderData<CandleEntity> lastValue,
     required final RenderData<CandleEntity> currentValue,
-    required final Canvas canvas,
   }) {
     for (var i = 0; i < (currentValue.data.maValueList?.length ?? 0); i++) {
       if (i == 3) {
@@ -258,9 +258,9 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   }
 
   void drawBollLine({
+    required final Canvas canvas,
     required final RenderData<CandleEntity> lastValue,
     required final RenderData<CandleEntity> currentValue,
-    required final Canvas canvas,
   }) {
     if (lastValue.data.up != 0) {
       drawLine(
@@ -286,8 +286,8 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   }
 
   void drawCandle({
-    required final RenderData<CandleEntity> candle,
     required final Canvas canvas,
+    required final RenderData<CandleEntity> candle,
   }) {
     final high = getVerticalPositionForPoint(value: candle.data.high);
     final low = getVerticalPositionForPoint(value: candle.data.low);

@@ -27,10 +27,10 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
 
   @override
   void drawChart({
+    required final Canvas canvas,
     required final RenderData<MACDEntity> lastValue,
     required final RenderData<MACDEntity> currentValue,
     required final Size size,
-    required final Canvas canvas,
   }) {
     switch (indicator) {
       case SecondaryIndicator.MACD:
@@ -92,9 +92,9 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
   }
 
   void drawMACD({
+    required final Canvas canvas,
     required final RenderData<MACDEntity> lastValue,
     required final RenderData<MACDEntity> currentValue,
-    required final Canvas canvas,
   }) {
     final currentMacdValue = currentValue.data.macd ?? 0;
     final currentMacdValueNormalized =

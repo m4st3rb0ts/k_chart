@@ -14,6 +14,7 @@ export 'package:flutter/material.dart'
 abstract class BaseChartPainter extends CustomPainter {
   static double maxScrollX = 0.0;
   List<KLineEntity>? datas;
+  final ChartStyle chartStyle;
 
   PrimaryIndicator primaryIndicator;
   SecondaryIndicator secondaryIndicator;
@@ -46,7 +47,7 @@ abstract class BaseChartPainter extends CustomPainter {
   double mMainLowMinValue = double.maxFinite;
   int mItemCount = 0;
   double mDataLen = 0.0; //数据占屏幕总长度
-  final ChartStyle chartStyle;
+
   List<String> mFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]; //格式化时间
 
   BaseChartPainter({

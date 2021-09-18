@@ -99,10 +99,10 @@ abstract class BaseChartRenderer<T> {
   /// @currentValue current value in data
   /// @canvas surface to paint
   void drawChart({
+    required final Canvas canvas,
     required final RenderData<T> lastValue,
     required final RenderData<T> currentValue,
     required Size size,
-    required Canvas canvas,
   });
 
   /// Draws a line
@@ -111,9 +111,9 @@ abstract class BaseChartRenderer<T> {
   /// @canvas surface to paint
   /// @color The color of the line
   void drawLine({
+    required final Canvas canvas,
     required final RenderPoint lastValue,
     required final RenderPoint currentValue,
-    required final Canvas canvas,
     required final Color color,
   }) {
     if (lastValue.y == null || currentValue.y == null) {
