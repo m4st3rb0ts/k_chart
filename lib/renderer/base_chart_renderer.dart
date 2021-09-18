@@ -126,15 +126,16 @@ abstract class BaseChartRenderer<T> {
       return;
     }
     canvas.drawLine(
-        Offset(
-          lastValue.x,
-          getVerticalPositionForPoint(value: lastValue.y ?? 0),
-        ),
-        Offset(
-          currentValue.x,
-          getVerticalPositionForPoint(value: currentValue.y ?? 0),
-        ),
-        chartPaint..color = color);
+      Offset(
+        lastValue.x,
+        getVerticalPositionForPoint(value: lastValue.y ?? 0),
+      ),
+      Offset(
+        currentValue.x,
+        getVerticalPositionForPoint(value: currentValue.y ?? 0),
+      ),
+      chartPaint..color = color,
+    );
   }
 
   /// Get the basic textstyle for painting in the chart renreder
