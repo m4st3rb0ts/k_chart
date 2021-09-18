@@ -6,25 +6,35 @@ export '../chart_style.dart';
 abstract class BaseChartRenderer<T> {
   BaseChartRenderer({
     required this.displayRect,
-    required this.maxVerticalValue,
-    required this.minVerticalValue,
+    required final double maxVerticalValue,
+    required final double minVerticalValue,
     required this.contentTopPadding,
     required this.fixedDecimalsLength,
     required Color gridColor,
-  }) {
+  })  : chartPaint = Paint()
+          ..isAntiAlias = true
+          ..filterQuality = FilterQuality.high
+          ..strokeWidth = 1.0
+          ..color = Colors.red,
+        gridPaint = Paint()
+          ..isAntiAlias = true
+          ..filterQuality = FilterQuality.high
+          ..strokeWidth = 0.5
+          ..color = gridColor,
+        maxVerticalValue = maxVerticalValue,
+        minVerticalValue = minVerticalValue {
     if (maxVerticalValue == minVerticalValue) {
-      maxVerticalValue *= 1.5;
-      minVerticalValue /= 2;
+      this.maxVerticalValue *= 1.5;
+      this.minVerticalValue /= 2;
     }
     verticalScale = displayRect.height / (maxVerticalValue - minVerticalValue);
-    gridPaint.color = gridColor;
   }
 
   /// Max y value of the chart
-  double maxVerticalValue;
+  late double maxVerticalValue;
 
   /// Min y value of the chart
-  double minVerticalValue;
+  late double minVerticalValue;
 
   /// Factor for scaling the graph (zoom)
   late double verticalScale;
@@ -38,17 +48,9 @@ abstract class BaseChartRenderer<T> {
   /// Fixed number of decimals
   final int fixedDecimalsLength;
 
-  final Paint chartPaint = Paint()
-    ..isAntiAlias = true
-    ..filterQuality = FilterQuality.high
-    ..strokeWidth = 1.0
-    ..color = Colors.red;
+  final Paint chartPaint;
 
-  final Paint gridPaint = Paint()
-    ..isAntiAlias = true
-    ..filterQuality = FilterQuality.high
-    ..strokeWidth = 0.5
-    ..color = Color(0xff4c5c74);
+  final Paint gridPaint;
 
   /// Gets the vertical position in the chart given a y value
   /// @value the value for computing the y position

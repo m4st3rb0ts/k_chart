@@ -119,7 +119,7 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
   @override
   void drawRightText({
     required final Canvas canvas,
-    required final textStyle,
+    required final TextStyle textStyle,
     required final int numberOfRows,
   }) {
     final TextSpan span = TextSpan(

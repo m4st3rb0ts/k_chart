@@ -85,12 +85,12 @@ class ChartPainter extends BaseChartPainter {
 
     mMainRenderer = CandleEntityRender(
       mainRect: mMainRect,
-      maxValue: mMainMaxValue,
-      minValue: mMainMinValue,
-      topPadding: mTopPadding,
+      maxVerticalValue: mMainMaxValue,
+      minVerticalValue: mMainMinValue,
+      contentTopPadding: mTopPadding,
       state: mainState,
       isLine: isLine,
-      fixedLength: fixedLength,
+      fixedDecimalsLength: fixedLength,
       chartStyle: chartStyle,
       scaleX: scaleX,
       maDayList: maDayList,

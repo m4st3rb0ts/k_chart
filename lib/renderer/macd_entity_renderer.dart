@@ -272,7 +272,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
   @override
   void drawRightText({
     required final Canvas canvas,
-    required final textStyle,
+    required final TextStyle textStyle,
     required final int numberOfRows,
   }) {
     final TextPainter maxTp = TextPainter(
