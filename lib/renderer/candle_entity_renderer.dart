@@ -6,34 +6,34 @@ import 'base_chart_renderer.dart';
 
 class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   CandleEntityRender({
-    required final Rect mainRect,
+    required final Rect displayRect,
     required double maxVerticalValue,
     required double minVerticalValue,
     required final double contentTopPadding,
     required this.indicator,
-    required this.isLine,
+    required this.isTimeLineMode,
     required final int fixedDecimalsLength,
     required final ChartStyle chartStyle,
-    required this.scaleX,
+    required this.timelineHorizontalScale,
     this.maDayList = const [5, 10, 20],
   }) : super(
-          displayRect: mainRect,
+          displayRect: displayRect,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
           contentTopPadding: contentTopPadding,
           fixedDecimalsLength: fixedDecimalsLength,
           chartStyle: chartStyle,
         ) {
-    mLinePaint = Paint()
+    timelinePaint = Paint()
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke
-      ..strokeWidth = mLineStrokeWidth
+      ..strokeWidth = timelineStrokeWidth
       ..color = chartStyle.colors.kLineColor;
     _contentRect = Rect.fromLTRB(
       displayRect.left,
-      displayRect.top + _contentPadding,
+      displayRect.top + contentPadding,
       displayRect.right,
-      displayRect.bottom - _contentPadding,
+      displayRect.bottom - contentPadding,
     );
     if (maxVerticalValue == minVerticalValue) {
       maxVerticalValue *= 1.5;
@@ -42,27 +42,28 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     verticalScale = _contentRect.height / (maxVerticalValue - minVerticalValue);
   }
 
-  /// Indicator that the candle graph should display (MA, BOLL)
+  /// Indicator which together the candle graph should display (MA, BOLL, NONE)
   final PrimaryIndicator indicator;
 
-  /// Display candle or lines
-  final bool isLine;
+  /// Display timeline or candle mode
+  final bool isTimeLineMode;
 
   /// Draw content area
   late Rect _contentRect;
-  final double _contentPadding = 5.0;
+
+  /// Padding for content
+  final double contentPadding = 5.0;
 
   List<int> maDayList;
 
-  final double mLineStrokeWidth = 1.0;
-  double scaleX;
-  late Paint mLinePaint;
+  /// Line stroke width used for isLine mode
+  final double timelineStrokeWidth = 1.0;
 
-  Shader? mLineFillShader;
-  Path? mLinePath, mLineFillPath;
-  Paint mLineFillPaint = Paint()
-    ..style = PaintingStyle.fill
-    ..isAntiAlias = true;
+  /// Paint to use for time isLine mode
+  late Paint timelinePaint;
+
+  // Horizontal scale to use with timeline mode
+  double timelineHorizontalScale;
 
   @override
   void drawText({
@@ -70,7 +71,9 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     required final CandleEntity value,
     required final double leftOffset,
   }) {
-    if (isLine == true) return;
+    if (isTimeLineMode == true) {
+      return;
+    }
     TextSpan? span;
     if (indicator == PrimaryIndicator.MA) {
       span = TextSpan(
@@ -81,26 +84,46 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
         children: [
           if (value.up != 0)
             TextSpan(
-                // TODO: Localize
-                text: "BOLL:${format(n: value.mb)}    ",
-                style: getTextStyle(color: chartStyle.colors.ma5Color)),
+              // TODO: Localize
+              text: "BOLL:${format(n: value.mb)}    ",
+              style: getTextStyle(
+                color: chartStyle.colors.ma5Color,
+              ),
+            ),
           if (value.mb != 0)
             TextSpan(
-                // TODO: Localize
-                text: "UB:${format(n: value.up)}    ",
-                style: getTextStyle(color: chartStyle.colors.ma10Color)),
+              // TODO: Localize
+              text: "UB:${format(n: value.up)}    ",
+              style: getTextStyle(
+                color: chartStyle.colors.ma10Color,
+              ),
+            ),
           if (value.dn != 0)
             TextSpan(
-                // TODO: Localize
-                text: "LB:${format(n: value.dn)}    ",
-                style: getTextStyle(color: chartStyle.colors.ma30Color)),
+              // TODO: Localize
+              text: "LB:${format(n: value.dn)}    ",
+              style: getTextStyle(
+                color: chartStyle.colors.ma30Color,
+              ),
+            ),
         ],
       );
     }
-    if (span == null) return;
-    TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
-    tp.layout();
-    tp.paint(canvas, Offset(leftOffset, displayRect.top - contentTopPadding));
+    if (span == null) {
+      return;
+    }
+    final textPainter = TextPainter(
+      text: span,
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      Offset(
+        leftOffset,
+        displayRect.top - contentTopPadding,
+      ),
+    );
   }
 
   List<InlineSpan> _createMATextSpan({required final CandleEntity data}) {
@@ -108,9 +131,12 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     for (var i = 0; i < (data.maValueList?.length ?? 0); i++) {
       if (data.maValueList?[i] != 0) {
         final item = TextSpan(
-            //Localize
-            text: "MA${maDayList[i]}:${format(n: data.maValueList![i])}    ",
-            style: getTextStyle(color: chartStyle.colors.getMAColor(i)));
+          //Localize
+          text: "MA${maDayList[i]}:${format(n: data.maValueList![i])}    ",
+          style: getTextStyle(
+            color: chartStyle.colors.getMAColor(i),
+          ),
+        );
         result.add(item);
       }
     }
@@ -124,10 +150,10 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     required final Size size,
     required final Canvas canvas,
   }) {
-    if (!isLine) {
+    if (!isTimeLineMode) {
       drawCandle(candle: currentValue, canvas: canvas);
     }
-    if (isLine) {
+    if (isTimeLineMode) {
       drawPolyline(
         lastValue: lastValue,
         currentValue: currentValue,
@@ -153,15 +179,20 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     required final RenderData<CandleEntity> currentValue,
     required final Canvas canvas,
   }) {
-    mLinePath ??= Path();
+    var path = Path();
+    var fillPath = Path();
+    Shader? fillShader;
+    final fillPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
 
     // Start filling point
     final lastXValue = lastValue.x == currentValue.x ? 0.0 : lastValue.x;
-    mLinePath!.moveTo(
+    path.moveTo(
       lastXValue,
       getVerticalPositionForPoint(value: lastValue.data.close),
     );
-    mLinePath!.cubicTo(
+    path.cubicTo(
       (lastXValue + currentValue.x) * 0.5,
       getVerticalPositionForPoint(value: lastValue.data.close),
       (lastXValue + currentValue.x) * 0.5,
@@ -171,23 +202,21 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     );
 
     // Shadows
-    mLineFillShader ??= LinearGradient(
+    fillShader ??= LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       tileMode: TileMode.clamp,
       colors: [chartStyle.colors.lineFillColor, Colors.transparent],
     ).createShader(Rect.fromLTRB(displayRect.left, displayRect.top,
         displayRect.right, displayRect.bottom));
-    mLineFillPaint..shader = mLineFillShader;
+    fillPaint..shader = fillShader;
 
-    mLineFillPath ??= Path();
-
-    mLineFillPath!.moveTo(lastXValue, displayRect.height + displayRect.top);
-    mLineFillPath!.lineTo(
+    fillPath.moveTo(lastXValue, displayRect.height + displayRect.top);
+    fillPath.lineTo(
       lastXValue,
       getVerticalPositionForPoint(value: lastValue.data.close),
     );
-    mLineFillPath!.cubicTo(
+    fillPath.cubicTo(
       (lastXValue + currentValue.x) * 0.5,
       getVerticalPositionForPoint(value: lastValue.data.close),
       (lastXValue + currentValue.x) * 0.5,
@@ -195,15 +224,15 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
       currentValue.x,
       getVerticalPositionForPoint(value: currentValue.data.close),
     );
-    mLineFillPath!.lineTo(currentValue.x, displayRect.height + displayRect.top);
-    mLineFillPath!.close();
+    fillPath.lineTo(currentValue.x, displayRect.height + displayRect.top);
+    fillPath.close();
 
-    canvas.drawPath(mLineFillPath!, mLineFillPaint);
-    mLineFillPath!.reset();
-
-    canvas.drawPath(mLinePath!,
-        mLinePaint..strokeWidth = (mLineStrokeWidth / scaleX).clamp(0.1, 1.0));
-    mLinePath!.reset();
+    canvas.drawPath(fillPath, fillPaint);
+    canvas.drawPath(
+        path,
+        timelinePaint
+          ..strokeWidth =
+              (timelineStrokeWidth / timelineHorizontalScale).clamp(0.1, 1.0));
   }
 
   void drawMaLine({
@@ -211,16 +240,20 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     required final RenderData<CandleEntity> currentValue,
     required final Canvas canvas,
   }) {
-    for (int i = 0; i < (currentValue.data.maValueList?.length ?? 0); i++) {
+    for (var i = 0; i < (currentValue.data.maValueList?.length ?? 0); i++) {
       if (i == 3) {
         break;
       }
       if (lastValue.data.maValueList?[i] != 0) {
         drawLine(
-          lastValue:
-              RenderPoint(x: lastValue.x, y: lastValue.data.maValueList?[i]),
+          lastValue: RenderPoint(
+            x: lastValue.x,
+            y: lastValue.data.maValueList?[i],
+          ),
           currentValue: RenderPoint(
-              x: currentValue.x, y: currentValue.data.maValueList?[i]),
+            x: currentValue.x,
+            y: currentValue.data.maValueList?[i],
+          ),
           canvas: canvas,
           color: chartStyle.colors.getMAColor(i),
         );
@@ -301,19 +334,35 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     required final Canvas canvas,
     required final TextStyle textStyle,
   }) {
-    double rowSpace = displayRect.height / chartStyle.gridRows;
+    final rowSpace = displayRect.height / chartStyle.gridRows;
     for (var i = 0; i <= chartStyle.gridRows; ++i) {
-      double value = (chartStyle.gridRows - i) * rowSpace / verticalScale +
+      final value = (chartStyle.gridRows - i) * rowSpace / verticalScale +
           minVerticalValue;
-      TextSpan span = TextSpan(text: "${format(n: value)}", style: textStyle);
-      TextPainter tp =
-          TextPainter(text: span, textDirection: TextDirection.ltr);
-      tp.layout();
+      final textSpan = TextSpan(
+        text: "${format(n: value)}",
+        style: textStyle,
+      );
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout();
       if (i == 0) {
-        tp.paint(canvas, Offset(0, contentTopPadding));
+        textPainter.paint(
+          canvas,
+          Offset(
+            0,
+            contentTopPadding,
+          ),
+        );
       } else {
-        tp.paint(
-            canvas, Offset(0, rowSpace * i - tp.height + contentTopPadding));
+        textPainter.paint(
+          canvas,
+          Offset(
+            0,
+            rowSpace * i - textPainter.height + contentTopPadding,
+          ),
+        );
       }
     }
   }
@@ -323,16 +372,20 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     required final Canvas canvas,
   }) {
     final rowSpace = displayRect.height / chartStyle.gridRows;
-    for (int i = 0; i <= chartStyle.gridRows; i++) {
+    for (var i = 0; i <= chartStyle.gridRows; i++) {
       canvas.drawLine(
-          Offset(0, rowSpace * i + contentTopPadding),
-          Offset(displayRect.width, rowSpace * i + contentTopPadding),
-          gridPaint);
+        Offset(0, rowSpace * i + contentTopPadding),
+        Offset(displayRect.width, rowSpace * i + contentTopPadding),
+        gridPaint,
+      );
     }
     final columnSpace = displayRect.width / chartStyle.gridColumns;
-    for (int i = 0; i <= columnSpace; i++) {
-      canvas.drawLine(Offset(columnSpace * i, contentTopPadding / 3),
-          Offset(columnSpace * i, displayRect.bottom), gridPaint);
+    for (var i = 0; i <= columnSpace; i++) {
+      canvas.drawLine(
+        Offset(columnSpace * i, contentTopPadding / 3),
+        Offset(columnSpace * i, displayRect.bottom),
+        gridPaint,
+      );
     }
   }
 
