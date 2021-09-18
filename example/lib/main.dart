@@ -35,9 +35,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<KLineEntity>? datas;
   bool showLoading = true;
-  MainState _mainState = MainState.MA;
+  PrimaryIndicator _mainState = PrimaryIndicator.MA;
   bool _volHidden = false;
-  SecondaryState _secondaryState = SecondaryState.MACD;
+  SecondaryIndicator _secondaryState = SecondaryIndicator.MACD;
   bool isLine = true;
   bool isChinese = true;
   bool _hideGrid = false;
@@ -144,21 +144,23 @@ class _MyHomePageState extends State<MyHomePage> {
       children: <Widget>[
         button("Time Mode", onPressed: () => isLine = true),
         button("K Line Mode", onPressed: () => isLine = false),
-        button("Line:MA", onPressed: () => _mainState = MainState.MA),
-        button("Line:BOLL", onPressed: () => _mainState = MainState.BOLL),
-        button("Hide Line", onPressed: () => _mainState = MainState.NONE),
+        button("Line:MA", onPressed: () => _mainState = PrimaryIndicator.MA),
+        button("Line:BOLL",
+            onPressed: () => _mainState = PrimaryIndicator.BOLL),
+        button("Hide Line",
+            onPressed: () => _mainState = PrimaryIndicator.NONE),
         button("Secondary Chart:MACD",
-            onPressed: () => _secondaryState = SecondaryState.MACD),
+            onPressed: () => _secondaryState = SecondaryIndicator.MACD),
         button("Secondary Chart:KDJ",
-            onPressed: () => _secondaryState = SecondaryState.KDJ),
+            onPressed: () => _secondaryState = SecondaryIndicator.KDJ),
         button("Secondary Chart:RSI",
-            onPressed: () => _secondaryState = SecondaryState.RSI),
+            onPressed: () => _secondaryState = SecondaryIndicator.RSI),
         button("Secondary Chart:WR",
-            onPressed: () => _secondaryState = SecondaryState.WR),
+            onPressed: () => _secondaryState = SecondaryIndicator.WR),
         button("Secondary Chart:CCI",
-            onPressed: () => _secondaryState = SecondaryState.CCI),
+            onPressed: () => _secondaryState = SecondaryIndicator.CCI),
         button("Secondary Chart:Hide",
-            onPressed: () => _secondaryState = SecondaryState.NONE),
+            onPressed: () => _secondaryState = SecondaryIndicator.NONE),
         button(_volHidden ? "Show Vol" : "Hide Vol",
             onPressed: () => _volHidden = !_volHidden),
         button("Change Language", onPressed: () => isChinese = !isChinese),

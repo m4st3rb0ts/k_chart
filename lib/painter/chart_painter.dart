@@ -112,7 +112,7 @@ class ChartPainter extends BaseChartPainter {
         maxVerticalValue: mSecondaryMaxValue,
         minVerticalValue: mSecondaryMinValue,
         contentTopPadding: mChildPadding,
-        state: secondaryState,
+        indicator: secondaryState,
         fixedDecimalsLength: fixedLength,
         chartStyle: chartStyle,
       );

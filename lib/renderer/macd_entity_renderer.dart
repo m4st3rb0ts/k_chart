@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../entity/macd_entity.dart';
-import '../k_chart_widget.dart' show SecondaryState;
+import '../k_chart_widget.dart' show SecondaryIndicator;
 import 'base_chart_renderer.dart';
 
 class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
@@ -12,7 +12,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     required final double maxVerticalValue,
     required final double minVerticalValue,
     required final double contentTopPadding,
-    required this.state,
+    required this.indicator,
     required final int fixedDecimalsLength,
     required final ChartStyle chartStyle,
   }) : super(
@@ -24,7 +24,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
           chartStyle: chartStyle,
         );
 
-  final SecondaryState state;
+  final SecondaryIndicator indicator;
 
   @override
   void drawChart({
@@ -33,8 +33,8 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     required final Size size,
     required final Canvas canvas,
   }) {
-    switch (state) {
-      case SecondaryState.MACD:
+    switch (indicator) {
+      case SecondaryIndicator.MACD:
         drawMACD(
           curPoint: currentValue.data,
           canvas: canvas,
@@ -43,7 +43,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
           lastX: lastValue.x,
         );
         break;
-      case SecondaryState.KDJ:
+      case SecondaryIndicator.KDJ:
         drawLine(
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.k),
           currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.k),
@@ -63,7 +63,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
           color: chartStyle.colors.jColor,
         );
         break;
-      case SecondaryState.RSI:
+      case SecondaryIndicator.RSI:
         drawLine(
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.rsi),
           currentValue:
@@ -72,7 +72,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
           color: chartStyle.colors.rsiColor,
         );
         break;
-      case SecondaryState.WR:
+      case SecondaryIndicator.WR:
         drawLine(
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.r),
           currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.r),
@@ -80,7 +80,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
           color: chartStyle.colors.rsiColor,
         );
         break;
-      case SecondaryState.CCI:
+      case SecondaryIndicator.CCI:
         drawLine(
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.cci),
           currentValue:
@@ -151,8 +151,8 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     required final double leftOffset,
   }) {
     List<TextSpan>? children;
-    switch (state) {
-      case SecondaryState.MACD:
+    switch (indicator) {
+      case SecondaryIndicator.MACD:
         children = [
           TextSpan(
             //TODO: Localize
@@ -187,7 +187,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
             ),
         ];
         break;
-      case SecondaryState.KDJ:
+      case SecondaryIndicator.KDJ:
         children = [
           TextSpan(
             //TODO: Localize
@@ -222,7 +222,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
             ),
         ];
         break;
-      case SecondaryState.RSI:
+      case SecondaryIndicator.RSI:
         children = [
           TextSpan(
             //TODO: Localize
@@ -233,7 +233,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
           ),
         ];
         break;
-      case SecondaryState.WR:
+      case SecondaryIndicator.WR:
         children = [
           TextSpan(
             //TODO: Localize
@@ -244,7 +244,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
           ),
         ];
         break;
-      case SecondaryState.CCI:
+      case SecondaryIndicator.CCI:
         children = [
           TextSpan(
             //TODO: Localize

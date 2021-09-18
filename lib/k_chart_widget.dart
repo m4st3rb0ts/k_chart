@@ -7,8 +7,8 @@ import 'package:k_chart/flutter_k_chart.dart';
 
 import 'painter/chart_painter.dart';
 
-enum MainState { MA, BOLL, NONE }
-enum SecondaryState { MACD, KDJ, RSI, WR, CCI, NONE }
+enum PrimaryIndicator { MA, BOLL, NONE }
+enum SecondaryIndicator { MACD, KDJ, RSI, WR, CCI, NONE }
 
 class TimeFormat {
   static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
@@ -27,9 +27,9 @@ class TimeFormat {
 
 class KChartWidget extends StatefulWidget {
   final List<KLineEntity>? datas;
-  final MainState mainState;
+  final PrimaryIndicator mainState;
   final bool volHidden;
-  final SecondaryState secondaryState;
+  final SecondaryIndicator secondaryState;
   final Function()? onSecondaryTap;
   final bool isLine;
   final bool hideGrid;
@@ -56,8 +56,8 @@ class KChartWidget extends StatefulWidget {
   const KChartWidget({
     required this.datas,
     required this.chartStyle,
-    this.mainState = MainState.MA,
-    this.secondaryState = SecondaryState.MACD,
+    this.mainState = PrimaryIndicator.MA,
+    this.secondaryState = SecondaryIndicator.MACD,
     this.onSecondaryTap,
     this.volHidden = false,
     this.isLine = false,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../entity/candle_entity.dart';
-import '../k_chart_widget.dart' show MainState;
+import '../k_chart_widget.dart' show PrimaryIndicator;
 import 'base_chart_renderer.dart';
 
 class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
@@ -10,7 +10,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     required double maxVerticalValue,
     required double minVerticalValue,
     required final double contentTopPadding,
-    required this.state,
+    required this.indicator,
     required this.isLine,
     required final int fixedDecimalsLength,
     required final ChartStyle chartStyle,
@@ -41,8 +41,8 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     verticalScale = _contentRect.height / (maxVerticalValue - minVerticalValue);
   }
 
-  /// Extra data that the graph should display (MA, BOLL)
-  final MainState state;
+  /// Indicator that the candle graph should display (MA, BOLL)
+  final PrimaryIndicator indicator;
 
   /// Display candle or lines
   final bool isLine;
@@ -71,11 +71,11 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   }) {
     if (isLine == true) return;
     TextSpan? span;
-    if (state == MainState.MA) {
+    if (indicator == PrimaryIndicator.MA) {
       span = TextSpan(
         children: _createMATextSpan(data: value),
       );
-    } else if (state == MainState.BOLL) {
+    } else if (indicator == PrimaryIndicator.BOLL) {
       span = TextSpan(
         children: [
           if (value.up != 0)
@@ -132,13 +132,13 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
         currentValue: currentValue,
         canvas: canvas,
       );
-    } else if (state == MainState.MA) {
+    } else if (indicator == PrimaryIndicator.MA) {
       drawMaLine(
         lastValue: lastValue,
         currentValue: currentValue,
         canvas: canvas,
       );
-    } else if (state == MainState.BOLL) {
+    } else if (indicator == PrimaryIndicator.BOLL) {
       drawBollLine(
         lastValue: lastValue,
         currentValue: currentValue,

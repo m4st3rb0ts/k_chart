@@ -14,9 +14,9 @@ export 'package:flutter/material.dart'
 abstract class BaseChartPainter extends CustomPainter {
   static double maxScrollX = 0.0;
   List<KLineEntity>? datas;
-  MainState mainState;
+  PrimaryIndicator mainState;
 
-  SecondaryState secondaryState;
+  SecondaryIndicator secondaryState;
 
   bool volHidden;
   double scaleX = 1.0, scrollX = 0.0, selectX;
@@ -51,9 +51,9 @@ abstract class BaseChartPainter extends CustomPainter {
     required this.scrollX,
     required this.isLongPress,
     required this.selectX,
-    this.mainState = MainState.MA,
+    this.mainState = PrimaryIndicator.MA,
     this.volHidden = false,
-    this.secondaryState = SecondaryState.MACD,
+    this.secondaryState = SecondaryIndicator.MACD,
     this.isLine = false,
   }) {
     mItemCount = datas?.length ?? 0;
@@ -158,7 +158,7 @@ abstract class BaseChartPainter extends CustomPainter {
   void initRect(Size size) {
     double volHeight = volHidden != true ? mDisplayHeight * 0.2 : 0;
     double secondaryHeight =
-        secondaryState != SecondaryState.NONE ? mDisplayHeight * 0.2 : 0;
+        secondaryState != SecondaryIndicator.NONE ? mDisplayHeight * 0.2 : 0;
 
     double mainHeight = mDisplayHeight;
     mainHeight -= volHeight;
@@ -172,7 +172,7 @@ abstract class BaseChartPainter extends CustomPainter {
     }
 
     //secondaryState == SecondaryState.NONE隐藏副视图
-    if (secondaryState != SecondaryState.NONE) {
+    if (secondaryState != SecondaryIndicator.NONE) {
       mSecondaryRect = Rect.fromLTRB(
           0,
           mMainRect.bottom + volHeight + mChildPadding,
@@ -198,10 +198,10 @@ abstract class BaseChartPainter extends CustomPainter {
 
   void getMainMaxMinValue(KLineEntity item, int i) {
     double maxPrice, minPrice;
-    if (mainState == MainState.MA) {
+    if (mainState == PrimaryIndicator.MA) {
       maxPrice = max(item.high, _findMaxMA(item.maValueList ?? [0]));
       minPrice = min(item.low, _findMinMA(item.maValueList ?? [0]));
-    } else if (mainState == MainState.BOLL) {
+    } else if (mainState == PrimaryIndicator.BOLL) {
       maxPrice = max(item.up ?? 0, item.high);
       minPrice = min(item.dn ?? 0, item.low);
     } else {
@@ -250,29 +250,29 @@ abstract class BaseChartPainter extends CustomPainter {
   }
 
   void getSecondaryMaxMinValue(KLineEntity item) {
-    if (secondaryState == SecondaryState.MACD) {
+    if (secondaryState == SecondaryIndicator.MACD) {
       if (item.macd != null) {
         mSecondaryMaxValue =
             max(mSecondaryMaxValue, max(item.macd!, max(item.dif!, item.dea!)));
         mSecondaryMinValue =
             min(mSecondaryMinValue, min(item.macd!, min(item.dif!, item.dea!)));
       }
-    } else if (secondaryState == SecondaryState.KDJ) {
+    } else if (secondaryState == SecondaryIndicator.KDJ) {
       if (item.d != null) {
         mSecondaryMaxValue =
             max(mSecondaryMaxValue, max(item.k!, max(item.d!, item.j!)));
         mSecondaryMinValue =
             min(mSecondaryMinValue, min(item.k!, min(item.d!, item.j!)));
       }
-    } else if (secondaryState == SecondaryState.RSI) {
+    } else if (secondaryState == SecondaryIndicator.RSI) {
       if (item.rsi != null) {
         mSecondaryMaxValue = max(mSecondaryMaxValue, item.rsi!);
         mSecondaryMinValue = min(mSecondaryMinValue, item.rsi!);
       }
-    } else if (secondaryState == SecondaryState.WR) {
+    } else if (secondaryState == SecondaryIndicator.WR) {
       mSecondaryMaxValue = 0;
       mSecondaryMinValue = -100;
-    } else if (secondaryState == SecondaryState.CCI) {
+    } else if (secondaryState == SecondaryIndicator.CCI) {
       if (item.cci != null) {
         mSecondaryMaxValue = max(mSecondaryMaxValue, item.cci!);
         mSecondaryMinValue = min(mSecondaryMinValue, item.cci!);
