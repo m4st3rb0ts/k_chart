@@ -7,8 +7,8 @@ export '../chart_style.dart';
 abstract class BaseChartRenderer<T> {
   BaseChartRenderer({
     required this.displayRect,
-    required final double maxVerticalValue,
-    required final double minVerticalValue,
+    required this.maxVerticalValue,
+    required this.minVerticalValue,
     required this.contentTopPadding,
     required this.fixedDecimalsLength,
     required this.chartStyle,
@@ -21,12 +21,10 @@ abstract class BaseChartRenderer<T> {
           ..isAntiAlias = true
           ..filterQuality = FilterQuality.high
           ..strokeWidth = 0.5
-          ..color = chartStyle.colors.gridColor,
-        maxVerticalValue = maxVerticalValue,
-        minVerticalValue = minVerticalValue {
+          ..color = chartStyle.colors.gridColor {
     if (maxVerticalValue == minVerticalValue) {
-      this.maxVerticalValue *= 1.5;
-      this.minVerticalValue /= 2;
+      maxVerticalValue *= 1.5;
+      minVerticalValue /= 2;
     }
     verticalScale = displayRect.height / (maxVerticalValue - minVerticalValue);
   }
