@@ -12,10 +12,10 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
     required final int fixedLength,
     required this.chartStyle,
   }) : super(
-          chartRect: mainRect,
-          maxYValue: maxValue,
-          minYValue: minValue,
-          topPadding: topPadding,
+          displayRect: mainRect,
+          maxVerticalValue: maxValue,
+          minVerticalValue: minValue,
+          contentTopPadding: topPadding,
           fixedDecimalsLength: fixedLength,
           gridColor: chartStyle.colors.gridColor,
         ) {
@@ -27,56 +27,53 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
 
   @override
   void drawChart({
-    required final VolumeEntity lastPoint,
-    required final VolumeEntity curPoint,
-    required final double lastX,
-    required final double curX,
+    required final RenderData<VolumeEntity> lastValue,
+    required final RenderData<VolumeEntity> currentValue,
     required final Size size,
     required final Canvas canvas,
   }) {
     double r = mVolWidth / 2;
-    double top = getVolY(curPoint.vol);
-    double bottom = chartRect.bottom;
-    if (curPoint.vol != 0) {
+    double top = getVolY(currentValue.data.vol);
+    double bottom = displayRect.bottom;
+    if (currentValue.data.vol != 0) {
       canvas.drawRect(
-          Rect.fromLTRB(curX - r, top, curX + r, bottom),
+          Rect.fromLTRB(currentValue.x - r, top, currentValue.x + r, bottom),
           chartPaint
-            ..color = curPoint.close > curPoint.open
+            ..color = currentValue.data.close > currentValue.data.open
                 ? chartStyle.colors.upColor
                 : chartStyle.colors.dnColor);
     }
 
-    if (lastPoint.MA5Volume != 0) {
+    if (lastValue.data.MA5Volume != 0) {
       drawLine(
-        lastPrice: lastPoint.MA5Volume,
-        curPrice: curPoint.MA5Volume,
+        lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.MA5Volume),
+        currentValue:
+            RenderPoint(x: currentValue.x, y: currentValue.data.MA5Volume),
         canvas: canvas,
-        lastX: lastX,
-        curX: curX,
         color: chartStyle.colors.ma5Color,
       );
     }
 
-    if (lastPoint.MA10Volume != 0) {
+    if (lastValue.data.MA10Volume != 0) {
       drawLine(
-        lastPrice: lastPoint.MA10Volume,
-        curPrice: curPoint.MA10Volume,
+        lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.MA10Volume),
+        currentValue:
+            RenderPoint(x: currentValue.x, y: currentValue.data.MA10Volume),
         canvas: canvas,
-        lastX: lastX,
-        curX: curX,
         color: chartStyle.colors.ma10Color,
       );
     }
   }
 
   double getVolY(double value) =>
-      (maxYValue - value) * (chartRect.height / maxYValue) + chartRect.top;
+      (maxVerticalValue - value) * (displayRect.height / maxVerticalValue) +
+      displayRect.top;
 
   @override
   void drawText({
     required final Canvas canvas,
     required final VolumeEntity data,
-    required final double x,
+    required final double leftOffset,
   }) {
     TextSpan span = TextSpan(
       children: [
@@ -95,7 +92,7 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
     );
     TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
     tp.layout();
-    tp.paint(canvas, Offset(x, chartRect.top - topPadding));
+    tp.paint(canvas, Offset(leftOffset, displayRect.top - contentTopPadding));
   }
 
   @override
@@ -104,27 +101,31 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
     required final textStyle,
     required final int gridRows,
   }) {
-    TextSpan span =
-        TextSpan(text: "${NumberUtil.format(maxYValue)}", style: textStyle);
+    TextSpan span = TextSpan(
+        text: "${NumberUtil.format(maxVerticalValue)}", style: textStyle);
     TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
     tp.layout();
     tp.paint(
-        canvas, Offset(chartRect.width - tp.width, chartRect.top - topPadding));
+        canvas,
+        Offset(
+            displayRect.width - tp.width, displayRect.top - contentTopPadding));
   }
 
   @override
   void drawGrid({
     required final Canvas canvas,
-    required final int gridRows,
-    required final int gridColumns,
+    required final int numberOfRows,
+    required final int numberOfColumns,
   }) {
-    canvas.drawLine(Offset(0, chartRect.bottom),
-        Offset(chartRect.width, chartRect.bottom), gridPaint);
-    double columnSpace = chartRect.width / gridColumns;
+    canvas.drawLine(Offset(0, displayRect.bottom),
+        Offset(displayRect.width, displayRect.bottom), gridPaint);
+    double columnSpace = displayRect.width / numberOfColumns;
     for (int i = 0; i <= columnSpace; i++) {
       //vol垂直线
-      canvas.drawLine(Offset(columnSpace * i, chartRect.top - topPadding),
-          Offset(columnSpace * i, chartRect.bottom), gridPaint);
+      canvas.drawLine(
+          Offset(columnSpace * i, displayRect.top - contentTopPadding),
+          Offset(columnSpace * i, displayRect.bottom),
+          gridPaint);
     }
   }
 }

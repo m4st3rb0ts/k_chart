@@ -5,36 +5,36 @@ export '../chart_style.dart';
 /// Base class for adding chart renders
 abstract class BaseChartRenderer<T> {
   BaseChartRenderer({
-    required this.chartRect,
-    required this.maxYValue,
-    required this.minYValue,
-    required this.topPadding,
+    required this.displayRect,
+    required this.maxVerticalValue,
+    required this.minVerticalValue,
+    required this.contentTopPadding,
     required this.fixedDecimalsLength,
     required Color gridColor,
   }) {
-    if (maxYValue == minYValue) {
-      maxYValue *= 1.5;
-      minYValue /= 2;
+    if (maxVerticalValue == minVerticalValue) {
+      maxVerticalValue *= 1.5;
+      minVerticalValue /= 2;
     }
-    scaleY = chartRect.height / (maxYValue - minYValue);
+    verticalScale = displayRect.height / (maxVerticalValue - minVerticalValue);
     gridPaint.color = gridColor;
     // print("maxValue=====" + maxValue.toString() + "====minValue===" + minValue.toString() + "==scaleY==" + scaleY.toString());
   }
 
   /// Max y value of the chart
-  double maxYValue;
+  double maxVerticalValue;
 
   /// Min y value of the chart
-  double minYValue;
+  double minVerticalValue;
 
   /// Factor for scaling the graph (zoom)
-  late double scaleY;
+  late double verticalScale;
 
   /// Margin of the maxYValue of the graph with the top
-  final double topPadding;
+  final double contentTopPadding;
 
   /// Full chart rect size where all content will be drawed
-  final Rect chartRect;
+  final Rect displayRect;
 
   /// Fixed number of decimals
   final int fixedDecimalsLength;
@@ -54,7 +54,7 @@ abstract class BaseChartRenderer<T> {
   /// Gets the vertical position in the chart given a y value
   /// @value the value for computing the y position
   double getVerticalPositionForPoint({required final double value}) =>
-      (maxYValue - value) * scaleY + chartRect.top;
+      (maxVerticalValue - value) * verticalScale + displayRect.top;
 
   String format({final double? n}) {
     if (n == null || n.isNaN) {
@@ -70,8 +70,8 @@ abstract class BaseChartRenderer<T> {
   /// @gridColumns number of columns
   void drawGrid({
     required final Canvas canvas,
-    required int gridRows,
-    required int gridColumns,
+    required int numberOfRows,
+    required int numberOfColumns,
   });
 
   /// Draws a text at the top of the chart
@@ -81,7 +81,7 @@ abstract class BaseChartRenderer<T> {
   void drawText({
     required final Canvas canvas,
     required T data,
-    required double x,
+    required double leftOffset,
   });
 
   /// Draws a text on the right of the chart
@@ -102,10 +102,8 @@ abstract class BaseChartRenderer<T> {
   /// @size
   /// @canvas surface to paint
   void drawChart({
-    required final T lastPoint,
-    required T curPoint,
-    required double lastX,
-    required double curX,
+    required final RenderData<T> lastValue,
+    required final RenderData<T> currentValue,
     required Size size,
     required Canvas canvas,
   });
@@ -118,22 +116,24 @@ abstract class BaseChartRenderer<T> {
   /// @curX
   /// @color The color of the line
   void drawLine({
-    final double? lastPrice,
-    final double? curPrice,
+    required final RenderPoint lastValue,
+    required final RenderPoint currentValue,
     required final Canvas canvas,
-    required final double lastX,
-    required final double curX,
     required final Color color,
   }) {
-    if (lastPrice == null || curPrice == null) {
+    if (lastValue.y == null || currentValue.y == null) {
       return;
     }
-    //("lasePrice==" + lastPrice.toString() + "==curPrice==" + curPrice.toString());
-    double lastY = getVerticalPositionForPoint(value: lastPrice);
-    double curY = getVerticalPositionForPoint(value: curPrice);
-    //print("lastX-----==" + lastX.toString() + "==lastY==" + lastY.toString() + "==curX==" + curX.toString() + "==curY==" + curY.toString());
     canvas.drawLine(
-        Offset(lastX, lastY), Offset(curX, curY), chartPaint..color = color);
+        Offset(
+          lastValue.x,
+          getVerticalPositionForPoint(value: lastValue.y ?? 0),
+        ),
+        Offset(
+          currentValue.x,
+          getVerticalPositionForPoint(value: currentValue.y ?? 0),
+        ),
+        chartPaint..color = color);
   }
 
   /// Get the basic textstyle for painting in the chart renreder
@@ -141,4 +141,16 @@ abstract class BaseChartRenderer<T> {
   TextStyle getTextStyle({required final Color color}) {
     return TextStyle(fontSize: 10.0, color: color);
   }
+}
+
+class RenderPoint {
+  const RenderPoint({required this.x, this.y});
+  final double x;
+  final double? y;
+}
+
+class RenderData<T> {
+  const RenderData({required this.data, required this.x});
+  final T data;
+  final double x;
 }

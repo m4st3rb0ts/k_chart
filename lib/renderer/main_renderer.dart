@@ -17,10 +17,10 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     required this.scaleX,
     this.maDayList = const [5, 10, 20],
   }) : super(
-            chartRect: mainRect,
-            maxYValue: maxValue,
-            minYValue: minValue,
-            topPadding: topPadding,
+            displayRect: mainRect,
+            maxVerticalValue: maxValue,
+            minVerticalValue: minValue,
+            contentTopPadding: topPadding,
             fixedDecimalsLength: fixedLength,
             gridColor: chartStyle.colors.gridColor) {
     mCandleWidth = chartStyle.candleWidth;
@@ -31,15 +31,15 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       ..strokeWidth = mLineStrokeWidth
       ..color = chartStyle.colors.kLineColor;
     _contentRect = Rect.fromLTRB(
-        chartRect.left,
-        chartRect.top + _contentPadding,
-        chartRect.right,
-        chartRect.bottom - _contentPadding);
+        displayRect.left,
+        displayRect.top + _contentPadding,
+        displayRect.right,
+        displayRect.bottom - _contentPadding);
     if (maxValue == minValue) {
       maxValue *= 1.5;
       minValue /= 2;
     }
-    scaleY = _contentRect.height / (maxValue - minValue);
+    verticalScale = _contentRect.height / (maxValue - minValue);
   }
 
   late double mCandleWidth;
@@ -66,7 +66,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   void drawText({
     required final Canvas canvas,
     required final CandleEntity data,
-    required final double x,
+    required final double leftOffset,
   }) {
     if (isLine == true) return;
     TextSpan? span;
@@ -95,7 +95,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     if (span == null) return;
     TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
     tp.layout();
-    tp.paint(canvas, Offset(x, chartRect.top - topPadding));
+    tp.paint(canvas, Offset(leftOffset, displayRect.top - contentTopPadding));
   }
 
   List<InlineSpan> _createMATextSpan({required final CandleEntity data}) {
@@ -113,39 +113,38 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
   @override
   void drawChart({
-    required final CandleEntity lastPoint,
-    required final CandleEntity curPoint,
-    required final double lastX,
-    required final double curX,
+    required final RenderData<CandleEntity> lastValue,
+    required final RenderData<CandleEntity> currentValue,
     required final Size size,
     required final Canvas canvas,
   }) {
     if (isLine != true) {
-      drawCandle(curPoint: curPoint, canvas: canvas, curX: curX);
+      drawCandle(
+          curPoint: currentValue.data, canvas: canvas, curX: currentValue.x);
     }
     if (isLine == true) {
       drawPolyline(
-        lastPrice: lastPoint.close,
-        curPrice: curPoint.close,
+        lastPrice: lastValue.data.close,
+        curPrice: currentValue.data.close,
         canvas: canvas,
-        lastX: lastX,
-        curX: curX,
+        lastX: lastValue.x,
+        curX: currentValue.x,
       );
     } else if (state == MainState.MA) {
       drawMaLine(
-        lastPoint: lastPoint,
-        curPoint: curPoint,
+        lastPoint: lastValue.data,
+        curPoint: currentValue.data,
         canvas: canvas,
-        lastX: lastX,
-        curX: curX,
+        lastX: lastValue.x,
+        curX: currentValue.x,
       );
     } else if (state == MainState.BOLL) {
       drawBollLine(
-        lastPoint: lastPoint,
-        curPoint: curPoint,
+        lastPoint: lastValue.data,
+        curPoint: currentValue.data,
         canvas: canvas,
-        lastX: lastX,
-        curX: curX,
+        lastX: lastValue.x,
+        curX: currentValue.x,
       );
     }
   }
@@ -186,13 +185,13 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       end: Alignment.bottomCenter,
       tileMode: TileMode.clamp,
       colors: [chartStyle.colors.lineFillColor, Colors.transparent],
-    ).createShader(Rect.fromLTRB(
-        chartRect.left, chartRect.top, chartRect.right, chartRect.bottom));
+    ).createShader(Rect.fromLTRB(displayRect.left, displayRect.top,
+        displayRect.right, displayRect.bottom));
     mLineFillPaint..shader = mLineFillShader;
 
     mLineFillPath ??= Path();
 
-    mLineFillPath!.moveTo(lastX, chartRect.height + chartRect.top);
+    mLineFillPath!.moveTo(lastX, displayRect.height + displayRect.top);
     mLineFillPath!.lineTo(lastX, getVerticalPositionForPoint(value: lastPrice));
     mLineFillPath!.cubicTo(
         (lastX + curX) / 2,
@@ -201,7 +200,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         getVerticalPositionForPoint(value: curPrice),
         curX,
         getVerticalPositionForPoint(value: curPrice));
-    mLineFillPath!.lineTo(curX, chartRect.height + chartRect.top);
+    mLineFillPath!.lineTo(curX, displayRect.height + displayRect.top);
     mLineFillPath!.close();
 
     canvas.drawPath(mLineFillPath!, mLineFillPaint);
@@ -225,11 +224,9 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       }
       if (lastPoint.maValueList?[i] != 0) {
         drawLine(
-          lastPrice: lastPoint.maValueList?[i],
-          curPrice: curPoint.maValueList?[i],
+          lastValue: RenderPoint(x: lastX, y: lastPoint.maValueList?[i]),
+          currentValue: RenderPoint(x: curX, y: curPoint.maValueList?[i]),
           canvas: canvas,
-          lastX: lastX,
-          curX: curX,
           color: chartStyle.colors.getMAColor(i),
         );
       }
@@ -245,29 +242,23 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   }) {
     if (lastPoint.up != 0) {
       drawLine(
-          lastPrice: lastPoint.up,
-          curPrice: curPoint.up,
+          lastValue: RenderPoint(x: lastX, y: lastPoint.up),
+          currentValue: RenderPoint(x: curX, y: curPoint.up),
           canvas: canvas,
-          lastX: lastX,
-          curX: curX,
           color: chartStyle.colors.ma10Color);
     }
     if (lastPoint.mb != 0) {
       drawLine(
-          lastPrice: lastPoint.mb,
-          curPrice: curPoint.mb,
+          lastValue: RenderPoint(x: lastX, y: lastPoint.mb),
+          currentValue: RenderPoint(x: curX, y: curPoint.mb),
           canvas: canvas,
-          lastX: lastX,
-          curX: curX,
           color: chartStyle.colors.ma5Color);
     }
     if (lastPoint.dn != 0) {
       drawLine(
-          lastPrice: lastPoint.dn,
-          curPrice: curPoint.dn,
+          lastValue: RenderPoint(x: lastX, y: lastPoint.dn),
+          currentValue: RenderPoint(x: curX, y: curPoint.dn),
           canvas: canvas,
-          lastX: lastX,
-          curX: curX,
           color: chartStyle.colors.ma30Color);
     }
   }
@@ -312,17 +303,19 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     required final textStyle,
     required final int gridRows,
   }) {
-    double rowSpace = chartRect.height / gridRows;
+    double rowSpace = displayRect.height / gridRows;
     for (var i = 0; i <= gridRows; ++i) {
-      double value = (gridRows - i) * rowSpace / scaleY + minYValue;
+      double value =
+          (gridRows - i) * rowSpace / verticalScale + minVerticalValue;
       TextSpan span = TextSpan(text: "${format(n: value)}", style: textStyle);
       TextPainter tp =
           TextPainter(text: span, textDirection: TextDirection.ltr);
       tp.layout();
       if (i == 0) {
-        tp.paint(canvas, Offset(0, topPadding));
+        tp.paint(canvas, Offset(0, contentTopPadding));
       } else {
-        tp.paint(canvas, Offset(0, rowSpace * i - tp.height + topPadding));
+        tp.paint(
+            canvas, Offset(0, rowSpace * i - tp.height + contentTopPadding));
       }
     }
   }
@@ -330,24 +323,26 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   @override
   void drawGrid({
     required final Canvas canvas,
-    required final int gridRows,
-    required final int gridColumns,
+    required final int numberOfRows,
+    required final int numberOfColumns,
   }) {
 //    final int gridRows = 4, gridColumns = 4;
-    double rowSpace = chartRect.height / gridRows;
-    for (int i = 0; i <= gridRows; i++) {
-      canvas.drawLine(Offset(0, rowSpace * i + topPadding),
-          Offset(chartRect.width, rowSpace * i + topPadding), gridPaint);
+    double rowSpace = displayRect.height / numberOfRows;
+    for (int i = 0; i <= numberOfRows; i++) {
+      canvas.drawLine(
+          Offset(0, rowSpace * i + contentTopPadding),
+          Offset(displayRect.width, rowSpace * i + contentTopPadding),
+          gridPaint);
     }
-    double columnSpace = chartRect.width / gridColumns;
+    double columnSpace = displayRect.width / numberOfColumns;
     for (int i = 0; i <= columnSpace; i++) {
-      canvas.drawLine(Offset(columnSpace * i, topPadding / 3),
-          Offset(columnSpace * i, chartRect.bottom), gridPaint);
+      canvas.drawLine(Offset(columnSpace * i, contentTopPadding / 3),
+          Offset(columnSpace * i, displayRect.bottom), gridPaint);
     }
   }
 
   @override
   double getVerticalPositionForPoint({required double value}) {
-    return (maxYValue - value) * scaleY + _contentRect.top;
+    return (maxVerticalValue - value) * verticalScale + _contentRect.top;
   }
 }

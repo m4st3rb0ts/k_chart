@@ -1,6 +1,7 @@
 import 'dart:async' show StreamSink;
 
 import 'package:flutter/material.dart';
+import 'package:k_chart/entity/index.dart';
 import 'package:k_chart/utils/number_util.dart';
 
 import '../entity/info_window_entity.dart';
@@ -154,11 +155,17 @@ class ChartPainter extends BaseChartPainter {
   void drawGrid(canvas) {
     if (!hideGrid) {
       mMainRenderer.drawGrid(
-          canvas: canvas, gridRows: mGridRows, gridColumns: mGridColumns);
+          canvas: canvas,
+          numberOfRows: mGridRows,
+          numberOfColumns: mGridColumns);
       mVolRenderer?.drawGrid(
-          canvas: canvas, gridRows: mGridRows, gridColumns: mGridColumns);
+          canvas: canvas,
+          numberOfRows: mGridRows,
+          numberOfColumns: mGridColumns);
       mSecondaryRenderer?.drawGrid(
-          canvas: canvas, gridRows: mGridRows, gridColumns: mGridColumns);
+          canvas: canvas,
+          numberOfRows: mGridRows,
+          numberOfColumns: mGridColumns);
     }
   }
 
@@ -175,26 +182,20 @@ class ChartPainter extends BaseChartPainter {
       double lastX = i == 0 ? curX : getX(i - 1);
 
       mMainRenderer.drawChart(
-        lastPoint: lastPoint,
-        curPoint: curPoint,
-        lastX: lastX,
-        curX: curX,
+        lastValue: RenderData<CandleEntity>(data: lastPoint, x: lastX),
+        currentValue: RenderData<CandleEntity>(data: curPoint, x: curX),
         size: size,
         canvas: canvas,
       );
       mVolRenderer?.drawChart(
-        lastPoint: lastPoint,
-        curPoint: curPoint,
-        lastX: lastX,
-        curX: curX,
+        lastValue: RenderData<VolumeEntity>(data: lastPoint, x: lastX),
+        currentValue: RenderData<VolumeEntity>(data: curPoint, x: curX),
         size: size,
         canvas: canvas,
       );
       mSecondaryRenderer?.drawChart(
-        lastPoint: lastPoint,
-        curPoint: curPoint,
-        lastX: lastX,
-        curX: curX,
+        lastValue: RenderData<MACDEntity>(data: lastPoint, x: lastX),
+        currentValue: RenderData<MACDEntity>(data: curPoint, x: curX),
         size: size,
         canvas: canvas,
       );
@@ -241,17 +242,6 @@ class ChartPainter extends BaseChartPainter {
         tp.paint(canvas, Offset(x, y));
       }
     }
-
-//    double translateX = xToTranslateX(0);
-//    if (translateX >= startX && translateX <= stopX) {
-//      TextPainter tp = getTextPainter(getDate(datas[mStartIndex].id));
-//      tp.paint(canvas, Offset(0, y));
-//    }
-//    translateX = xToTranslateX(size.width);
-//    if (translateX >= startX && translateX <= stopX) {
-//      TextPainter tp = getTextPainter(getDate(datas[mStopIndex].id));
-//      tp.paint(canvas, Offset(size.width - tp.width, y));
-//    }
   }
 
   @override
@@ -333,9 +323,9 @@ class ChartPainter extends BaseChartPainter {
       data = getItem(index);
     }
     //松开显示最后一条数据
-    mMainRenderer.drawText(canvas: canvas, data: data, x: x);
-    mVolRenderer?.drawText(canvas: canvas, data: data, x: x);
-    mSecondaryRenderer?.drawText(canvas: canvas, data: data, x: x);
+    mMainRenderer.drawText(canvas: canvas, data: data, leftOffset: x);
+    mVolRenderer?.drawText(canvas: canvas, data: data, leftOffset: x);
+    mSecondaryRenderer?.drawText(canvas: canvas, data: data, leftOffset: x);
   }
 
   @override
