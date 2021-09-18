@@ -15,7 +15,8 @@ import 'vol_renderer.dart';
 class ChartPainter extends BaseChartPainter {
   static get maxScrollX => BaseChartPainter.maxScrollX;
   late BaseChartRenderer mMainRenderer;
-  BaseChartRenderer? mVolRenderer, mSecondaryRenderer;
+  late BaseChartRenderer? mVolRenderer;
+  late BaseChartRenderer? mSecondaryRenderer;
   StreamSink<InfoWindowEntity?>? sink;
   Color? upColor, dnColor;
   Color? ma5Color, ma10Color, ma30Color;
@@ -23,16 +24,16 @@ class ChartPainter extends BaseChartPainter {
   Color? macdColor, difColor, deaColor, jColor;
   List<Color>? bgColor;
   int fixedLength;
-  List<int> maDayList;
+  final List<int> maDayList;
   final ChartColors chartColors;
   late Paint selectPointPaint, selectorBorderPaint, nowPricePaint;
   final ChartStyle chartStyle;
   final bool hideGrid;
   final bool showNowPrice;
 
-  ChartPainter(
-    this.chartStyle,
-    this.chartColors, {
+  ChartPainter({
+    required this.chartStyle,
+    required this.chartColors,
     required datas,
     required scaleX,
     required scrollX,
@@ -49,16 +50,18 @@ class ChartPainter extends BaseChartPainter {
     this.fixedLength = 2,
     this.maDayList = const [5, 10, 20],
   })  : assert(bgColor == null || bgColor.length >= 2),
-        super(chartStyle,
-            datas: datas,
-            scaleX: scaleX,
-            scrollX: scrollX,
-            isLongPress: isLongPass,
-            selectX: selectX,
-            mainState: mainState,
-            volHidden: volHidden,
-            secondaryState: secondaryState,
-            isLine: isLine) {
+        super(
+          chartStyle: chartStyle,
+          datas: datas,
+          scaleX: scaleX,
+          scrollX: scrollX,
+          isLongPress: isLongPass,
+          selectX: selectX,
+          mainState: mainState,
+          volHidden: volHidden,
+          secondaryState: secondaryState,
+          isLine: isLine,
+        ) {
     selectPointPaint = Paint()
       ..isAntiAlias = true
       ..strokeWidth = 0.5
@@ -80,33 +83,43 @@ class ChartPainter extends BaseChartPainter {
       fixedLength =
           NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
     }
+
     mMainRenderer = MainRenderer(
-      mMainRect,
-      mMainMaxValue,
-      mMainMinValue,
-      mTopPadding,
-      mainState,
-      isLine,
-      fixedLength,
-      this.chartStyle,
-      this.chartColors,
-      this.scaleX,
-      maDayList,
+      mainRect: mMainRect,
+      maxValue: mMainMaxValue,
+      minValue: mMainMinValue,
+      topPadding: mTopPadding,
+      state: mainState,
+      isLine: isLine,
+      fixedLength: fixedLength,
+      chartStyle: chartStyle,
+      chartColors: chartColors,
+      scaleX: scaleX,
+      maDayList: maDayList,
     );
+
     if (mVolRect != null) {
-      mVolRenderer = VolRenderer(mVolRect!, mVolMaxValue, mVolMinValue,
-          mChildPadding, fixedLength, this.chartStyle, this.chartColors);
+      mVolRenderer = VolRenderer(
+        mainRect: mVolRect!,
+        maxValue: mVolMaxValue,
+        minValue: mVolMinValue,
+        topPadding: mChildPadding,
+        fixedLength: fixedLength,
+        chartStyle: chartStyle,
+        chartColors: chartColors,
+      );
     }
     if (mSecondaryRect != null) {
       mSecondaryRenderer = SecondaryRenderer(
-          mSecondaryRect!,
-          mSecondaryMaxValue,
-          mSecondaryMinValue,
-          mChildPadding,
-          secondaryState,
-          fixedLength,
-          chartStyle,
-          chartColors);
+        mainRect: mSecondaryRect!,
+        maxValue: mSecondaryMaxValue,
+        minValue: mSecondaryMinValue,
+        topPadding: mChildPadding,
+        state: secondaryState,
+        fixedLength: fixedLength,
+        chartStyle: chartStyle,
+        chartColors: chartColors,
+      );
     }
   }
 
@@ -145,9 +158,12 @@ class ChartPainter extends BaseChartPainter {
   @override
   void drawGrid(canvas) {
     if (!hideGrid) {
-      mMainRenderer.drawGrid(canvas, mGridRows, mGridColumns);
-      mVolRenderer?.drawGrid(canvas, mGridRows, mGridColumns);
-      mSecondaryRenderer?.drawGrid(canvas, mGridRows, mGridColumns);
+      mMainRenderer.drawGrid(
+          canvas: canvas, gridRows: mGridRows, gridColumns: mGridColumns);
+      mVolRenderer?.drawGrid(
+          canvas: canvas, gridRows: mGridRows, gridColumns: mGridColumns);
+      mSecondaryRenderer?.drawGrid(
+          canvas: canvas, gridRows: mGridRows, gridColumns: mGridColumns);
     }
   }
 
@@ -163,10 +179,30 @@ class ChartPainter extends BaseChartPainter {
       double curX = getX(i);
       double lastX = i == 0 ? curX : getX(i - 1);
 
-      mMainRenderer.drawChart(lastPoint, curPoint, lastX, curX, size, canvas);
-      mVolRenderer?.drawChart(lastPoint, curPoint, lastX, curX, size, canvas);
+      mMainRenderer.drawChart(
+        lastPoint: lastPoint,
+        curPoint: curPoint,
+        lastX: lastX,
+        curX: curX,
+        size: size,
+        canvas: canvas,
+      );
+      mVolRenderer?.drawChart(
+        lastPoint: lastPoint,
+        curPoint: curPoint,
+        lastX: lastX,
+        curX: curX,
+        size: size,
+        canvas: canvas,
+      );
       mSecondaryRenderer?.drawChart(
-          lastPoint, curPoint, lastX, curX, size, canvas);
+        lastPoint: lastPoint,
+        curPoint: curPoint,
+        lastX: lastX,
+        curX: curX,
+        size: size,
+        canvas: canvas,
+      );
     }
 
     canvas.restore();
@@ -176,10 +212,13 @@ class ChartPainter extends BaseChartPainter {
   void drawRightText(canvas) {
     var textStyle = getTextStyle(this.chartColors.defaultTextColor);
     if (!hideGrid) {
-      mMainRenderer.drawRightText(canvas, textStyle, mGridRows);
+      mMainRenderer.drawRightText(
+          canvas: canvas, textStyle: textStyle, gridRows: mGridRows);
     }
-    mVolRenderer?.drawRightText(canvas, textStyle, mGridRows);
-    mSecondaryRenderer?.drawRightText(canvas, textStyle, mGridRows);
+    mVolRenderer?.drawRightText(
+        canvas: canvas, textStyle: textStyle, gridRows: mGridRows);
+    mSecondaryRenderer?.drawRightText(
+        canvas: canvas, textStyle: textStyle, gridRows: mGridRows);
   }
 
   @override
@@ -263,7 +302,8 @@ class ChartPainter extends BaseChartPainter {
       tp.paint(canvas, Offset(x + w1 + w2, y - textHeight / 2));
     }
 
-    TextPainter dateTp = getTextPainter(getDate(point.time), chartColors.crossTextColor);
+    TextPainter dateTp =
+        getTextPainter(getDate(point.time), chartColors.crossTextColor);
     textWidth = dateTp.width;
     r = textHeight / 2;
     x = translateXtoX(getX(index));
@@ -297,9 +337,9 @@ class ChartPainter extends BaseChartPainter {
       data = getItem(index);
     }
     //松开显示最后一条数据
-    mMainRenderer.drawText(canvas, data, x);
-    mVolRenderer?.drawText(canvas, data, x);
-    mSecondaryRenderer?.drawText(canvas, data, x);
+    mMainRenderer.drawText(canvas: canvas, data: data, x: x);
+    mVolRenderer?.drawText(canvas: canvas, data: data, x: x);
+    mSecondaryRenderer?.drawText(canvas: canvas, data: data, x: x);
   }
 
   @override
@@ -311,11 +351,13 @@ class ChartPainter extends BaseChartPainter {
     if (x < mWidth / 2) {
       //画右边
       TextPainter tp = getTextPainter(
-          "── " + mMainLowMinValue.toStringAsFixed(fixedLength), chartColors.minColor);
+          "── " + mMainLowMinValue.toStringAsFixed(fixedLength),
+          chartColors.minColor);
       tp.paint(canvas, Offset(x, y - tp.height / 2));
     } else {
       TextPainter tp = getTextPainter(
-          mMainLowMinValue.toStringAsFixed(fixedLength) + " ──", chartColors.minColor);
+          mMainLowMinValue.toStringAsFixed(fixedLength) + " ──",
+          chartColors.minColor);
       tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
     }
     x = translateXtoX(getX(mMainMaxIndex));
@@ -323,11 +365,13 @@ class ChartPainter extends BaseChartPainter {
     if (x < mWidth / 2) {
       //画右边
       TextPainter tp = getTextPainter(
-          "── " + mMainHighMaxValue.toStringAsFixed(fixedLength), chartColors.maxColor);
+          "── " + mMainHighMaxValue.toStringAsFixed(fixedLength),
+          chartColors.maxColor);
       tp.paint(canvas, Offset(x, y - tp.height / 2));
     } else {
       TextPainter tp = getTextPainter(
-          mMainHighMaxValue.toStringAsFixed(fixedLength) + " ──", chartColors.maxColor);
+          mMainHighMaxValue.toStringAsFixed(fixedLength) + " ──",
+          chartColors.maxColor);
       tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
     }
   }
@@ -423,7 +467,8 @@ class ChartPainter extends BaseChartPainter {
           date ?? DateTime.now().millisecondsSinceEpoch),
       mFormats);
 
-  double getMainY(double y) => mMainRenderer.getY(y);
+  double getMainY(double y) =>
+      mMainRenderer.getVerticalPositionForPoint(value: y);
 
   /// 点是否在SecondaryRect中
   bool isInSecondaryRect(Offset point) {

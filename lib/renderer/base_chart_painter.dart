@@ -44,8 +44,8 @@ abstract class BaseChartPainter extends CustomPainter {
   late double mPointWidth;
   List<String> mFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]; //格式化时间
 
-  BaseChartPainter(
-    this.chartStyle, {
+  BaseChartPainter({
+    required this.chartStyle,
     this.datas,
     required this.scaleX,
     required this.scrollX,

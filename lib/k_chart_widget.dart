@@ -121,8 +121,8 @@ class _KChartWidgetState extends State<KChartWidget>
       mScaleX = 1.0;
     }
     final _painter = ChartPainter(
-      widget.chartStyle,
-      widget.chartColors,
+      chartStyle: widget.chartStyle,
+      chartColors: widget.chartColors,
       datas: widget.datas,
       scaleX: mScaleX,
       scrollX: mScrollX,
@@ -321,8 +321,7 @@ class _KChartWidgetState extends State<KChartWidget>
     Color color = widget.chartColors.infoWindowNormalColor;
     if (info.startsWith("+"))
       color = widget.chartColors.infoWindowUpColor;
-    else if (info.startsWith("-"))
-      color = widget.chartColors.infoWindowDnColor;
+    else if (info.startsWith("-")) color = widget.chartColors.infoWindowDnColor;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,

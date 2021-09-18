@@ -4,25 +4,38 @@ import 'package:flutter/material.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 
 class VolRenderer extends BaseChartRenderer<VolumeEntity> {
+  VolRenderer({
+    required final Rect mainRect,
+    required final double maxValue,
+    required final double minValue,
+    required final double topPadding,
+    required final int fixedLength,
+    required this.chartStyle,
+    required this.chartColors,
+  }) : super(
+          chartRect: mainRect,
+          maxYValue: maxValue,
+          minYValue: minValue,
+          topPadding: topPadding,
+          fixedDecimalsLength: fixedLength,
+          gridColor: chartColors.gridColor,
+        ) {
+    mVolWidth = this.chartStyle.volWidth;
+  }
+
   late double mVolWidth;
   final ChartStyle chartStyle;
   final ChartColors chartColors;
 
-  VolRenderer(Rect mainRect, double maxValue, double minValue,
-      double topPadding, int fixedLength, this.chartStyle, this.chartColors)
-      : super(
-            chartRect: mainRect,
-            maxValue: maxValue,
-            minValue: minValue,
-            topPadding: topPadding,
-            fixedLength: fixedLength,
-            gridColor: chartColors.gridColor,) {
-    mVolWidth = this.chartStyle.volWidth;
-  }
-
   @override
-  void drawChart(VolumeEntity lastPoint, VolumeEntity curPoint, double lastX,
-      double curX, Size size, Canvas canvas) {
+  void drawChart({
+    required final VolumeEntity lastPoint,
+    required final VolumeEntity curPoint,
+    required final double lastX,
+    required final double curX,
+    required final Size size,
+    required final Canvas canvas,
+  }) {
     double r = mVolWidth / 2;
     double top = getVolY(curPoint.vol);
     double bottom = chartRect.bottom;
@@ -31,39 +44,55 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
           Rect.fromLTRB(curX - r, top, curX + r, bottom),
           chartPaint
             ..color = curPoint.close > curPoint.open
-                ? this.chartColors.upColor
-                : this.chartColors.dnColor);
+                ? chartColors.upColor
+                : chartColors.dnColor);
     }
 
     if (lastPoint.MA5Volume != 0) {
-      drawLine(lastPoint.MA5Volume, curPoint.MA5Volume, canvas, lastX, curX,
-          this.chartColors.ma5Color);
+      drawLine(
+        lastPrice: lastPoint.MA5Volume,
+        curPrice: curPoint.MA5Volume,
+        canvas: canvas,
+        lastX: lastX,
+        curX: curX,
+        color: chartColors.ma5Color,
+      );
     }
 
     if (lastPoint.MA10Volume != 0) {
-      drawLine(lastPoint.MA10Volume, curPoint.MA10Volume, canvas, lastX, curX,
-          this.chartColors.ma10Color);
+      drawLine(
+        lastPrice: lastPoint.MA10Volume,
+        curPrice: curPoint.MA10Volume,
+        canvas: canvas,
+        lastX: lastX,
+        curX: curX,
+        color: chartColors.ma10Color,
+      );
     }
   }
 
   double getVolY(double value) =>
-      (maxValue - value) * (chartRect.height / maxValue) + chartRect.top;
+      (maxYValue - value) * (chartRect.height / maxYValue) + chartRect.top;
 
   @override
-  void drawText(Canvas canvas, VolumeEntity data, double x) {
+  void drawText({
+    required final Canvas canvas,
+    required final VolumeEntity data,
+    required final double x,
+  }) {
     TextSpan span = TextSpan(
       children: [
         TextSpan(
             text: "VOL:${NumberUtil.format(data.vol)}    ",
-            style: getTextStyle(this.chartColors.volColor)),
+            style: getTextStyle(color: chartColors.volColor)),
         if (data.MA5Volume.notNullOrZero)
           TextSpan(
               text: "MA5:${NumberUtil.format(data.MA5Volume!)}    ",
-              style: getTextStyle(this.chartColors.ma5Color)),
+              style: getTextStyle(color: chartColors.ma5Color)),
         if (data.MA10Volume.notNullOrZero)
           TextSpan(
               text: "MA10:${NumberUtil.format(data.MA10Volume!)}    ",
-              style: getTextStyle(this.chartColors.ma10Color)),
+              style: getTextStyle(color: chartColors.ma10Color)),
       ],
     );
     TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
@@ -72,9 +101,13 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
   }
 
   @override
-  void drawRightText(canvas, textStyle, int gridRows) {
+  void drawRightText({
+    required final Canvas canvas,
+    required final textStyle,
+    required final int gridRows,
+  }) {
     TextSpan span =
-        TextSpan(text: "${NumberUtil.format(maxValue)}", style: textStyle);
+        TextSpan(text: "${NumberUtil.format(maxYValue)}", style: textStyle);
     TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
     tp.layout();
     tp.paint(
@@ -82,7 +115,11 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
   }
 
   @override
-  void drawGrid(Canvas canvas, int gridRows, int gridColumns) {
+  void drawGrid({
+    required final Canvas canvas,
+    required final int gridRows,
+    required final int gridColumns,
+  }) {
     canvas.drawLine(Offset(0, chartRect.bottom),
         Offset(chartRect.width, chartRect.bottom), gridPaint);
     double columnSpace = chartRect.width / gridColumns;
