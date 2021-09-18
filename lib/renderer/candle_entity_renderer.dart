@@ -13,16 +13,17 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     required this.state,
     required this.isLine,
     required final int fixedDecimalsLength,
-    required this.chartStyle,
+    required final ChartStyle chartStyle,
     required this.scaleX,
     this.maDayList = const [5, 10, 20],
   }) : super(
-            displayRect: mainRect,
-            maxVerticalValue: maxVerticalValue,
-            minVerticalValue: minVerticalValue,
-            contentTopPadding: contentTopPadding,
-            fixedDecimalsLength: fixedDecimalsLength,
-            gridColor: chartStyle.colors.gridColor) {
+          displayRect: mainRect,
+          maxVerticalValue: maxVerticalValue,
+          minVerticalValue: minVerticalValue,
+          contentTopPadding: contentTopPadding,
+          fixedDecimalsLength: fixedDecimalsLength,
+          chartStyle: chartStyle,
+        ) {
     mLinePaint = Paint()
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke
@@ -45,9 +46,6 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
 
   /// Display candle or lines
   final bool isLine;
-
-  /// Chart style
-  final ChartStyle chartStyle;
 
   /// Draw content area
   late Rect _contentRect;
@@ -301,12 +299,11 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   void drawRightText({
     required final Canvas canvas,
     required final TextStyle textStyle,
-    required final int numberOfRows,
   }) {
-    double rowSpace = displayRect.height / numberOfRows;
-    for (var i = 0; i <= numberOfRows; ++i) {
-      double value =
-          (numberOfRows - i) * rowSpace / verticalScale + minVerticalValue;
+    double rowSpace = displayRect.height / chartStyle.gridRows;
+    for (var i = 0; i <= chartStyle.gridRows; ++i) {
+      double value = (chartStyle.gridRows - i) * rowSpace / verticalScale +
+          minVerticalValue;
       TextSpan span = TextSpan(text: "${format(n: value)}", style: textStyle);
       TextPainter tp =
           TextPainter(text: span, textDirection: TextDirection.ltr);
@@ -323,17 +320,15 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   @override
   void drawGrid({
     required final Canvas canvas,
-    required final int numberOfRows,
-    required final int numberOfColumns,
   }) {
-    double rowSpace = displayRect.height / numberOfRows;
-    for (int i = 0; i <= numberOfRows; i++) {
+    final rowSpace = displayRect.height / chartStyle.gridRows;
+    for (int i = 0; i <= chartStyle.gridRows; i++) {
       canvas.drawLine(
           Offset(0, rowSpace * i + contentTopPadding),
           Offset(displayRect.width, rowSpace * i + contentTopPadding),
           gridPaint);
     }
-    double columnSpace = displayRect.width / numberOfColumns;
+    final columnSpace = displayRect.width / chartStyle.gridColumns;
     for (int i = 0; i <= columnSpace; i++) {
       canvas.drawLine(Offset(columnSpace * i, contentTopPadding / 3),
           Offset(columnSpace * i, displayRect.bottom), gridPaint);

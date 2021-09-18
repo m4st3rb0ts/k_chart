@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_chart/chart_style.dart';
 
 export '../chart_style.dart';
 
@@ -10,7 +11,7 @@ abstract class BaseChartRenderer<T> {
     required final double minVerticalValue,
     required this.contentTopPadding,
     required this.fixedDecimalsLength,
-    required Color gridColor,
+    required this.chartStyle,
   })  : chartPaint = Paint()
           ..isAntiAlias = true
           ..filterQuality = FilterQuality.high
@@ -20,7 +21,7 @@ abstract class BaseChartRenderer<T> {
           ..isAntiAlias = true
           ..filterQuality = FilterQuality.high
           ..strokeWidth = 0.5
-          ..color = gridColor,
+          ..color = chartStyle.colors.gridColor,
         maxVerticalValue = maxVerticalValue,
         minVerticalValue = minVerticalValue {
     if (maxVerticalValue == minVerticalValue) {
@@ -54,6 +55,9 @@ abstract class BaseChartRenderer<T> {
   /// Custom paint for the grid
   final Paint gridPaint;
 
+  /// Defined style of chart
+  final ChartStyle chartStyle;
+
   /// Gets the vertical position in the chart given a y value
   /// @value the value for computing the y position
   double getVerticalPositionForPoint({required final double value}) =>
@@ -75,8 +79,6 @@ abstract class BaseChartRenderer<T> {
   /// @gridColumns number of columns
   void drawGrid({
     required final Canvas canvas,
-    required int numberOfRows,
-    required int numberOfColumns,
   });
 
   /// Draws a text at the top of the chart
@@ -96,7 +98,6 @@ abstract class BaseChartRenderer<T> {
   void drawRightText({
     required final Canvas canvas,
     required final TextStyle textStyle,
-    required int numberOfRows,
   });
 
   /// Draws the chart

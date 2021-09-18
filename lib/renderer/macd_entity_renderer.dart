@@ -14,18 +14,17 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
     required final double contentTopPadding,
     required this.state,
     required final int fixedDecimalsLength,
-    required this.chartStyle,
+    required final ChartStyle chartStyle,
   }) : super(
           displayRect: displayRect,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
           contentTopPadding: contentTopPadding,
           fixedDecimalsLength: fixedDecimalsLength,
-          gridColor: chartStyle.colors.gridColor,
+          chartStyle: chartStyle,
         );
 
   final SecondaryState state;
-  final ChartStyle chartStyle;
 
   @override
   void drawChart({
@@ -273,7 +272,6 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
   void drawRightText({
     required final Canvas canvas,
     required final TextStyle textStyle,
-    required final int numberOfRows,
   }) {
     final TextPainter maxTp = TextPainter(
       text: TextSpan(
@@ -311,8 +309,6 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
   @override
   void drawGrid({
     required final Canvas canvas,
-    required final int numberOfRows,
-    required final int numberOfColumns,
   }) {
     canvas.drawLine(
       Offset(0, displayRect.top),
@@ -324,7 +320,7 @@ class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
       Offset(displayRect.width, displayRect.bottom),
       gridPaint,
     );
-    final columnSpace = displayRect.width / numberOfColumns;
+    final columnSpace = displayRect.width / chartStyle.gridColumns;
     for (var i = 0; i <= columnSpace; i++) {
       canvas.drawLine(
           Offset(columnSpace * i, displayRect.top - contentTopPadding),

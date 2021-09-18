@@ -12,17 +12,15 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
     required final double minVerticalValue,
     required final double contentTopPadding,
     required final int fixedDecimalsLength,
-    required this.chartStyle,
+    required final ChartStyle chartStyle,
   }) : super(
           displayRect: displayRect,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
           contentTopPadding: contentTopPadding,
           fixedDecimalsLength: fixedDecimalsLength,
-          gridColor: chartStyle.colors.gridColor,
+          chartStyle: chartStyle,
         );
-
-  final ChartStyle chartStyle;
 
   @override
   void drawChart({
@@ -120,7 +118,6 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
   void drawRightText({
     required final Canvas canvas,
     required final TextStyle textStyle,
-    required final int numberOfRows,
   }) {
     final TextSpan span = TextSpan(
       text: "${NumberUtil.format(maxVerticalValue)}",
@@ -143,15 +140,13 @@ class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {
   @override
   void drawGrid({
     required final Canvas canvas,
-    required final int numberOfRows,
-    required final int numberOfColumns,
   }) {
     canvas.drawLine(
       Offset(0, displayRect.bottom),
       Offset(displayRect.width, displayRect.bottom),
       gridPaint,
     );
-    final columnSpace = displayRect.width / numberOfColumns;
+    final columnSpace = displayRect.width / chartStyle.gridColumns;
     for (var i = 0; i <= columnSpace; i++) {
       canvas.drawLine(
           Offset(columnSpace * i, displayRect.top - contentTopPadding),

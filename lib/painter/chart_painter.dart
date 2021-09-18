@@ -154,18 +154,9 @@ class ChartPainter extends BaseChartPainter {
   @override
   void drawGrid(canvas) {
     if (!hideGrid) {
-      mMainRenderer.drawGrid(
-          canvas: canvas,
-          numberOfRows: mGridRows,
-          numberOfColumns: mGridColumns);
-      mVolRenderer?.drawGrid(
-          canvas: canvas,
-          numberOfRows: mGridRows,
-          numberOfColumns: mGridColumns);
-      mSecondaryRenderer?.drawGrid(
-          canvas: canvas,
-          numberOfRows: mGridRows,
-          numberOfColumns: mGridColumns);
+      mMainRenderer.drawGrid(canvas: canvas);
+      mVolRenderer?.drawGrid(canvas: canvas);
+      mSecondaryRenderer?.drawGrid(canvas: canvas);
     }
   }
 
@@ -208,13 +199,10 @@ class ChartPainter extends BaseChartPainter {
   void drawRightText(canvas) {
     var textStyle = getTextStyle(chartStyle.colors.defaultTextColor);
     if (!hideGrid) {
-      mMainRenderer.drawRightText(
-          canvas: canvas, textStyle: textStyle, numberOfRows: mGridRows);
+      mMainRenderer.drawRightText(canvas: canvas, textStyle: textStyle);
     }
-    mVolRenderer?.drawRightText(
-        canvas: canvas, textStyle: textStyle, numberOfRows: mGridRows);
-    mSecondaryRenderer?.drawRightText(
-        canvas: canvas, textStyle: textStyle, numberOfRows: mGridRows);
+    mVolRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
+    mSecondaryRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
   }
 
   @override
