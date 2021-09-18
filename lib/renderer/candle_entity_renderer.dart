@@ -30,10 +30,11 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
       ..strokeWidth = mLineStrokeWidth
       ..color = chartStyle.colors.kLineColor;
     _contentRect = Rect.fromLTRB(
-        displayRect.left,
-        displayRect.top + _contentPadding,
-        displayRect.right,
-        displayRect.bottom - _contentPadding);
+      displayRect.left,
+      displayRect.top + _contentPadding,
+      displayRect.right,
+      displayRect.bottom - _contentPadding,
+    );
     if (maxVerticalValue == minVerticalValue) {
       maxVerticalValue *= 1.5;
       minVerticalValue /= 2;

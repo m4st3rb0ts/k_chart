@@ -88,7 +88,7 @@ class ChartPainter extends BaseChartPainter {
       maxVerticalValue: mMainMaxValue,
       minVerticalValue: mMainMinValue,
       contentTopPadding: mTopPadding,
-      state: mainState,
+      indicator: mainState,
       isLine: isLine,
       fixedDecimalsLength: fixedLength,
       chartStyle: chartStyle,
