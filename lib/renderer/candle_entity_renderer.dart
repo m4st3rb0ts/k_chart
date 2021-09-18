@@ -296,7 +296,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     var open = getVerticalPositionForPoint(value: candle.data.open);
     final close = getVerticalPositionForPoint(value: candle.data.close);
     final candleMidWidth = chartStyle.candleWidth * 0.5;
-    final lineR = chartStyle.candleLineWidth * 0.5;
+    final candleLineMidWidth = chartStyle.candleLineWidth * 0.5;
 
     if (open >= close) {
       // 实体高度>= CandleLineWidth
@@ -306,11 +306,20 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
       chartPaint.color = chartStyle.colors.upColor;
       canvas.drawRect(
         Rect.fromLTRB(
-            candle.x - candleMidWidth, close, candle.x + candleMidWidth, open),
+          candle.x - candleMidWidth,
+          close,
+          candle.x + candleMidWidth,
+          open,
+        ),
         chartPaint,
       );
       canvas.drawRect(
-        Rect.fromLTRB(candle.x - lineR, high, candle.x + lineR, low),
+        Rect.fromLTRB(
+          candle.x - candleLineMidWidth,
+          high,
+          candle.x + candleLineMidWidth,
+          low,
+        ),
         chartPaint,
       );
     } else if (close > open) {
@@ -320,11 +329,20 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
       chartPaint.color = chartStyle.colors.dnColor;
       canvas.drawRect(
         Rect.fromLTRB(
-            candle.x - candleMidWidth, open, candle.x + candleMidWidth, close),
+          candle.x - candleMidWidth,
+          open,
+          candle.x + candleMidWidth,
+          close,
+        ),
         chartPaint,
       );
       canvas.drawRect(
-        Rect.fromLTRB(candle.x - lineR, high, candle.x + lineR, low),
+        Rect.fromLTRB(
+          candle.x - candleLineMidWidth,
+          high,
+          candle.x + candleLineMidWidth,
+          low,
+        ),
         chartPaint,
       );
     }
