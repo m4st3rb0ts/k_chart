@@ -21,22 +21,44 @@ abstract class BaseChartPainter extends CustomPainter {
     this.displayTimeLineChart = false,
     this.horizontalScale = 1.0,
     this.currentHorizontalScroll = 0.0,
-    this.isLongPress = false,
-    required this.selectX,
+    this.shouldDisplaySelection = false,
+    required this.selectedHorizontalValue,
   }) {
     _initDateFormats();
   }
 
+  /// Data to display in the graph
   final List<KLineEntity> dataSource;
+
+  /// Graph data
   final ChartStyle chartStyle;
+
+  /// First indicator to display in candles
   final PrimaryIndicator primaryIndicator;
+
+  /// Second indicator to display in another graph
   final SecondaryIndicator secondaryIndicator;
+
+  /// Should display volume?
   final bool hideVolumeChart;
+
+  /// Should display line chart instead candles?
   final bool displayTimeLineChart;
+
+  /// Time format for display dates
   List<String> displayDateFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
+
+  /// current scale
   final double horizontalScale;
+
+  // current position in the graph
   final double currentHorizontalScroll;
-  final bool isLongPress;
+
+  // If want to display data from a selected point
+  final bool shouldDisplaySelection;
+
+  // selected horizontal value in this case the dates
+  final double selectedHorizontalValue;
 
   double get maxHorizontalScrollWidth {
     final dataWidth = -dataSource.length * chartStyle.pointWidth +
@@ -49,8 +71,6 @@ abstract class BaseChartPainter extends CustomPainter {
   late Rect candleGraphRect;
   Rect? volumeGraphRect;
   Rect? thirdGraphRect;
-
-  double selectX;
 
   late double mWidth;
   int mStartIndex = 0;
@@ -118,7 +138,7 @@ abstract class BaseChartPainter extends CustomPainter {
       drawMaxAndMin(canvas: canvas);
       drawNowPrice(canvas: canvas);
 
-      if (isLongPress) {
+      if (shouldDisplaySelection) {
         drawCrossLine(canvas: canvas, size: size);
         drawCrossLineText(canvas: canvas, size: size);
       }

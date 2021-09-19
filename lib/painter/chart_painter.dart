@@ -37,8 +37,8 @@ class ChartPainter extends BaseChartPainter {
           dataSource: datas,
           horizontalScale: scaleX,
           currentHorizontalScroll: scrollX,
-          isLongPress: isLongPass,
-          selectX: selectX,
+          shouldDisplaySelection: isLongPass,
+          selectedHorizontalValue: selectX,
           primaryIndicator: mainState,
           hideVolumeChart: volHidden,
           secondaryIndicator: secondaryState,
@@ -241,7 +241,7 @@ class ChartPainter extends BaseChartPainter {
   @override
   void drawCrossLineText(
       {required final Canvas canvas, required final Size size}) {
-    var index = calculateSelectedX(selectX: selectX);
+    var index = calculateSelectedX(selectX: selectedHorizontalValue);
     KLineEntity? point = getItem(position: index);
     if (point == null) {
       return;
@@ -321,8 +321,8 @@ class ChartPainter extends BaseChartPainter {
   }) {
     //长按显示按中的数据
     KLineEntity? customData = data;
-    if (isLongPress) {
-      var index = calculateSelectedX(selectX: selectX);
+    if (shouldDisplaySelection) {
+      var index = calculateSelectedX(selectX: selectedHorizontalValue);
       customData = getItem(position: index);
       if (customData == null) {
         //TODO: Review if return or assign to data
@@ -411,7 +411,7 @@ class ChartPainter extends BaseChartPainter {
 
   ///画交叉线
   void drawCrossLine({required final Canvas canvas, required final Size size}) {
-    var index = calculateSelectedX(selectX: selectX);
+    var index = calculateSelectedX(selectX: selectedHorizontalValue);
     final point = getItem(position: index);
     if (point == null) {
       return;
