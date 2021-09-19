@@ -162,7 +162,7 @@ abstract class BaseChartPainter extends CustomPainter {
     if (dataSource.isEmpty) {
       return;
     }
-    final maxScrollX = getMinTranslateX().abs();
+    maxScrollX = getMinTranslateX().abs();
     setTranslateXFromScrollX(scrollX: currentHorizontalScroll);
     mStartIndex = indexOfTranslateX(translateX: xToTranslateX(x: 0));
     mStopIndex = indexOfTranslateX(translateX: xToTranslateX(x: mWidth));
