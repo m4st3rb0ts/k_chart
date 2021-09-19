@@ -19,9 +19,9 @@ abstract class BaseChartPainter extends CustomPainter {
     this.secondaryIndicator = SecondaryIndicator.MACD,
     this.hideVolumeChart = false,
     this.displayTimeLineChart = false,
-    required this.scaleX,
-    required this.scrollX,
-    required this.isLongPress,
+    this.horizontalScale = 1.0,
+    this.currentHorizontalScroll = 0.0,
+    this.isLongPress = false,
     required this.selectX,
   }) {
     _initDateFormats();
@@ -34,13 +34,13 @@ abstract class BaseChartPainter extends CustomPainter {
   final bool hideVolumeChart;
   final bool displayTimeLineChart;
   List<String> displayDateFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
+  final double horizontalScale;
+  final double currentHorizontalScroll;
+  final bool isLongPress;
 
   //TOREVIEW GOING DOWN
   static double maxScrollX = 0.0;
-  double scaleX = 1.0;
-  double scrollX = 0.0;
   double selectX;
-  bool isLongPress = false;
 
   //3块区域大小与位置
   late Rect mMainRect;
@@ -114,7 +114,7 @@ abstract class BaseChartPainter extends CustomPainter {
       drawMaxAndMin(canvas: canvas);
       drawNowPrice(canvas: canvas);
 
-      if (isLongPress == true) {
+      if (isLongPress) {
         drawCrossLine(canvas: canvas, size: size);
         drawCrossLineText(canvas: canvas, size: size);
       }
@@ -162,8 +162,8 @@ abstract class BaseChartPainter extends CustomPainter {
     if (dataSource.isEmpty) {
       return;
     }
-    maxScrollX = getMinTranslateX().abs();
-    setTranslateXFromScrollX(scrollX: scrollX);
+    final maxScrollX = getMinTranslateX().abs();
+    setTranslateXFromScrollX(scrollX: currentHorizontalScroll);
     mStartIndex = indexOfTranslateX(translateX: xToTranslateX(x: 0));
     mStopIndex = indexOfTranslateX(translateX: xToTranslateX(x: mWidth));
     for (int i = mStartIndex; i <= mStopIndex; i++) {
@@ -262,7 +262,8 @@ abstract class BaseChartPainter extends CustomPainter {
     }
   }
 
-  double xToTranslateX({required final double x}) => -mTranslateX + x / scaleX;
+  double xToTranslateX({required final double x}) =>
+      -mTranslateX + x / horizontalScale;
 
   int indexOfTranslateX({required final double translateX}) =>
       _indexOfTranslateX(
@@ -315,7 +316,7 @@ abstract class BaseChartPainter extends CustomPainter {
   ///获取平移的最小值
   double getMinTranslateX() {
     var x = -dataSource.length * chartStyle.pointWidth +
-        mWidth / scaleX -
+        mWidth / horizontalScale -
         chartStyle.pointWidth * 0.5;
     return x >= 0 ? 0.0 : x;
   }
@@ -335,7 +336,7 @@ abstract class BaseChartPainter extends CustomPainter {
 
   ///translateX转化为view中的x
   double translateXtoX({required final double translateX}) =>
-      (translateX + mTranslateX) * scaleX;
+      (translateX + mTranslateX) * horizontalScale;
 
   TextStyle getTextStyle({required final Color color}) =>
       TextStyle(fontSize: 10.0, color: color);

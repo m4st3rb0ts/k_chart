@@ -35,8 +35,8 @@ class ChartPainter extends BaseChartPainter {
         super(
           chartStyle: chartStyle,
           dataSource: datas,
-          scaleX: scaleX,
-          scrollX: scrollX,
+          horizontalScale: scaleX,
+          currentHorizontalScroll: scrollX,
           isLongPress: isLongPass,
           selectX: selectX,
           primaryIndicator: mainState,
@@ -91,7 +91,7 @@ class ChartPainter extends BaseChartPainter {
       isTimeLineMode: displayTimeLineChart,
       fixedDecimalsLength: fixedLength,
       chartStyle: chartStyle,
-      timelineHorizontalScale: scaleX,
+      timelineHorizontalScale: horizontalScale,
       maFactorsForTitles: maDayList,
     );
 
@@ -164,8 +164,8 @@ class ChartPainter extends BaseChartPainter {
   @override
   void drawChart({required final Canvas canvas, required final Size size}) {
     canvas.save();
-    canvas.translate(mTranslateX * scaleX, 0.0);
-    canvas.scale(scaleX, 1.0);
+    canvas.translate(mTranslateX * horizontalScale, 0.0);
+    canvas.scale(horizontalScale, 1.0);
     for (int i = mStartIndex; i <= mStopIndex; i++) {
       final curPoint = dataSource[i];
       KLineEntity lastPoint = i == 0 ? curPoint : dataSource[i - 1];
@@ -389,7 +389,7 @@ class ChartPainter extends BaseChartPainter {
           : chartStyle.colors.nowPriceDnColor;
     //先画横线
     double startX = 0;
-    final max = -mTranslateX + mWidth / scaleX;
+    final max = -mTranslateX + mWidth / horizontalScale;
     final space = chartStyle.nowPriceLineSpan + chartStyle.nowPriceLineLength;
     while (startX < max) {
       canvas.drawLine(Offset(startX, y),
@@ -429,16 +429,16 @@ class ChartPainter extends BaseChartPainter {
       ..isAntiAlias = true;
     // k线图横线
     canvas.drawLine(Offset(-mTranslateX, y),
-        Offset(-mTranslateX + mWidth / scaleX, y), paintX);
-    if (scaleX >= 1) {
+        Offset(-mTranslateX + mWidth / horizontalScale, y), paintX);
+    if (horizontalScale >= 1) {
       canvas.drawOval(
           Rect.fromCenter(
-              center: Offset(x, y), height: 2.0 * scaleX, width: 2.0),
+              center: Offset(x, y), height: 2.0 * horizontalScale, width: 2.0),
           paintX);
     } else {
       canvas.drawOval(
           Rect.fromCenter(
-              center: Offset(x, y), height: 2.0, width: 2.0 / scaleX),
+              center: Offset(x, y), height: 2.0, width: 2.0 / horizontalScale),
           paintX);
     }
   }
