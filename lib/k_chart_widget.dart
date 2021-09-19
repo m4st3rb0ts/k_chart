@@ -158,13 +158,13 @@ class _KChartWidgetState extends State<KChartWidget>
           onHorizontalDragUpdate: (details) {
             if (isScale || isLongPress) return;
             mScrollX = (details.primaryDelta! / mScaleX + mScrollX)
-                .clamp(0.0, ChartPainter.maxScrollX)
+                .clamp(0.0, _painter.maxHorizontalScrollWidth)
                 .toDouble();
             notifyChanged();
           },
           onHorizontalDragEnd: (DragEndDetails details) {
             var velocity = details.velocity.pixelsPerSecond.dx;
-            _onFling(velocity);
+            _onFling(velocity, _painter.maxHorizontalScrollWidth);
           },
           onHorizontalDragCancel: () => _onDragChanged(false),
           onScaleStart: (_) {
@@ -228,7 +228,7 @@ class _KChartWidgetState extends State<KChartWidget>
     }
   }
 
-  void _onFling(double x) {
+  void _onFling(double x, final double maxScrollX) {
     _controller = AnimationController(
         duration: Duration(milliseconds: widget.flingTime), vsync: this);
     aniX = null;
@@ -243,8 +243,8 @@ class _KChartWidgetState extends State<KChartWidget>
           widget.onLoadMore!(true);
         }
         _stopAnimation();
-      } else if (mScrollX >= ChartPainter.maxScrollX) {
-        mScrollX = ChartPainter.maxScrollX;
+      } else if (mScrollX >= maxScrollX) {
+        mScrollX = maxScrollX;
         if (widget.onLoadMore != null) {
           widget.onLoadMore!(false);
         }

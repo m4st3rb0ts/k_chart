@@ -38,14 +38,19 @@ abstract class BaseChartPainter extends CustomPainter {
   final double currentHorizontalScroll;
   final bool isLongPress;
 
-  //TOREVIEW GOING DOWN
-  static double maxScrollX = 0.0;
-  double selectX;
+  double get maxHorizontalScrollWidth {
+    final dataWidth = -dataSource.length * chartStyle.pointWidth +
+        mWidth / horizontalScale -
+        chartStyle.pointWidth * 0.5;
+    return dataWidth >= 0 ? 0.0 : dataWidth.abs();
+  }
 
-  //3块区域大小与位置
-  late Rect mMainRect;
-  Rect? mVolRect;
-  Rect? mSecondaryRect;
+  //TOREVIEW GOING DOWN
+  late Rect candleGraphRect;
+  Rect? volumeGraphRect;
+  Rect? thirdGraphRect;
+
+  double selectX;
 
   late double mDisplayHeight;
   late double mWidth;
@@ -132,7 +137,7 @@ abstract class BaseChartPainter extends CustomPainter {
     mainHeight -= volHeight;
     mainHeight -= secondaryHeight;
 
-    mMainRect = Rect.fromLTRB(
+    candleGraphRect = Rect.fromLTRB(
       0,
       chartStyle.topPadding,
       mWidth,
@@ -140,20 +145,20 @@ abstract class BaseChartPainter extends CustomPainter {
     );
 
     if (hideVolumeChart != true) {
-      mVolRect = Rect.fromLTRB(
+      volumeGraphRect = Rect.fromLTRB(
         0,
-        mMainRect.bottom + chartStyle.childPadding,
+        candleGraphRect.bottom + chartStyle.childPadding,
         mWidth,
-        mMainRect.bottom + volHeight,
+        candleGraphRect.bottom + volHeight,
       );
     }
 
     if (secondaryIndicator != SecondaryIndicator.NONE) {
-      mSecondaryRect = Rect.fromLTRB(
+      thirdGraphRect = Rect.fromLTRB(
         0,
-        mMainRect.bottom + volHeight + chartStyle.childPadding,
+        candleGraphRect.bottom + volHeight + chartStyle.childPadding,
         mWidth,
-        mMainRect.bottom + volHeight + secondaryHeight,
+        candleGraphRect.bottom + volHeight + secondaryHeight,
       );
     }
   }
@@ -162,7 +167,7 @@ abstract class BaseChartPainter extends CustomPainter {
     if (dataSource.isEmpty) {
       return;
     }
-    maxScrollX = getMinTranslateX().abs();
+
     setTranslateXFromScrollX(scrollX: currentHorizontalScroll);
     mStartIndex = indexOfTranslateX(translateX: xToTranslateX(x: 0));
     mStopIndex = indexOfTranslateX(translateX: xToTranslateX(x: mWidth));
@@ -311,15 +316,7 @@ abstract class BaseChartPainter extends CustomPainter {
 
   ///scrollX 转换为 TranslateX
   void setTranslateXFromScrollX({required final double scrollX}) =>
-      mTranslateX = scrollX + getMinTranslateX();
-
-  ///获取平移的最小值
-  double getMinTranslateX() {
-    var x = -dataSource.length * chartStyle.pointWidth +
-        mWidth / horizontalScale -
-        chartStyle.pointWidth * 0.5;
-    return x >= 0 ? 0.0 : x;
-  }
+      mTranslateX = scrollX - maxHorizontalScrollWidth;
 
   ///计算长按后x的值，转换为index
   int calculateSelectedX({required final double selectX}) {
