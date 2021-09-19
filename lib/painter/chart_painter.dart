@@ -34,7 +34,7 @@ class ChartPainter extends BaseChartPainter {
   })  : assert(bgColor == null || bgColor.length >= 2),
         super(
           chartStyle: chartStyle,
-          datas: datas,
+          dataSource: datas,
           scaleX: scaleX,
           scrollX: scrollX,
           isLongPress: isLongPass,
@@ -77,8 +77,8 @@ class ChartPainter extends BaseChartPainter {
 
   @override
   void initChartRenderer() {
-    if (datas != null && datas!.isNotEmpty) {
-      var t = datas![0];
+    if (dataSource.isNotEmpty) {
+      final t = dataSource.first;
       fixedLength =
           NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
     }
@@ -166,10 +166,9 @@ class ChartPainter extends BaseChartPainter {
     canvas.save();
     canvas.translate(mTranslateX * scaleX, 0.0);
     canvas.scale(scaleX, 1.0);
-    for (int i = mStartIndex; datas != null && i <= mStopIndex; i++) {
-      KLineEntity? curPoint = datas?[i];
-      if (curPoint == null) continue;
-      KLineEntity lastPoint = i == 0 ? curPoint : datas![i - 1];
+    for (int i = mStartIndex; i <= mStopIndex; i++) {
+      final curPoint = dataSource[i];
+      KLineEntity lastPoint = i == 0 ? curPoint : dataSource[i - 1];
       double curX = getX(position: i);
       double lastX = i == 0 ? curX : getX(position: i - 1);
 
@@ -208,8 +207,6 @@ class ChartPainter extends BaseChartPainter {
 
   @override
   void drawDate({required final Canvas canvas, required final Size size}) {
-    if (datas == null) return;
-
     double columnSpace = size.width / chartStyle.numberOfGridColumns;
     double startX = getX(position: mStartIndex) - chartStyle.pointWidth * 0.5;
     double stopX = getX(position: mStopIndex) + chartStyle.pointWidth * 0.5;
@@ -221,8 +218,11 @@ class ChartPainter extends BaseChartPainter {
       if (translateX >= startX && translateX <= stopX) {
         int index = indexOfTranslateX(translateX: translateX);
 
-        if (datas?[index] == null) continue;
-        TextPainter tp = getTextPainter(getDate(datas![index].time), null);
+        final item = getItem(position: index);
+        if (item == null) {
+          return;
+        }
+        TextPainter tp = getTextPainter(getDate(item.time), null);
         y = size.height -
             (chartStyle.bottomPadding - tp.height) / 2 -
             tp.height;
@@ -239,7 +239,10 @@ class ChartPainter extends BaseChartPainter {
   void drawCrossLineText(
       {required final Canvas canvas, required final Size size}) {
     var index = calculateSelectedX(selectX: selectX);
-    KLineEntity point = getItem(position: index);
+    KLineEntity? point = getItem(position: index);
+    if (point == null) {
+      return;
+    }
 
     TextPainter tp =
         getTextPainter(point.close, chartStyle.colors.crossTextColor);
@@ -314,10 +317,14 @@ class ChartPainter extends BaseChartPainter {
     required final double x,
   }) {
     //长按显示按中的数据
-    var customData = data;
+    KLineEntity? customData = data;
     if (isLongPress) {
       var index = calculateSelectedX(selectX: selectX);
       customData = getItem(position: index);
+      if (customData == null) {
+        //TODO: Review if return or assign to data
+        return;
+      }
     }
     //松开显示最后一条数据
     mMainRenderer.drawText(canvas: canvas, value: customData, leftOffset: x);
@@ -366,18 +373,18 @@ class ChartPainter extends BaseChartPainter {
       return;
     }
 
-    if (datas == null) {
+    if (dataSource.isEmpty) {
       return;
     }
 
-    double value = datas!.last.close;
+    double value = dataSource.last.close;
     double y = getMainY(value);
     //不在视图展示区域不绘制
     if (y > getMainY(mMainLowMinValue) || y < getMainY(mMainHighMaxValue)) {
       return;
     }
     nowPricePaint
-      ..color = value >= datas!.last.open
+      ..color = value >= dataSource.last.open
           ? chartStyle.colors.nowPriceUpColor
           : chartStyle.colors.nowPriceDnColor;
     //先画横线
@@ -402,7 +409,10 @@ class ChartPainter extends BaseChartPainter {
   ///画交叉线
   void drawCrossLine({required final Canvas canvas, required final Size size}) {
     var index = calculateSelectedX(selectX: selectX);
-    KLineEntity point = getItem(position: index);
+    final point = getItem(position: index);
+    if (point == null) {
+      return;
+    }
     Paint paintY = Paint()
       ..color = chartStyle.colors.vCrossColor
       ..strokeWidth = chartStyle.vCrossWidth

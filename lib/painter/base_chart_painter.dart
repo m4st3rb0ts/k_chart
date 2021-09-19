@@ -14,7 +14,7 @@ export 'package:flutter/material.dart'
 abstract class BaseChartPainter extends CustomPainter {
   BaseChartPainter({
     required this.chartStyle,
-    this.datas,
+    required this.dataSource,
     required this.scaleX,
     required this.scrollX,
     required this.isLongPress,
@@ -24,13 +24,11 @@ abstract class BaseChartPainter extends CustomPainter {
     this.secondaryIndicator = SecondaryIndicator.MACD,
     this.isLine = false,
   }) {
-    mItemCount = datas?.length ?? 0;
-    mDataLen = mItemCount * chartStyle.pointWidth;
     initFormats();
   }
 
   static double maxScrollX = 0.0;
-  List<KLineEntity>? datas;
+  final List<KLineEntity> dataSource;
   final ChartStyle chartStyle;
 
   PrimaryIndicator primaryIndicator;
@@ -62,8 +60,9 @@ abstract class BaseChartPainter extends CustomPainter {
   int mMainMinIndex = 0;
   double mMainHighMaxValue = double.minPositive;
   double mMainLowMinValue = double.maxFinite;
-  int mItemCount = 0;
-  double mDataLen = 0.0; //数据占屏幕总长度
+
+  //Data occupies the total length of the screen
+  double get dataLen => dataSource.length * chartStyle.pointWidth;
 
   List<String> mFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]; //格式化时间
 
@@ -73,13 +72,13 @@ abstract class BaseChartPainter extends CustomPainter {
       return;
     }
 
-    if (mItemCount < 2) {
+    if (dataSource.length < 2) {
       mFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
       return;
     }
 
-    int firstTime = datas!.first.time ?? 0;
-    int secondTime = datas![1].time ?? 0;
+    int firstTime = dataSource.first.time ?? 0;
+    int secondTime = dataSource[1].time ?? 0;
     int time = secondTime - firstTime;
     time ~/= 1000;
     //月线
@@ -107,12 +106,12 @@ abstract class BaseChartPainter extends CustomPainter {
     canvas.scale(1, 1);
     drawBackground(canvas: canvas, size: size);
     drawGrid(canvas: canvas);
-    if (datas != null && datas!.isNotEmpty) {
+    if (dataSource.isNotEmpty) {
       drawChart(canvas: canvas, size: size);
       drawRightText(canvas: canvas);
       drawDate(canvas: canvas, size: size);
 
-      drawText(canvas: canvas, data: datas!.last, x: 5);
+      drawText(canvas: canvas, data: dataSource.last, x: 5);
       drawMaxAndMin(canvas: canvas);
       drawNowPrice(canvas: canvas);
 
@@ -211,14 +210,15 @@ abstract class BaseChartPainter extends CustomPainter {
   }
 
   void calculateValue() {
-    if (datas == null) return;
-    if (datas!.isEmpty) return;
+    if (dataSource.isEmpty) {
+      return;
+    }
     maxScrollX = getMinTranslateX().abs();
     setTranslateXFromScrollX(scrollX: scrollX);
     mStartIndex = indexOfTranslateX(translateX: xToTranslateX(x: 0));
     mStopIndex = indexOfTranslateX(translateX: xToTranslateX(x: mWidth));
     for (int i = mStartIndex; i <= mStopIndex; i++) {
-      var item = datas![i];
+      var item = dataSource[i];
       getMainMaxMinValue(item: item, i: i);
       getVolMaxMinValue(item: item);
       getSecondaryMaxMinValue(item: item);
@@ -316,7 +316,8 @@ abstract class BaseChartPainter extends CustomPainter {
   double xToTranslateX({required final double x}) => -mTranslateX + x / scaleX;
 
   int indexOfTranslateX({required final double translateX}) =>
-      _indexOfTranslateX(translateX: translateX, start: 0, end: mItemCount - 1);
+      _indexOfTranslateX(
+          translateX: translateX, start: 0, end: dataSource.length - 1);
 
   ///二分查找当前值的index
   int _indexOfTranslateX(
@@ -350,13 +351,12 @@ abstract class BaseChartPainter extends CustomPainter {
   double getX({required final int position}) =>
       position * chartStyle.pointWidth + chartStyle.pointWidth * 0.5;
 
-  KLineEntity getItem({required final int position}) {
-    return datas![position];
-    // if (datas != null) {
-    //   return datas[position];
-    // } else {
-    //   return null;
-    // }
+  KLineEntity? getItem({required final int position}) {
+    if (position >= 0 && position < dataSource.length) {
+      return dataSource[position];
+    } else {
+      return null;
+    }
   }
 
   ///scrollX 转换为 TranslateX
@@ -365,7 +365,7 @@ abstract class BaseChartPainter extends CustomPainter {
 
   ///获取平移的最小值
   double getMinTranslateX() {
-    var x = -mDataLen + mWidth / scaleX - chartStyle.pointWidth * 0.5;
+    var x = -dataSource.length + mWidth / scaleX - chartStyle.pointWidth * 0.5;
     return x >= 0 ? 0.0 : x;
   }
 
