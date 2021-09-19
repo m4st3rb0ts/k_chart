@@ -92,7 +92,6 @@ abstract class BaseChartPainter extends CustomPainter {
   double mMainLowMinValue = double.maxFinite;
 
   // Init data format
-  // [x] Reviewed
   void _initDateFormats() {
     if (chartStyle.dateTimeFormat != null) {
       displayDateFormats = chartStyle.dateTimeFormat!;
@@ -196,8 +195,10 @@ abstract class BaseChartPainter extends CustomPainter {
     }
 
     setTranslateXFromScrollX(scrollX: currentHorizontalScroll, size: size);
-    mStartIndex = indexOfTranslateX(translateX: xToTranslateX(x: 0));
-    mStopIndex = indexOfTranslateX(translateX: xToTranslateX(x: size.width));
+    mStartIndex = dataIndexInViewportFor(
+        leftOffset: translateToCurrentViewport(leftOffset: 0));
+    mStopIndex = dataIndexInViewportFor(
+        leftOffset: translateToCurrentViewport(leftOffset: size.width));
     for (int i = mStartIndex; i <= mStopIndex; i++) {
       var item = dataSource[i];
       getMainMaxMinValue(item: item, i: i);
@@ -213,8 +214,8 @@ abstract class BaseChartPainter extends CustomPainter {
       maxPrice = max(item.high, _findMaxMA(a: item.maValueList ?? [0]));
       minPrice = min(item.low, _findMinMA(a: item.maValueList ?? [0]));
     } else if (primaryIndicator == PrimaryIndicator.BOLL) {
-      maxPrice = max(item.up ?? 0, item.high);
-      minPrice = min(item.dn ?? 0, item.low);
+      maxPrice = max(item.top ?? 0, item.high);
+      minPrice = min(item.bottom ?? 0, item.low);
     } else {
       maxPrice = item.high;
       minPrice = item.low;
@@ -298,53 +299,51 @@ abstract class BaseChartPainter extends CustomPainter {
     }
   }
 
-  // [] Reviewed
-  double xToTranslateX({required final double x}) =>
-      -mTranslateX + x / horizontalScale;
+  /// Translate a leftOffset position to the current viewport
+  double translateToCurrentViewport({required final double leftOffset}) =>
+      -mTranslateX + leftOffset / horizontalScale;
 
-  // [] Reviewed
-  int indexOfTranslateX({required final double translateX}) =>
-      _indexOfTranslateX(
-          translateX: translateX, start: 0, end: dataSource.length - 1);
+  /// Binary search of the current data index for the current viewport for a giving leftOffset
+  int dataIndexInViewportFor({required final double leftOffset}) {
+    final start = 0;
+    final end = dataSource.length - 1;
 
-  // [] Reviewed
-  ///二分查找当前值的index
-  int _indexOfTranslateX(
-      {required final double translateX,
-      required final int start,
-      required final int end}) {
     if (end == start || end == -1) {
       return start;
     }
     if (end - start == 1) {
-      double startValue = getX(position: start);
-      double endValue = getX(position: end);
-      return (translateX - startValue).abs() < (translateX - endValue).abs()
+      final startValue = getLeftOffsetByIndex(index: start);
+      final endValue = getLeftOffsetByIndex(index: end);
+      return (leftOffset - startValue).abs() < (leftOffset - endValue).abs()
           ? start
           : end;
     }
-    int mid = start + (end - start) ~/ 2;
-    double midValue = getX(position: mid);
-    if (translateX < midValue) {
-      return _indexOfTranslateX(translateX: translateX, start: start, end: mid);
-    } else if (translateX > midValue) {
-      return _indexOfTranslateX(translateX: translateX, start: mid, end: end);
-    } else {
-      return mid;
+
+    var _end = end;
+    int mid = 0;
+    for (var _start = start; _start < _end; _start++) {
+      mid = (_start + (_end - _start) * 0.5).floor();
+      final midValue = getLeftOffsetByIndex(index: mid);
+      if (leftOffset < midValue) {
+        _end = mid;
+      } else if (leftOffset > midValue) {
+        _start = mid;
+      } else {
+        break;
+      }
     }
+    return mid;
   }
 
-  ///根据索引索取x坐标
-  ///+ mPointWidth / 2防止第一根和最后一根k线显示不���
-  ///@param position 索引值
-  ///// [] Reviewed
-  double getX({required final int position}) =>
-      position * chartStyle.pointWidth + chartStyle.pointWidth * 0.5;
+  /// Get the left offset for a giving index
+  /// @param index
+  double getLeftOffsetByIndex({required final int index}) =>
+      //*0.5 Prevent the first and last bars from displaying incorrectly
+      index * chartStyle.pointWidth + chartStyle.pointWidth * 0.5;
 
-  // [] Reviewed
-  KLineEntity? getItem({required final int position}) {
-    if (position >= 0 && position < dataSource.length) {
-      return dataSource[position];
+  KLineEntity? getDataItemByIndex({required final int index}) {
+    if (index >= 0 && index < dataSource.length) {
+      return dataSource[index];
     } else {
       return null;
     }
@@ -358,8 +357,8 @@ abstract class BaseChartPainter extends CustomPainter {
   // [] Reviewed
   ///计算长按后x的值，转换为index
   int calculateSelectedX({required final double selectX}) {
-    int mSelectedIndex =
-        indexOfTranslateX(translateX: xToTranslateX(x: selectX));
+    int mSelectedIndex = dataIndexInViewportFor(
+        leftOffset: translateToCurrentViewport(leftOffset: selectX));
     if (mSelectedIndex < mStartIndex) {
       mSelectedIndex = mStartIndex;
     }

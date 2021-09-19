@@ -172,8 +172,8 @@ class ChartPainter extends BaseChartPainter {
     for (int i = mStartIndex; i <= mStopIndex; i++) {
       final curPoint = dataSource[i];
       KLineEntity lastPoint = i == 0 ? curPoint : dataSource[i - 1];
-      double curX = getX(position: i);
-      double lastX = i == 0 ? curX : getX(position: i - 1);
+      double curX = getLeftOffsetByIndex(index: i);
+      double lastX = i == 0 ? curX : getLeftOffsetByIndex(index: i - 1);
 
       mMainRenderer.drawChart(
         lastValue: RenderData<CandleEntity>(data: lastPoint, x: lastX),
@@ -211,17 +211,20 @@ class ChartPainter extends BaseChartPainter {
   @override
   void drawDate({required final Canvas canvas, required final Size size}) {
     double columnSpace = size.width / chartStyle.numberOfGridColumns;
-    double startX = getX(position: mStartIndex) - chartStyle.pointWidth * 0.5;
-    double stopX = getX(position: mStopIndex) + chartStyle.pointWidth * 0.5;
+    double startX =
+        getLeftOffsetByIndex(index: mStartIndex) - chartStyle.pointWidth * 0.5;
+    double stopX =
+        getLeftOffsetByIndex(index: mStopIndex) + chartStyle.pointWidth * 0.5;
     double x = 0.0;
     double y = 0.0;
     for (var i = 0; i <= chartStyle.numberOfGridColumns; ++i) {
-      double translateX = xToTranslateX(x: columnSpace * i);
+      double translateX =
+          translateToCurrentViewport(leftOffset: columnSpace * i);
 
       if (translateX >= startX && translateX <= stopX) {
-        int index = indexOfTranslateX(translateX: translateX);
+        int index = dataIndexInViewportFor(leftOffset: translateX);
 
-        final item = getItem(position: index);
+        final item = getDataItemByIndex(index: index);
         if (item == null) {
           return;
         }
@@ -242,7 +245,7 @@ class ChartPainter extends BaseChartPainter {
   void drawCrossLineText(
       {required final Canvas canvas, required final Size size}) {
     var index = calculateSelectedX(selectX: selectedHorizontalValue);
-    KLineEntity? point = getItem(position: index);
+    KLineEntity? point = getDataItemByIndex(index: index);
     if (point == null) {
       return;
     }
@@ -258,7 +261,8 @@ class ChartPainter extends BaseChartPainter {
     double y = getMainY(point.close);
     double x;
     bool isLeft = false;
-    if (translateXtoX(translateX: getX(position: index)) < size.width / 2) {
+    if (translateXtoX(translateX: getLeftOffsetByIndex(index: index)) <
+        size.width / 2) {
       isLeft = false;
       x = 1;
       Path path = new Path();
@@ -290,7 +294,7 @@ class ChartPainter extends BaseChartPainter {
         getTextPainter(getDate(point.time), chartStyle.colors.crossTextColor);
     textWidth = dateTp.width;
     r = textHeight / 2;
-    x = translateXtoX(translateX: getX(position: index));
+    x = translateXtoX(translateX: getLeftOffsetByIndex(index: index));
     y = size.height - chartStyle.bottomPadding;
 
     if (x < textWidth + 2 * w1) {
@@ -323,7 +327,7 @@ class ChartPainter extends BaseChartPainter {
     KLineEntity? customData = data;
     if (shouldDisplaySelection) {
       var index = calculateSelectedX(selectX: selectedHorizontalValue);
-      customData = getItem(position: index);
+      customData = getDataItemByIndex(index: index);
       if (customData == null) {
         //TODO: Review if return or assign to data
         return;
@@ -340,7 +344,8 @@ class ChartPainter extends BaseChartPainter {
   void drawMaxAndMin({required final Canvas canvas, required final Size size}) {
     if (displayTimeLineChart == true) return;
     //绘制最大值和最小值
-    double x = translateXtoX(translateX: getX(position: mMainMinIndex));
+    double x =
+        translateXtoX(translateX: getLeftOffsetByIndex(index: mMainMinIndex));
     double y = getMainY(mMainLowMinValue);
     if (x < size.width / 2) {
       //画右边
@@ -354,7 +359,7 @@ class ChartPainter extends BaseChartPainter {
           chartStyle.colors.minColor);
       tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
     }
-    x = translateXtoX(translateX: getX(position: mMainMaxIndex));
+    x = translateXtoX(translateX: getLeftOffsetByIndex(index: mMainMaxIndex));
     y = getMainY(mMainHighMaxValue);
     if (x < size.width / 2) {
       //画右边
@@ -412,7 +417,7 @@ class ChartPainter extends BaseChartPainter {
   ///画交叉线
   void drawCrossLine({required final Canvas canvas, required final Size size}) {
     var index = calculateSelectedX(selectX: selectedHorizontalValue);
-    final point = getItem(position: index);
+    final point = getDataItemByIndex(index: index);
     if (point == null) {
       return;
     }
@@ -420,7 +425,7 @@ class ChartPainter extends BaseChartPainter {
       ..color = chartStyle.colors.vCrossColor
       ..strokeWidth = chartStyle.vCrossWidth
       ..isAntiAlias = true;
-    double x = getX(position: index);
+    double x = getLeftOffsetByIndex(index: index);
     double y = getMainY(point.close);
     // k线图竖线
     canvas.drawLine(Offset(x, chartStyle.topPadding),

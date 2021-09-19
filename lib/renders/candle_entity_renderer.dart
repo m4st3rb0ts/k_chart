@@ -76,26 +76,26 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     } else if (indicator == PrimaryIndicator.BOLL) {
       titles = TextSpan(
         children: [
-          if (value.up != 0)
+          if (value.top != 0)
             TextSpan(
               // TODO: Localize
-              text: 'BOLL:${format(n: value.mb)}    ',
+              text: 'BOLL:${format(n: value.middle)}    ',
               style: getTextStyle(
                 color: chartStyle.colors.ma5Color,
               ),
             ),
-          if (value.mb != 0)
+          if (value.middle != 0)
             TextSpan(
               // TODO: Localize
-              text: 'UB:${format(n: value.up)}    ',
+              text: 'UB:${format(n: value.top)}    ',
               style: getTextStyle(
                 color: chartStyle.colors.ma10Color,
               ),
             ),
-          if (value.dn != 0)
+          if (value.bottom != 0)
             TextSpan(
               // TODO: Localize
-              text: 'LB:${format(n: value.dn)}    ',
+              text: 'LB:${format(n: value.bottom)}    ',
               style: getTextStyle(
                 color: chartStyle.colors.ma30Color,
               ),
@@ -260,24 +260,27 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     required final RenderData<CandleEntity> lastValue,
     required final RenderData<CandleEntity> currentValue,
   }) {
-    if (lastValue.data.up != 0) {
+    if (lastValue.data.top != 0) {
       drawLine(
-          lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.up),
-          currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.up),
+          lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.top),
+          currentValue:
+              RenderPoint(x: currentValue.x, y: currentValue.data.top),
           canvas: canvas,
           color: chartStyle.colors.ma10Color);
     }
-    if (lastValue.data.mb != 0) {
+    if (lastValue.data.middle != 0) {
       drawLine(
-          lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.mb),
-          currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.mb),
+          lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.middle),
+          currentValue:
+              RenderPoint(x: currentValue.x, y: currentValue.data.middle),
           canvas: canvas,
           color: chartStyle.colors.ma5Color);
     }
-    if (lastValue.data.dn != 0) {
+    if (lastValue.data.bottom != 0) {
       drawLine(
-          lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.dn),
-          currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.dn),
+          lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.bottom),
+          currentValue:
+              RenderPoint(x: currentValue.x, y: currentValue.data.bottom),
           canvas: canvas,
           color: chartStyle.colors.ma30Color);
     }
