@@ -73,9 +73,9 @@ abstract class BaseChartPainter extends CustomPainter {
   Size _lastPaintedSize = Size.zero;
 
   //TOREVIEW GOING DOWN
-  late Rect candleGraphRect;
-  Rect? volumeGraphRect;
-  Rect? thirdGraphRect;
+  // late Rect candleGraphRect;
+  // Rect? volumeGraphRect;
+  // Rect? thirdGraphRect;
 
   int mStartIndex = 0;
   int mStopIndex = 0;
@@ -127,10 +127,8 @@ abstract class BaseChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     _lastPaintedSize = size;
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
-    // mWidth = size.width;
-    initRect(size: size);
     calculateValue(size: size);
-    initChartRenderer();
+    initChartRenderer(size: size);
 
     canvas.save();
     canvas.scale(1, 1);
@@ -151,44 +149,6 @@ abstract class BaseChartPainter extends CustomPainter {
       }
     }
     canvas.restore();
-  }
-
-  // [] Reviewed
-  void initRect({required final Size size}) {
-    double mainHeight =
-        size.height - chartStyle.topPadding - chartStyle.bottomPadding;
-
-    final volumeGraphHeight = hideVolumeChart != true ? mainHeight * 0.2 : 0;
-    final secondaryGraphHeight =
-        secondaryIndicator != SecondaryIndicator.NONE ? mainHeight * 0.2 : 0;
-
-    mainHeight -= volumeGraphHeight;
-    mainHeight -= secondaryGraphHeight;
-
-    candleGraphRect = Rect.fromLTRB(
-      0,
-      chartStyle.topPadding,
-      size.width,
-      chartStyle.topPadding + mainHeight,
-    );
-
-    if (hideVolumeChart != true) {
-      volumeGraphRect = Rect.fromLTRB(
-        0,
-        candleGraphRect.bottom + chartStyle.childPadding,
-        size.width,
-        candleGraphRect.bottom + volumeGraphHeight,
-      );
-    }
-
-    if (secondaryIndicator != SecondaryIndicator.NONE) {
-      thirdGraphRect = Rect.fromLTRB(
-        0,
-        candleGraphRect.bottom + volumeGraphHeight + chartStyle.childPadding,
-        size.width,
-        candleGraphRect.bottom + volumeGraphHeight + secondaryGraphHeight,
-      );
-    }
   }
 
   // [] Reviewed
@@ -387,7 +347,7 @@ abstract class BaseChartPainter extends CustomPainter {
   bool shouldRepaint(BaseChartPainter oldDelegate) => true;
 
   // Implement in child classes
-  void initChartRenderer();
+  void initChartRenderer({required final Size size});
 
   void drawBackground({
     required final Canvas canvas,

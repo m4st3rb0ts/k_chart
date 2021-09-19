@@ -60,8 +60,8 @@ class ChartPainter extends BaseChartPainter {
 
   // static get maxScrollX => BaseChartPainter.maxScrollX;
   late BaseChartRenderer mMainRenderer;
-  late BaseChartRenderer? mVolRenderer;
-  late BaseChartRenderer? mSecondaryRenderer;
+  BaseChartRenderer? mVolRenderer;
+  BaseChartRenderer? mSecondaryRenderer;
   StreamSink<InfoWindowEntity?>? sink;
   Color? upColor, dnColor;
   Color? ma5Color, ma10Color, ma30Color;
@@ -76,15 +76,29 @@ class ChartPainter extends BaseChartPainter {
   final bool showNowPrice;
 
   @override
-  void initChartRenderer() {
+  void initChartRenderer({required final Size size}) {
     if (dataSource.isNotEmpty) {
       final t = dataSource.first;
       fixedLength =
           NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
     }
 
+    double mainHeight =
+        size.height - chartStyle.topPadding - chartStyle.bottomPadding;
+    final volumeGraphHeight = !hideVolumeChart ? mainHeight * 0.2 : 0;
+    final secondaryGraphHeight =
+        secondaryIndicator != SecondaryIndicator.NONE ? mainHeight * 0.2 : 0;
+
+    mainHeight -= volumeGraphHeight;
+    mainHeight -= secondaryGraphHeight;
+
     mMainRenderer = CandleEntityRender(
-      displayRect: candleGraphRect,
+      displayRect: Rect.fromLTRB(
+        0,
+        chartStyle.topPadding,
+        size.width,
+        chartStyle.topPadding + mainHeight,
+      ),
       maxVerticalValue: mMainMaxValue,
       minVerticalValue: mMainMinValue,
       indicator: primaryIndicator,
@@ -95,18 +109,32 @@ class ChartPainter extends BaseChartPainter {
       maFactorsForTitles: maDayList,
     );
 
-    if (volumeGraphRect != null) {
+    if (!hideVolumeChart) {
       mVolRenderer = VolumeRenderer(
-        displayRect: volumeGraphRect!,
+        displayRect: Rect.fromLTRB(
+          0,
+          mMainRenderer.displayRect.bottom + chartStyle.childPadding,
+          size.width,
+          mMainRenderer.displayRect.bottom + volumeGraphHeight,
+        ),
         maxVerticalValue: mVolMaxValue,
         minVerticalValue: mVolMinValue,
         fixedDecimalsLength: fixedLength,
         chartStyle: chartStyle,
       );
     }
-    if (thirdGraphRect != null) {
+    if (secondaryIndicator != SecondaryIndicator.NONE) {
       mSecondaryRenderer = MACDEntityRenderer(
-        displayRect: thirdGraphRect!,
+        displayRect: Rect.fromLTRB(
+          0,
+          mMainRenderer.displayRect.bottom +
+              volumeGraphHeight +
+              chartStyle.childPadding,
+          size.width,
+          mMainRenderer.displayRect.bottom +
+              volumeGraphHeight +
+              secondaryGraphHeight,
+        ),
         maxVerticalValue: mSecondaryMaxValue,
         minVerticalValue: mSecondaryMinValue,
         indicator: secondaryIndicator,
@@ -125,27 +153,29 @@ class ChartPainter extends BaseChartPainter {
       end: Alignment.topCenter,
       colors: bgColor ?? chartStyle.colors.bgColor,
     );
-    Rect mainRect = Rect.fromLTRB(0, 0, candleGraphRect.width,
-        candleGraphRect.height + chartStyle.topPadding);
+    Rect mainRect = Rect.fromLTRB(0, 0, mMainRenderer.displayRect.width,
+        mMainRenderer.displayRect.height + chartStyle.topPadding);
     canvas.drawRect(
         mainRect, mBgPaint..shader = mBgGradient.createShader(mainRect));
 
-    if (volumeGraphRect != null) {
+    if (mVolRenderer != null) {
       Rect volRect = Rect.fromLTRB(
-          0,
-          volumeGraphRect!.top - chartStyle.childPadding,
-          volumeGraphRect!.width,
-          volumeGraphRect!.bottom);
+        0,
+        mVolRenderer?.displayRect.top ?? 0 - chartStyle.childPadding,
+        mVolRenderer?.displayRect.width ?? 0,
+        mVolRenderer?.displayRect.bottom ?? 0,
+      );
       canvas.drawRect(
           volRect, mBgPaint..shader = mBgGradient.createShader(volRect));
     }
 
-    if (thirdGraphRect != null) {
+    if (mSecondaryRenderer != null) {
       Rect secondaryRect = Rect.fromLTRB(
-          0,
-          thirdGraphRect!.top - chartStyle.childPadding,
-          thirdGraphRect!.width,
-          thirdGraphRect!.bottom);
+        0,
+        mSecondaryRenderer?.displayRect.top ?? 0 - chartStyle.childPadding,
+        mSecondaryRenderer?.displayRect.width ?? 0,
+        mSecondaryRenderer?.displayRect.bottom ?? 0,
+      );
       canvas.drawRect(secondaryRect,
           mBgPaint..shader = mBgGradient.createShader(secondaryRect));
     }
@@ -483,6 +513,6 @@ class ChartPainter extends BaseChartPainter {
 
   /// 点是否在SecondaryRect中
   bool isInSecondaryRect(Offset point) {
-    return thirdGraphRect?.contains(point) ?? false;
+    return mSecondaryRenderer?.displayRect.contains(point) ?? false;
   }
 }
