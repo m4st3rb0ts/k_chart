@@ -244,7 +244,7 @@ class ChartPainter extends BaseChartPainter {
   @override
   void drawCrossLineText(
       {required final Canvas canvas, required final Size size}) {
-    var index = calculateSelectedX(selectX: selectedHorizontalValue);
+    final index = calculateSelectedX();
     KLineEntity? point = getDataItemByIndex(index: index);
     if (point == null) {
       return;
@@ -326,7 +326,7 @@ class ChartPainter extends BaseChartPainter {
     //长按显示按中的数据
     KLineEntity? customData = data;
     if (shouldDisplaySelection) {
-      var index = calculateSelectedX(selectX: selectedHorizontalValue);
+      final index = calculateSelectedX();
       customData = getDataItemByIndex(index: index);
       if (customData == null) {
         //TODO: Review if return or assign to data
@@ -416,7 +416,7 @@ class ChartPainter extends BaseChartPainter {
 
   ///画交叉线
   void drawCrossLine({required final Canvas canvas, required final Size size}) {
-    var index = calculateSelectedX(selectX: selectedHorizontalValue);
+    var index = calculateSelectedX();
     final point = getDataItemByIndex(index: index);
     if (point == null) {
       return;

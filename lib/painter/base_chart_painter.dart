@@ -353,21 +353,26 @@ abstract class BaseChartPainter extends CustomPainter {
 
   // [] Reviewed
   ///scrollX 转换为 TranslateX
-  void setTranslateXFromScrollX(
-          {required final double scrollX, required final Size size}) =>
+  void setTranslateXFromScrollX({
+    required final double scrollX,
+    required final Size size,
+  }) =>
       mTranslateX = scrollX - maxHorizontalScrollWidth(size: size);
-  // [] Reviewed
-  ///计算长按后x的值，转换为index
-  int calculateSelectedX({required final double selectX}) {
-    int mSelectedIndex = dataIndexInViewportFor(
-        leftOffset: translateToCurrentViewport(leftOffset: selectX));
-    if (mSelectedIndex < mStartIndex) {
-      mSelectedIndex = mStartIndex;
+
+  /// Gets the index of the current selected horizontal value
+  int getIndexForSelectedHorizontalValue() {
+    final selectedIndex = dataIndexInViewportFor(
+      leftOffset: translateToCurrentViewport(
+        leftOffset: selectedHorizontalValue,
+      ),
+    );
+    if (selectedIndex < mStartIndex) {
+      return mStartIndex;
+    } else if (selectedIndex > mStopIndex) {
+      return mStopIndex;
+    } else {
+      return selectedIndex;
     }
-    if (mSelectedIndex > mStopIndex) {
-      mSelectedIndex = mStopIndex;
-    }
-    return mSelectedIndex;
   }
 
   // [] Reviewed
