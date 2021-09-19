@@ -85,7 +85,6 @@ abstract class BaseChartPainter extends CustomPainter {
   double mVolMinValue = double.maxFinite;
   double mSecondaryMaxValue = double.minPositive;
   double mSecondaryMinValue = double.maxFinite;
-  double mTranslateX = double.minPositive;
   int mMainMaxIndex = 0;
   int mMainMinIndex = 0;
   double mMainHighMaxValue = double.minPositive;
@@ -119,6 +118,10 @@ abstract class BaseChartPainter extends CustomPainter {
     }
   }
 
+  double getCurrentOffset({required final Size size}) {
+    return currentHorizontalScroll - maxHorizontalScrollWidth(size: size);
+  }
+
   // [] Reviewed
   @override
   void paint(Canvas canvas, Size size) {
@@ -132,13 +135,13 @@ abstract class BaseChartPainter extends CustomPainter {
     canvas.save();
     canvas.scale(1, 1);
     drawBackground(canvas: canvas, size: size);
-    drawGrid(canvas: canvas);
+    drawGrid(canvas: canvas, size: size);
     if (dataSource.isNotEmpty) {
       drawChart(canvas: canvas, size: size);
-      drawRightText(canvas: canvas);
+      drawRightText(canvas: canvas, size: size);
       drawDate(canvas: canvas, size: size);
 
-      drawText(canvas: canvas, data: dataSource.last, x: 5);
+      drawText(canvas: canvas, data: dataSource.last, x: 5, size: size);
       drawMaxAndMin(canvas: canvas, size: size);
       drawNowPrice(canvas: canvas, size: size);
 
@@ -194,11 +197,11 @@ abstract class BaseChartPainter extends CustomPainter {
       return;
     }
 
-    setTranslateXFromScrollX(scrollX: currentHorizontalScroll, size: size);
     mStartIndex = dataIndexInViewportFor(
-        leftOffset: translateToCurrentViewport(leftOffset: 0));
+        leftOffset: translateToCurrentViewport(leftOffset: 0, size: size));
     mStopIndex = dataIndexInViewportFor(
-        leftOffset: translateToCurrentViewport(leftOffset: size.width));
+        leftOffset:
+            translateToCurrentViewport(leftOffset: size.width, size: size));
     for (int i = mStartIndex; i <= mStopIndex; i++) {
       var item = dataSource[i];
       getMainMaxMinValue(item: item, i: i);
@@ -300,8 +303,9 @@ abstract class BaseChartPainter extends CustomPainter {
   }
 
   /// Translate a leftOffset position to the current viewport
-  double translateToCurrentViewport({required final double leftOffset}) =>
-      -mTranslateX + leftOffset / horizontalScale;
+  double translateToCurrentViewport(
+          {required final double leftOffset, required final Size size}) =>
+      -getCurrentOffset(size: size) + leftOffset / horizontalScale;
 
   /// Binary search of the current data index for the current viewport for a giving leftOffset
   int dataIndexInViewportFor({required final double leftOffset}) {
@@ -351,19 +355,12 @@ abstract class BaseChartPainter extends CustomPainter {
     }
   }
 
-  // [] Reviewed
-  ///scrollX 转换为 TranslateX
-  void setTranslateXFromScrollX({
-    required final double scrollX,
-    required final Size size,
-  }) =>
-      mTranslateX = scrollX - maxHorizontalScrollWidth(size: size);
-
   /// Gets the index of the current selected horizontal value
-  int getIndexForSelectedHorizontalValue() {
+  int getIndexForSelectedHorizontalValue({required final Size size}) {
     final selectedIndex = dataIndexInViewportFor(
       leftOffset: translateToCurrentViewport(
         leftOffset: selectedHorizontalValue,
+        size: size,
       ),
     );
     if (selectedIndex < mStartIndex) {
@@ -377,8 +374,9 @@ abstract class BaseChartPainter extends CustomPainter {
 
   // [] Reviewed
   ///translateX转化为view中的x
-  double translateXtoX({required final double translateX}) =>
-      (translateX + mTranslateX) * horizontalScale;
+  double translateXtoX(
+          {required final double translateX, required final Size size}) =>
+      (translateX + getCurrentOffset(size: size)) * horizontalScale;
 
   // [] Reviewed
   // Duplicated in base chart rendered
@@ -398,6 +396,7 @@ abstract class BaseChartPainter extends CustomPainter {
 
   void drawGrid({
     required final Canvas canvas,
+    required final Size size,
   });
 
   void drawChart({
@@ -407,6 +406,7 @@ abstract class BaseChartPainter extends CustomPainter {
 
   void drawRightText({
     required final Canvas canvas,
+    required final Size size,
   });
 
   void drawDate({
@@ -416,6 +416,7 @@ abstract class BaseChartPainter extends CustomPainter {
 
   void drawText({
     required final Canvas canvas,
+    required final Size size,
     required final KLineEntity data,
     required final double x,
   });
