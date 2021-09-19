@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:k_chart/chart_translations.dart';
 import 'package:k_chart/extension/map_ext.dart';
 import 'package:k_chart/flutter_k_chart.dart';
+import 'package:k_chart/indicators/candles/candles_indicator.dart';
 
 import 'painter/chart_painter.dart';
 
@@ -121,6 +122,11 @@ class _KChartWidgetState extends State<KChartWidget>
       mScaleX = 1.0;
     }
     final _painter = ChartPainter(
+      candlesIndicator: CandlesIndicator(
+        dataSource: <KLineEntity>[],
+        displayTimeLineChart: false,
+        candleIndicator: CandlesIndicators.MA,
+      ),
       chartStyle: widget.chartStyle,
       dataSource: widget.datas ?? <KLineEntity>[],
       horizontalScale: mScaleX,

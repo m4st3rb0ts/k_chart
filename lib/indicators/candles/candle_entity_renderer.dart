@@ -3,14 +3,14 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:k_chart/indicators/candles/candle.dart';
 
-import '../chart_style.dart';
-import '../entity/candle_entity.dart';
-import '../k_chart_widget.dart' show PrimaryIndicator;
-import 'base_chart_renderer.dart';
+import '../../chart_style.dart';
+import '../../renders/base_chart_renderer.dart';
+import 'candles_indicator.dart';
 
 /// Candle data render
-class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
+class CandleEntityRender extends BaseChartRenderer<Candle> {
   CandleEntityRender({
     required final Rect displayRect,
     required final double maxVerticalValue,
@@ -43,7 +43,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   }
 
   /// Indicator which together the candle graph should display (MA, BOLL, NONE)
-  final PrimaryIndicator indicator;
+  final CandlesIndicators indicator;
 
   /// Display timeline or candle mode
   final bool isTimeLineMode;
@@ -66,18 +66,18 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   @override
   void drawText({
     required final Canvas canvas,
-    required final CandleEntity value,
+    required final Candle value,
     required final double leftOffset,
   }) {
     if (isTimeLineMode == true) {
       return;
     }
     TextSpan? titles;
-    if (indicator == PrimaryIndicator.MA) {
+    if (indicator == CandlesIndicators.MA) {
       titles = TextSpan(
         children: _createMATextSpan(data: value),
       );
-    } else if (indicator == PrimaryIndicator.BOLL) {
+    } else if (indicator == CandlesIndicators.BOLL) {
       titles = TextSpan(
         children: [
           if (value.top != 0)
@@ -124,14 +124,14 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
     );
   }
 
-  List<InlineSpan> _createMATextSpan({required final CandleEntity data}) {
+  List<InlineSpan> _createMATextSpan({required final Candle data}) {
     var titles = <InlineSpan>[];
-    for (var i = 0; i < (data.maValueList?.length ?? 0); i++) {
-      if (data.maValueList?[i] != 0) {
+    for (var i = 0; i < data.maValueList.length; i++) {
+      if (data.maValueList[i] != 0) {
         final title = TextSpan(
           //Localize
           text:
-              'MA${maFactorsForTitles[i]}:${format(n: data.maValueList![i])}    ',
+              'MA${maFactorsForTitles[i]}:${format(n: data.maValueList[i])}    ',
           style: getTextStyle(
             color: chartStyle.colors.getMAColor(i),
           ),
@@ -145,8 +145,8 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   @override
   void drawChart({
     required final Canvas canvas,
-    required final RenderData<CandleEntity> lastValue,
-    required final RenderData<CandleEntity> currentValue,
+    required final RenderData<Candle> lastValue,
+    required final RenderData<Candle> currentValue,
     required final Size size,
   }) {
     if (!isTimeLineMode) {
@@ -158,13 +158,13 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
         currentValue: currentValue,
         canvas: canvas,
       );
-    } else if (indicator == PrimaryIndicator.MA) {
+    } else if (indicator == CandlesIndicators.MA) {
       drawMaLine(
         lastValue: lastValue,
         currentValue: currentValue,
         canvas: canvas,
       );
-    } else if (indicator == PrimaryIndicator.BOLL) {
+    } else if (indicator == CandlesIndicators.BOLL) {
       drawBollLine(
         lastValue: lastValue,
         currentValue: currentValue,
@@ -175,8 +175,8 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
 
   void drawPolyline({
     required final Canvas canvas,
-    required final RenderData<CandleEntity> lastValue,
-    required final RenderData<CandleEntity> currentValue,
+    required final RenderData<Candle> lastValue,
+    required final RenderData<Candle> currentValue,
   }) {
     // Start filling point
     final lastXValue = lastValue.x == currentValue.x ? 0.0 : lastValue.x;
@@ -235,22 +235,22 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
 
   void drawMaLine({
     required final Canvas canvas,
-    required final RenderData<CandleEntity> lastValue,
-    required final RenderData<CandleEntity> currentValue,
+    required final RenderData<Candle> lastValue,
+    required final RenderData<Candle> currentValue,
   }) {
-    for (var i = 0; i < (currentValue.data.maValueList?.length ?? 0); i++) {
+    for (var i = 0; i < currentValue.data.maValueList.length; i++) {
       if (i == 3) {
         break;
       }
-      if (lastValue.data.maValueList?[i] != 0) {
+      if (lastValue.data.maValueList[i] != 0) {
         drawLine(
           lastValue: RenderPoint(
             x: lastValue.x,
-            y: lastValue.data.maValueList?[i],
+            y: lastValue.data.maValueList[i],
           ),
           currentValue: RenderPoint(
             x: currentValue.x,
-            y: currentValue.data.maValueList?[i],
+            y: currentValue.data.maValueList[i],
           ),
           canvas: canvas,
           color: chartStyle.colors.getMAColor(i),
@@ -261,8 +261,8 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
 
   void drawBollLine({
     required final Canvas canvas,
-    required final RenderData<CandleEntity> lastValue,
-    required final RenderData<CandleEntity> currentValue,
+    required final RenderData<Candle> lastValue,
+    required final RenderData<Candle> currentValue,
   }) {
     if (lastValue.data.top != 0) {
       drawLine(
@@ -292,7 +292,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
 
   void drawCandle({
     required final Canvas canvas,
-    required final RenderData<CandleEntity> candle,
+    required final RenderData<Candle> candle,
   }) {
     final high = getVerticalPositionForPoint(value: candle.data.high);
     final low = getVerticalPositionForPoint(value: candle.data.low);

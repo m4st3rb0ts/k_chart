@@ -1,6 +1,7 @@
 import 'dart:async' show StreamSink;
 
 import 'package:flutter/material.dart';
+import 'package:k_chart/indicators/candles/candles_indicator.dart';
 import 'package:k_chart/utils/number_util.dart';
 
 import '../entity/info_window_entity.dart';
@@ -15,6 +16,7 @@ import '../renders/volume_renderer.dart';
 
 class ChartPainter extends BaseChartPainter {
   ChartPainter({
+    required this.candlesIndicator,
     required final ChartStyle chartStyle,
     required final List<KLineEntity> dataSource,
     required final double horizontalScale,
@@ -61,6 +63,7 @@ class ChartPainter extends BaseChartPainter {
   final bool hideVolumeChart;
 
   // static get maxScrollX => BaseChartPainter.maxScrollX;
+  final CandlesIndicator candlesIndicator;
   late BaseChartRenderer mMainRenderer;
   BaseChartRenderer? mVolRenderer;
   BaseChartRenderer? mSecondaryRenderer;
@@ -84,8 +87,8 @@ class ChartPainter extends BaseChartPainter {
           NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
     }
 
-    double mainHeight =
-        size.height - chartStyle.topPadding - chartStyle.bottomPadding;
+    double mainHeight = 600;
+    // size.height - chartStyle.topPadding - chartStyle.bottomPadding;
     final volumeGraphHeight = !hideVolumeChart ? mainHeight * 0.2 : 0;
     final secondaryGraphHeight =
         secondaryIndicator != SecondaryIndicator.NONE ? mainHeight * 0.2 : 0;
