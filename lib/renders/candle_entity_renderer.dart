@@ -9,8 +9,8 @@ import 'base_chart_renderer.dart';
 class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   CandleEntityRender({
     required final Rect displayRect,
-    required double maxVerticalValue,
-    required double minVerticalValue,
+    required final double maxVerticalValue,
+    required final double minVerticalValue,
     required this.indicator,
     required this.isTimeLineMode,
     required final int fixedDecimalsLength,
@@ -35,10 +35,6 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
       displayRect.right,
       displayRect.bottom - contentPadding,
     );
-    if (maxVerticalValue == minVerticalValue) {
-      maxVerticalValue *= 1.5;
-      minVerticalValue /= 2;
-    }
     verticalScale = _contentRect.height / (maxVerticalValue - minVerticalValue);
   }
 
@@ -51,6 +47,7 @@ class CandleEntityRender extends BaseChartRenderer<CandleEntity> {
   /// Padding for content
   final double contentPadding = 5.0;
 
+  // Suffix for MA titles computing
   final List<int> maFactorsForTitles;
 
   // Horizontal scale to use with timeline mode
