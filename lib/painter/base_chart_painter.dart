@@ -73,10 +73,6 @@ abstract class BaseChartPainter extends CustomPainter {
   Size _lastPaintedSize = Size.zero;
 
   //TOREVIEW GOING DOWN
-  // late Rect candleGraphRect;
-  // Rect? volumeGraphRect;
-  // Rect? thirdGraphRect;
-
   int mStartIndex = 0;
   int mStopIndex = 0;
   double mMainMaxValue = double.minPositive;
