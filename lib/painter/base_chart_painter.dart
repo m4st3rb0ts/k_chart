@@ -341,6 +341,8 @@ abstract class BaseChartPainter extends CustomPainter {
       //*0.5 Prevent the first and last bars from displaying incorrectly
       index * chartStyle.pointWidth + chartStyle.pointWidth * 0.5;
 
+  /// Get the data item by an index
+  /// @param index
   KLineEntity? getDataItemByIndex({required final int index}) {
     if (index >= 0 && index < dataSource.length) {
       return dataSource[index];
