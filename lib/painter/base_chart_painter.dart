@@ -52,7 +52,6 @@ abstract class BaseChartPainter extends CustomPainter {
 
   double selectX;
 
-  late double mDisplayHeight;
   late double mWidth;
   int mStartIndex = 0;
   int mStopIndex = 0;
@@ -69,6 +68,7 @@ abstract class BaseChartPainter extends CustomPainter {
   double mMainLowMinValue = double.maxFinite;
 
   // Init data format
+  // [x] Reviewed
   void _initDateFormats() {
     if (chartStyle.dateTimeFormat != null) {
       displayDateFormats = chartStyle.dateTimeFormat!;
@@ -96,11 +96,10 @@ abstract class BaseChartPainter extends CustomPainter {
     }
   }
 
+  // [] Reviewed
   @override
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
-    mDisplayHeight =
-        size.height - chartStyle.topPadding - chartStyle.bottomPadding;
     mWidth = size.width;
     initRect(size: size);
     calculateValue();
@@ -127,15 +126,17 @@ abstract class BaseChartPainter extends CustomPainter {
     canvas.restore();
   }
 
+  // [] Reviewed
   void initRect({required final Size size}) {
-    double volHeight = hideVolumeChart != true ? mDisplayHeight * 0.2 : 0;
-    double secondaryHeight = secondaryIndicator != SecondaryIndicator.NONE
-        ? mDisplayHeight * 0.2
-        : 0;
+    double mainHeight =
+        size.height - chartStyle.topPadding - chartStyle.bottomPadding;
 
-    double mainHeight = mDisplayHeight;
-    mainHeight -= volHeight;
-    mainHeight -= secondaryHeight;
+    final volumeGraphHeight = hideVolumeChart != true ? mainHeight * 0.2 : 0;
+    final secondaryGraphHeight =
+        secondaryIndicator != SecondaryIndicator.NONE ? mainHeight * 0.2 : 0;
+
+    mainHeight -= volumeGraphHeight;
+    mainHeight -= secondaryGraphHeight;
 
     candleGraphRect = Rect.fromLTRB(
       0,
@@ -149,20 +150,21 @@ abstract class BaseChartPainter extends CustomPainter {
         0,
         candleGraphRect.bottom + chartStyle.childPadding,
         mWidth,
-        candleGraphRect.bottom + volHeight,
+        candleGraphRect.bottom + volumeGraphHeight,
       );
     }
 
     if (secondaryIndicator != SecondaryIndicator.NONE) {
       thirdGraphRect = Rect.fromLTRB(
         0,
-        candleGraphRect.bottom + volHeight + chartStyle.childPadding,
+        candleGraphRect.bottom + volumeGraphHeight + chartStyle.childPadding,
         mWidth,
-        candleGraphRect.bottom + volHeight + secondaryHeight,
+        candleGraphRect.bottom + volumeGraphHeight + secondaryGraphHeight,
       );
     }
   }
 
+  // [] Reviewed
   void calculateValue() {
     if (dataSource.isEmpty) {
       return;
@@ -210,6 +212,7 @@ abstract class BaseChartPainter extends CustomPainter {
     }
   }
 
+  // [] Reviewed
   double _findMaxMA({required final List<double> a}) {
     double result = double.minPositive;
     for (double i in a) {
@@ -218,6 +221,7 @@ abstract class BaseChartPainter extends CustomPainter {
     return result;
   }
 
+  // [] Reviewed
   double _findMinMA({required final List<double> a}) {
     double result = double.maxFinite;
     for (double i in a) {
@@ -226,6 +230,7 @@ abstract class BaseChartPainter extends CustomPainter {
     return result;
   }
 
+  // [] Reviewed
   void getVolMaxMinValue({required final KLineEntity item}) {
     mVolMaxValue = max(mVolMaxValue,
         max(item.vol, max(item.MA5Volume ?? 0, item.MA10Volume ?? 0)));
@@ -233,6 +238,7 @@ abstract class BaseChartPainter extends CustomPainter {
         min(item.vol, min(item.MA5Volume ?? 0, item.MA10Volume ?? 0)));
   }
 
+  // [] Reviewed
   void getSecondaryMaxMinValue({required final KLineEntity item}) {
     if (secondaryIndicator == SecondaryIndicator.MACD) {
       if (item.macd != null) {
@@ -267,13 +273,16 @@ abstract class BaseChartPainter extends CustomPainter {
     }
   }
 
+  // [] Reviewed
   double xToTranslateX({required final double x}) =>
       -mTranslateX + x / horizontalScale;
 
+  // [] Reviewed
   int indexOfTranslateX({required final double translateX}) =>
       _indexOfTranslateX(
           translateX: translateX, start: 0, end: dataSource.length - 1);
 
+  // [] Reviewed
   ///二分查找当前值的index
   int _indexOfTranslateX(
       {required final double translateX,
@@ -303,9 +312,11 @@ abstract class BaseChartPainter extends CustomPainter {
   ///根据索引索取x坐标
   ///+ mPointWidth / 2防止第一根和最后一根k线显示不���
   ///@param position 索引值
+  ///// [] Reviewed
   double getX({required final int position}) =>
       position * chartStyle.pointWidth + chartStyle.pointWidth * 0.5;
 
+  // [] Reviewed
   KLineEntity? getItem({required final int position}) {
     if (position >= 0 && position < dataSource.length) {
       return dataSource[position];
@@ -314,10 +325,11 @@ abstract class BaseChartPainter extends CustomPainter {
     }
   }
 
+  // [] Reviewed
   ///scrollX 转换为 TranslateX
   void setTranslateXFromScrollX({required final double scrollX}) =>
       mTranslateX = scrollX - maxHorizontalScrollWidth;
-
+  // [] Reviewed
   ///计算长按后x的值，转换为index
   int calculateSelectedX({required final double selectX}) {
     int mSelectedIndex =
@@ -331,16 +343,20 @@ abstract class BaseChartPainter extends CustomPainter {
     return mSelectedIndex;
   }
 
+  // [] Reviewed
   ///translateX转化为view中的x
   double translateXtoX({required final double translateX}) =>
       (translateX + mTranslateX) * horizontalScale;
 
+  // [] Reviewed
+  // Duplicated in base chart rendered
   TextStyle getTextStyle({required final Color color}) =>
       TextStyle(fontSize: 10.0, color: color);
 
   @override
   bool shouldRepaint(BaseChartPainter oldDelegate) => true;
 
+  // Implement in child classes
   void initChartRenderer();
 
   void drawBackground({
