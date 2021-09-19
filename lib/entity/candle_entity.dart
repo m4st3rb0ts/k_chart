@@ -7,14 +7,9 @@ mixin CandleEntity {
 
   List<double>? maValueList;
 
-//  上轨线
-  double? up;
-
-//  中轨线
-  double? mb;
-
-//  下轨线
-  double? dn;
+  double? top;
+  double? middle;
+  double? bottom;
 
   double? BOLLMA;
 }
