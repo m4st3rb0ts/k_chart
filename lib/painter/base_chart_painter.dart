@@ -17,7 +17,6 @@ abstract class BaseChartPainter extends CustomPainter {
     required this.dataSource,
     this.primaryIndicator = PrimaryIndicator.MA,
     this.secondaryIndicator = SecondaryIndicator.MACD,
-    this.hideVolumeChart = false,
     this.displayTimeLineChart = false,
     this.horizontalScale = 1.0,
     this.currentHorizontalScroll = 0.0,
@@ -38,9 +37,6 @@ abstract class BaseChartPainter extends CustomPainter {
 
   /// Second indicator to display in another graph
   final SecondaryIndicator secondaryIndicator;
-
-  /// Should display volume?
-  final bool hideVolumeChart;
 
   /// Should display line chart instead candles?
   final bool displayTimeLineChart;

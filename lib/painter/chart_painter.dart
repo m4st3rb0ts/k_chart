@@ -15,17 +15,17 @@ import '../renders/volume_renderer.dart';
 
 class ChartPainter extends BaseChartPainter {
   ChartPainter({
-    required this.chartStyle,
-    required datas,
-    required scaleX,
-    required scrollX,
-    required isLongPass,
-    required selectX,
-    mainState,
-    volHidden,
-    secondaryState,
+    required final ChartStyle chartStyle,
+    required final List<KLineEntity> dataSource,
+    required final double horizontalScale,
+    required final double currentHorizontalScroll,
+    required final bool shouldDisplaySelection,
+    required final double selectedHorizontalValue,
+    required final PrimaryIndicator primaryIndicator,
+    required this.hideVolumeChart,
+    required final SecondaryIndicator secondaryIndicator,
+    final bool displayTimeLineChart = false,
     this.sink,
-    bool isLine = false,
     this.hideGrid = false,
     this.showNowPrice = true,
     this.bgColor,
@@ -34,15 +34,14 @@ class ChartPainter extends BaseChartPainter {
   })  : assert(bgColor == null || bgColor.length >= 2),
         super(
           chartStyle: chartStyle,
-          dataSource: datas,
-          horizontalScale: scaleX,
-          currentHorizontalScroll: scrollX,
-          shouldDisplaySelection: isLongPass,
-          selectedHorizontalValue: selectX,
-          primaryIndicator: mainState,
-          hideVolumeChart: volHidden,
-          secondaryIndicator: secondaryState,
-          displayTimeLineChart: isLine,
+          dataSource: dataSource,
+          horizontalScale: horizontalScale,
+          currentHorizontalScroll: currentHorizontalScroll,
+          shouldDisplaySelection: shouldDisplaySelection,
+          selectedHorizontalValue: selectedHorizontalValue,
+          primaryIndicator: primaryIndicator,
+          secondaryIndicator: secondaryIndicator,
+          displayTimeLineChart: displayTimeLineChart,
         ) {
     selectPointPaint = Paint()
       ..isAntiAlias = true
@@ -58,6 +57,9 @@ class ChartPainter extends BaseChartPainter {
       ..isAntiAlias = true;
   }
 
+  /// Should display volume?
+  final bool hideVolumeChart;
+
   // static get maxScrollX => BaseChartPainter.maxScrollX;
   late BaseChartRenderer mMainRenderer;
   BaseChartRenderer? mVolRenderer;
@@ -71,7 +73,6 @@ class ChartPainter extends BaseChartPainter {
   int fixedLength;
   final List<int> maDayList;
   late Paint selectPointPaint, selectorBorderPaint, nowPricePaint;
-  final ChartStyle chartStyle;
   final bool hideGrid;
   final bool showNowPrice;
 
