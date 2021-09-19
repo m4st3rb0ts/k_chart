@@ -60,19 +60,23 @@ abstract class BaseChartPainter extends CustomPainter {
   // selected horizontal value in this case the dates
   final double selectedHorizontalValue;
 
-  double get maxHorizontalScrollWidth {
+  double maxHorizontalScrollWidth({required final Size size}) {
     final dataWidth = -dataSource.length * chartStyle.pointWidth +
-        mWidth / horizontalScale -
+        size.width / horizontalScale -
         chartStyle.pointWidth * 0.5;
     return dataWidth >= 0 ? 0.0 : dataWidth.abs();
   }
+
+  // TODO: Review
+  /// Last size of the latest painted canvas
+  Size get lastPaintedSize => _lastPaintedSize;
+  Size _lastPaintedSize = Size.zero;
 
   //TOREVIEW GOING DOWN
   late Rect candleGraphRect;
   Rect? volumeGraphRect;
   Rect? thirdGraphRect;
 
-  late double mWidth;
   int mStartIndex = 0;
   int mStopIndex = 0;
   double mMainMaxValue = double.minPositive;
@@ -119,10 +123,11 @@ abstract class BaseChartPainter extends CustomPainter {
   // [] Reviewed
   @override
   void paint(Canvas canvas, Size size) {
+    _lastPaintedSize = size;
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
-    mWidth = size.width;
+    // mWidth = size.width;
     initRect(size: size);
-    calculateValue();
+    calculateValue(size: size);
     initChartRenderer();
 
     canvas.save();
@@ -135,8 +140,8 @@ abstract class BaseChartPainter extends CustomPainter {
       drawDate(canvas: canvas, size: size);
 
       drawText(canvas: canvas, data: dataSource.last, x: 5);
-      drawMaxAndMin(canvas: canvas);
-      drawNowPrice(canvas: canvas);
+      drawMaxAndMin(canvas: canvas, size: size);
+      drawNowPrice(canvas: canvas, size: size);
 
       if (shouldDisplaySelection) {
         drawCrossLine(canvas: canvas, size: size);
@@ -161,7 +166,7 @@ abstract class BaseChartPainter extends CustomPainter {
     candleGraphRect = Rect.fromLTRB(
       0,
       chartStyle.topPadding,
-      mWidth,
+      size.width,
       chartStyle.topPadding + mainHeight,
     );
 
@@ -169,7 +174,7 @@ abstract class BaseChartPainter extends CustomPainter {
       volumeGraphRect = Rect.fromLTRB(
         0,
         candleGraphRect.bottom + chartStyle.childPadding,
-        mWidth,
+        size.width,
         candleGraphRect.bottom + volumeGraphHeight,
       );
     }
@@ -178,21 +183,21 @@ abstract class BaseChartPainter extends CustomPainter {
       thirdGraphRect = Rect.fromLTRB(
         0,
         candleGraphRect.bottom + volumeGraphHeight + chartStyle.childPadding,
-        mWidth,
+        size.width,
         candleGraphRect.bottom + volumeGraphHeight + secondaryGraphHeight,
       );
     }
   }
 
   // [] Reviewed
-  void calculateValue() {
+  void calculateValue({required final Size size}) {
     if (dataSource.isEmpty) {
       return;
     }
 
-    setTranslateXFromScrollX(scrollX: currentHorizontalScroll);
+    setTranslateXFromScrollX(scrollX: currentHorizontalScroll, size: size);
     mStartIndex = indexOfTranslateX(translateX: xToTranslateX(x: 0));
-    mStopIndex = indexOfTranslateX(translateX: xToTranslateX(x: mWidth));
+    mStopIndex = indexOfTranslateX(translateX: xToTranslateX(x: size.width));
     for (int i = mStartIndex; i <= mStopIndex; i++) {
       var item = dataSource[i];
       getMainMaxMinValue(item: item, i: i);
@@ -347,8 +352,9 @@ abstract class BaseChartPainter extends CustomPainter {
 
   // [] Reviewed
   ///scrollX 转换为 TranslateX
-  void setTranslateXFromScrollX({required final double scrollX}) =>
-      mTranslateX = scrollX - maxHorizontalScrollWidth;
+  void setTranslateXFromScrollX(
+          {required final double scrollX, required final Size size}) =>
+      mTranslateX = scrollX - maxHorizontalScrollWidth(size: size);
   // [] Reviewed
   ///计算长按后x的值，转换为index
   int calculateSelectedX({required final double selectX}) {
@@ -410,10 +416,12 @@ abstract class BaseChartPainter extends CustomPainter {
 
   void drawMaxAndMin({
     required final Canvas canvas,
+    required final Size size,
   });
 
   void drawNowPrice({
     required final Canvas canvas,
+    required final Size size,
   });
 
   void drawCrossLine({

@@ -158,13 +158,19 @@ class _KChartWidgetState extends State<KChartWidget>
           onHorizontalDragUpdate: (details) {
             if (isScale || isLongPress) return;
             mScrollX = (details.primaryDelta! / mScaleX + mScrollX)
-                .clamp(0.0, _painter.maxHorizontalScrollWidth)
+                .clamp(
+                    0.0,
+                    _painter.maxHorizontalScrollWidth(
+                        size: _painter.lastPaintedSize))
                 .toDouble();
             notifyChanged();
           },
           onHorizontalDragEnd: (DragEndDetails details) {
             var velocity = details.velocity.pixelsPerSecond.dx;
-            _onFling(velocity, _painter.maxHorizontalScrollWidth);
+            _onFling(
+                velocity,
+                _painter.maxHorizontalScrollWidth(
+                    size: _painter.lastPaintedSize));
           },
           onHorizontalDragCancel: () => _onDragChanged(false),
           onScaleStart: (_) {

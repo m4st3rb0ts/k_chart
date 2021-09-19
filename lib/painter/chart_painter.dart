@@ -258,7 +258,7 @@ class ChartPainter extends BaseChartPainter {
     double y = getMainY(point.close);
     double x;
     bool isLeft = false;
-    if (translateXtoX(translateX: getX(position: index)) < mWidth / 2) {
+    if (translateXtoX(translateX: getX(position: index)) < size.width / 2) {
       isLeft = false;
       x = 1;
       Path path = new Path();
@@ -273,12 +273,12 @@ class ChartPainter extends BaseChartPainter {
       tp.paint(canvas, Offset(x + w1, y - textHeight / 2));
     } else {
       isLeft = true;
-      x = mWidth - textWidth - 1 - 2 * w1 - w2;
+      x = size.width - textWidth - 1 - 2 * w1 - w2;
       Path path = new Path();
       path.moveTo(x, y);
       path.lineTo(x + w2, y + r);
-      path.lineTo(mWidth - 2, y + r);
-      path.lineTo(mWidth - 2, y - r);
+      path.lineTo(size.width - 2, y + r);
+      path.lineTo(size.width - 2, y - r);
       path.lineTo(x + w2, y - r);
       path.close();
       canvas.drawPath(path, selectPointPaint);
@@ -295,8 +295,8 @@ class ChartPainter extends BaseChartPainter {
 
     if (x < textWidth + 2 * w1) {
       x = 1 + textWidth / 2 + w1;
-    } else if (mWidth - x < textWidth + 2 * w1) {
-      x = mWidth - 1 - textWidth / 2 - w1;
+    } else if (size.width - x < textWidth + 2 * w1) {
+      x = size.width - 1 - textWidth / 2 - w1;
     }
     double baseLine = textHeight / 2;
     canvas.drawRect(
@@ -337,12 +337,12 @@ class ChartPainter extends BaseChartPainter {
   }
 
   @override
-  void drawMaxAndMin({required final Canvas canvas}) {
+  void drawMaxAndMin({required final Canvas canvas, required final Size size}) {
     if (displayTimeLineChart == true) return;
     //绘制最大值和最小值
     double x = translateXtoX(translateX: getX(position: mMainMinIndex));
     double y = getMainY(mMainLowMinValue);
-    if (x < mWidth / 2) {
+    if (x < size.width / 2) {
       //画右边
       TextPainter tp = getTextPainter(
           "── " + mMainLowMinValue.toStringAsFixed(fixedLength),
@@ -356,7 +356,7 @@ class ChartPainter extends BaseChartPainter {
     }
     x = translateXtoX(translateX: getX(position: mMainMaxIndex));
     y = getMainY(mMainHighMaxValue);
-    if (x < mWidth / 2) {
+    if (x < size.width / 2) {
       //画右边
       TextPainter tp = getTextPainter(
           "── " + mMainHighMaxValue.toStringAsFixed(fixedLength),
@@ -371,7 +371,7 @@ class ChartPainter extends BaseChartPainter {
   }
 
   @override
-  void drawNowPrice({required final Canvas canvas}) {
+  void drawNowPrice({required final Canvas canvas, required final Size size}) {
     if (!showNowPrice) {
       return;
     }
@@ -392,7 +392,7 @@ class ChartPainter extends BaseChartPainter {
           : chartStyle.colors.nowPriceDnColor;
     //先画横线
     double startX = 0;
-    final max = -mTranslateX + mWidth / horizontalScale;
+    final max = -mTranslateX + size.width / horizontalScale;
     final space = chartStyle.nowPriceLineSpan + chartStyle.nowPriceLineLength;
     while (startX < max) {
       canvas.drawLine(Offset(startX, y),
@@ -432,7 +432,7 @@ class ChartPainter extends BaseChartPainter {
       ..isAntiAlias = true;
     // k线图横线
     canvas.drawLine(Offset(-mTranslateX, y),
-        Offset(-mTranslateX + mWidth / horizontalScale, y), paintX);
+        Offset(-mTranslateX + size.width / horizontalScale, y), paintX);
     if (horizontalScale >= 1) {
       canvas.drawOval(
           Rect.fromCenter(
