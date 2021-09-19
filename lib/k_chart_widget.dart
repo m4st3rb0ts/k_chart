@@ -122,7 +122,7 @@ class _KChartWidgetState extends State<KChartWidget>
     }
     final _painter = ChartPainter(
       chartStyle: widget.chartStyle,
-      datas: widget.datas,
+      datas: widget.datas ?? <KLineEntity>[],
       scaleX: mScaleX,
       scrollX: mScrollX,
       selectX: mSelectX,

@@ -15,36 +15,38 @@ abstract class BaseChartPainter extends CustomPainter {
   BaseChartPainter({
     required this.chartStyle,
     required this.dataSource,
+    this.primaryIndicator = PrimaryIndicator.MA,
+    this.secondaryIndicator = SecondaryIndicator.MACD,
+    this.hideVolumeChart = false,
+    this.displayTimeLineChart = false,
     required this.scaleX,
     required this.scrollX,
     required this.isLongPress,
     required this.selectX,
-    this.primaryIndicator = PrimaryIndicator.MA,
-    this.volHidden = false,
-    this.secondaryIndicator = SecondaryIndicator.MACD,
-    this.isLine = false,
   }) {
-    initFormats();
+    _initDateFormats();
   }
 
-  static double maxScrollX = 0.0;
   final List<KLineEntity> dataSource;
   final ChartStyle chartStyle;
+  final PrimaryIndicator primaryIndicator;
+  final SecondaryIndicator secondaryIndicator;
+  final bool hideVolumeChart;
+  final bool displayTimeLineChart;
+  List<String> displayDateFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
 
-  PrimaryIndicator primaryIndicator;
-  SecondaryIndicator secondaryIndicator;
-
-  bool volHidden;
+  //TOREVIEW GOING DOWN
+  static double maxScrollX = 0.0;
   double scaleX = 1.0;
   double scrollX = 0.0;
   double selectX;
   bool isLongPress = false;
-  bool isLine;
 
   //3块区域大小与位置
   late Rect mMainRect;
   Rect? mVolRect;
   Rect? mSecondaryRect;
+
   late double mDisplayHeight;
   late double mWidth;
   int mStartIndex = 0;
@@ -61,35 +63,32 @@ abstract class BaseChartPainter extends CustomPainter {
   double mMainHighMaxValue = double.minPositive;
   double mMainLowMinValue = double.maxFinite;
 
-  //Data occupies the total length of the screen
-  double get dataLen => dataSource.length * chartStyle.pointWidth;
-
-  List<String> mFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]; //格式化时间
-
-  void initFormats() {
+  // Init data format
+  void _initDateFormats() {
     if (chartStyle.dateTimeFormat != null) {
-      mFormats = chartStyle.dateTimeFormat!;
+      displayDateFormats = chartStyle.dateTimeFormat!;
       return;
     }
 
     if (dataSource.length < 2) {
-      mFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
+      displayDateFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
       return;
     }
 
-    int firstTime = dataSource.first.time ?? 0;
-    int secondTime = dataSource[1].time ?? 0;
-    int time = secondTime - firstTime;
-    time ~/= 1000;
-    //月线
-    if (time >= 24 * 60 * 60 * 28)
-      mFormats = [yy, '-', mm];
-    //日线等
-    else if (time >= 24 * 60 * 60)
-      mFormats = [yy, '-', mm, '-', dd];
-    //小时线等
-    else
-      mFormats = [mm, '-', dd, ' ', HH, ':', nn];
+    final firstTime = dataSource.first.time ?? 0;
+    final secondTime = dataSource[1].time ?? 0;
+    final time = (secondTime - firstTime) ~/ 1000;
+
+    if (time >= 24 * 60 * 60 * 28) {
+      //Monthly line
+      displayDateFormats = [yy, '-', mm];
+    } else if (time >= 24 * 60 * 60) {
+      //Daily line
+      displayDateFormats = [yy, '-', mm, '-', dd];
+    } else {
+      //Hourly line
+      displayDateFormats = [mm, '-', dd, ' ', HH, ':', nn];
+    }
   }
 
   @override
@@ -123,57 +122,8 @@ abstract class BaseChartPainter extends CustomPainter {
     canvas.restore();
   }
 
-  void initChartRenderer();
-
-  void drawBackground({
-    required final Canvas canvas,
-    required final Size size,
-  });
-
-  void drawGrid({
-    required final Canvas canvas,
-  });
-
-  void drawChart({
-    required final Canvas canvas,
-    required final Size size,
-  });
-
-  void drawRightText({
-    required final Canvas canvas,
-  });
-
-  void drawDate({
-    required final Canvas canvas,
-    required final Size size,
-  });
-
-  void drawText({
-    required final Canvas canvas,
-    required final KLineEntity data,
-    required final double x,
-  });
-
-  void drawMaxAndMin({
-    required final Canvas canvas,
-  });
-
-  void drawNowPrice({
-    required final Canvas canvas,
-  });
-
-  void drawCrossLine({
-    required final Canvas canvas,
-    required final Size size,
-  });
-
-  void drawCrossLineText({
-    required final Canvas canvas,
-    required final Size size,
-  });
-
   void initRect({required final Size size}) {
-    double volHeight = volHidden != true ? mDisplayHeight * 0.2 : 0;
+    double volHeight = hideVolumeChart != true ? mDisplayHeight * 0.2 : 0;
     double secondaryHeight = secondaryIndicator != SecondaryIndicator.NONE
         ? mDisplayHeight * 0.2
         : 0;
@@ -189,7 +139,7 @@ abstract class BaseChartPainter extends CustomPainter {
       chartStyle.topPadding + mainHeight,
     );
 
-    if (volHidden != true) {
+    if (hideVolumeChart != true) {
       mVolRect = Rect.fromLTRB(
         0,
         mMainRect.bottom + chartStyle.childPadding,
@@ -198,7 +148,6 @@ abstract class BaseChartPainter extends CustomPainter {
       );
     }
 
-    //secondaryState == SecondaryState.NONE隐藏副视图
     if (secondaryIndicator != SecondaryIndicator.NONE) {
       mSecondaryRect = Rect.fromLTRB(
         0,
@@ -250,7 +199,7 @@ abstract class BaseChartPainter extends CustomPainter {
       mMainMinIndex = i;
     }
 
-    if (isLine == true) {
+    if (displayTimeLineChart == true) {
       mMainMaxValue = max(mMainMaxValue, item.close);
       mMainMinValue = min(mMainMinValue, item.close);
     }
@@ -386,21 +335,58 @@ abstract class BaseChartPainter extends CustomPainter {
   double translateXtoX({required final double translateX}) =>
       (translateX + mTranslateX) * scaleX;
 
-  TextStyle getTextStyle({required final Color color}) {
-    return TextStyle(fontSize: 10.0, color: color);
-  }
+  TextStyle getTextStyle({required final Color color}) =>
+      TextStyle(fontSize: 10.0, color: color);
 
   @override
-  bool shouldRepaint(BaseChartPainter oldDelegate) {
-    return true;
-//    return oldDelegate.datas != datas ||
-//        oldDelegate.datas?.length != datas?.length ||
-//        oldDelegate.scaleX != scaleX ||
-//        oldDelegate.scrollX != scrollX ||
-//        oldDelegate.isLongPress != isLongPress ||
-//        oldDelegate.selectX != selectX ||
-//        oldDelegate.isLine != isLine ||
-//        oldDelegate.mainState != mainState ||
-//        oldDelegate.secondaryState != secondaryState;
-  }
+  bool shouldRepaint(BaseChartPainter oldDelegate) => true;
+
+  void initChartRenderer();
+
+  void drawBackground({
+    required final Canvas canvas,
+    required final Size size,
+  });
+
+  void drawGrid({
+    required final Canvas canvas,
+  });
+
+  void drawChart({
+    required final Canvas canvas,
+    required final Size size,
+  });
+
+  void drawRightText({
+    required final Canvas canvas,
+  });
+
+  void drawDate({
+    required final Canvas canvas,
+    required final Size size,
+  });
+
+  void drawText({
+    required final Canvas canvas,
+    required final KLineEntity data,
+    required final double x,
+  });
+
+  void drawMaxAndMin({
+    required final Canvas canvas,
+  });
+
+  void drawNowPrice({
+    required final Canvas canvas,
+  });
+
+  void drawCrossLine({
+    required final Canvas canvas,
+    required final Size size,
+  });
+
+  void drawCrossLineText({
+    required final Canvas canvas,
+    required final Size size,
+  });
 }

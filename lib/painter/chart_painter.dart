@@ -40,9 +40,9 @@ class ChartPainter extends BaseChartPainter {
           isLongPress: isLongPass,
           selectX: selectX,
           primaryIndicator: mainState,
-          volHidden: volHidden,
+          hideVolumeChart: volHidden,
           secondaryIndicator: secondaryState,
-          isLine: isLine,
+          displayTimeLineChart: isLine,
         ) {
     selectPointPaint = Paint()
       ..isAntiAlias = true
@@ -88,7 +88,7 @@ class ChartPainter extends BaseChartPainter {
       maxVerticalValue: mMainMaxValue,
       minVerticalValue: mMainMinValue,
       indicator: primaryIndicator,
-      isTimeLineMode: isLine,
+      isTimeLineMode: displayTimeLineChart,
       fixedDecimalsLength: fixedLength,
       chartStyle: chartStyle,
       timelineHorizontalScale: scaleX,
@@ -335,7 +335,7 @@ class ChartPainter extends BaseChartPainter {
 
   @override
   void drawMaxAndMin({required final Canvas canvas}) {
-    if (isLine == true) return;
+    if (displayTimeLineChart == true) return;
     //绘制最大值和最小值
     double x = translateXtoX(translateX: getX(position: mMainMinIndex));
     double y = getMainY(mMainLowMinValue);
@@ -456,7 +456,7 @@ class ChartPainter extends BaseChartPainter {
   String getDate(int? date) => dateFormat(
       DateTime.fromMillisecondsSinceEpoch(
           date ?? DateTime.now().millisecondsSinceEpoch),
-      mFormats);
+      displayDateFormats);
 
   double getMainY(double y) =>
       mMainRenderer.getVerticalPositionForPoint(value: y);
