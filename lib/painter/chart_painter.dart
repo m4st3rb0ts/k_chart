@@ -14,23 +14,6 @@ import '../renders/macd_entity_renderer.dart';
 import '../renders/volume_renderer.dart';
 
 class ChartPainter extends BaseChartPainter {
-  static get maxScrollX => BaseChartPainter.maxScrollX;
-  late BaseChartRenderer mMainRenderer;
-  late BaseChartRenderer? mVolRenderer;
-  late BaseChartRenderer? mSecondaryRenderer;
-  StreamSink<InfoWindowEntity?>? sink;
-  Color? upColor, dnColor;
-  Color? ma5Color, ma10Color, ma30Color;
-  Color? volColor;
-  Color? macdColor, difColor, deaColor, jColor;
-  List<Color>? bgColor;
-  int fixedLength;
-  final List<int> maDayList;
-  late Paint selectPointPaint, selectorBorderPaint, nowPricePaint;
-  final ChartStyle chartStyle;
-  final bool hideGrid;
-  final bool showNowPrice;
-
   ChartPainter({
     required this.chartStyle,
     required datas,
@@ -75,6 +58,23 @@ class ChartPainter extends BaseChartPainter {
       ..isAntiAlias = true;
   }
 
+  static get maxScrollX => BaseChartPainter.maxScrollX;
+  late BaseChartRenderer mMainRenderer;
+  late BaseChartRenderer? mVolRenderer;
+  late BaseChartRenderer? mSecondaryRenderer;
+  StreamSink<InfoWindowEntity?>? sink;
+  Color? upColor, dnColor;
+  Color? ma5Color, ma10Color, ma30Color;
+  Color? volColor;
+  Color? macdColor, difColor, deaColor, jColor;
+  List<Color>? bgColor;
+  int fixedLength;
+  final List<int> maDayList;
+  late Paint selectPointPaint, selectorBorderPaint, nowPricePaint;
+  final ChartStyle chartStyle;
+  final bool hideGrid;
+  final bool showNowPrice;
+
   @override
   void initChartRenderer() {
     if (datas != null && datas!.isNotEmpty) {
@@ -117,7 +117,8 @@ class ChartPainter extends BaseChartPainter {
   }
 
   @override
-  void drawBg(Canvas canvas, Size size) {
+  void drawBackground(
+      {required final Canvas canvas, required final Size size}) {
     Paint mBgPaint = Paint();
     Gradient mBgGradient = LinearGradient(
       begin: Alignment.bottomCenter,
@@ -152,7 +153,7 @@ class ChartPainter extends BaseChartPainter {
   }
 
   @override
-  void drawGrid(canvas) {
+  void drawGrid({required final Canvas canvas}) {
     if (!hideGrid) {
       mMainRenderer.drawGrid(canvas: canvas);
       mVolRenderer?.drawGrid(canvas: canvas);
@@ -161,7 +162,7 @@ class ChartPainter extends BaseChartPainter {
   }
 
   @override
-  void drawChart(Canvas canvas, Size size) {
+  void drawChart({required final Canvas canvas, required final Size size}) {
     canvas.save();
     canvas.translate(mTranslateX * scaleX, 0.0);
     canvas.scale(scaleX, 1.0);
@@ -169,8 +170,8 @@ class ChartPainter extends BaseChartPainter {
       KLineEntity? curPoint = datas?[i];
       if (curPoint == null) continue;
       KLineEntity lastPoint = i == 0 ? curPoint : datas![i - 1];
-      double curX = getX(i);
-      double lastX = i == 0 ? curX : getX(i - 1);
+      double curX = getX(position: i);
+      double lastX = i == 0 ? curX : getX(position: i - 1);
 
       mMainRenderer.drawChart(
         lastValue: RenderData<CandleEntity>(data: lastPoint, x: lastX),
@@ -196,8 +197,8 @@ class ChartPainter extends BaseChartPainter {
   }
 
   @override
-  void drawRightText(canvas) {
-    var textStyle = getTextStyle(chartStyle.colors.defaultTextColor);
+  void drawRightText({required final Canvas canvas}) {
+    var textStyle = getTextStyle(color: chartStyle.colors.defaultTextColor);
     if (!hideGrid) {
       mMainRenderer.drawRightText(canvas: canvas, textStyle: textStyle);
     }
@@ -206,19 +207,19 @@ class ChartPainter extends BaseChartPainter {
   }
 
   @override
-  void drawDate(Canvas canvas, Size size) {
+  void drawDate({required final Canvas canvas, required final Size size}) {
     if (datas == null) return;
 
     double columnSpace = size.width / chartStyle.numberOfGridColumns;
-    double startX = getX(mStartIndex) - chartStyle.pointWidth * 0.5;
-    double stopX = getX(mStopIndex) + chartStyle.pointWidth * 0.5;
+    double startX = getX(position: mStartIndex) - chartStyle.pointWidth * 0.5;
+    double stopX = getX(position: mStopIndex) + chartStyle.pointWidth * 0.5;
     double x = 0.0;
     double y = 0.0;
     for (var i = 0; i <= chartStyle.numberOfGridColumns; ++i) {
-      double translateX = xToTranslateX(columnSpace * i);
+      double translateX = xToTranslateX(x: columnSpace * i);
 
       if (translateX >= startX && translateX <= stopX) {
-        int index = indexOfTranslateX(translateX);
+        int index = indexOfTranslateX(translateX: translateX);
 
         if (datas?[index] == null) continue;
         TextPainter tp = getTextPainter(getDate(datas![index].time), null);
@@ -235,9 +236,10 @@ class ChartPainter extends BaseChartPainter {
   }
 
   @override
-  void drawCrossLineText(Canvas canvas, Size size) {
-    var index = calculateSelectedX(selectX);
-    KLineEntity point = getItem(index);
+  void drawCrossLineText(
+      {required final Canvas canvas, required final Size size}) {
+    var index = calculateSelectedX(selectX: selectX);
+    KLineEntity point = getItem(position: index);
 
     TextPainter tp =
         getTextPainter(point.close, chartStyle.colors.crossTextColor);
@@ -250,7 +252,7 @@ class ChartPainter extends BaseChartPainter {
     double y = getMainY(point.close);
     double x;
     bool isLeft = false;
-    if (translateXtoX(getX(index)) < mWidth / 2) {
+    if (translateXtoX(translateX: getX(position: index)) < mWidth / 2) {
       isLeft = false;
       x = 1;
       Path path = new Path();
@@ -282,7 +284,7 @@ class ChartPainter extends BaseChartPainter {
         getTextPainter(getDate(point.time), chartStyle.colors.crossTextColor);
     textWidth = dateTp.width;
     r = textHeight / 2;
-    x = translateXtoX(getX(index));
+    x = translateXtoX(translateX: getX(position: index));
     y = size.height - chartStyle.bottomPadding;
 
     if (x < textWidth + 2 * w1) {
@@ -306,23 +308,29 @@ class ChartPainter extends BaseChartPainter {
   }
 
   @override
-  void drawText(Canvas canvas, KLineEntity data, double x) {
+  void drawText({
+    required final Canvas canvas,
+    required final KLineEntity data,
+    required final double x,
+  }) {
     //长按显示按中的数据
+    var customData = data;
     if (isLongPress) {
-      var index = calculateSelectedX(selectX);
-      data = getItem(index);
+      var index = calculateSelectedX(selectX: selectX);
+      customData = getItem(position: index);
     }
     //松开显示最后一条数据
-    mMainRenderer.drawText(canvas: canvas, value: data, leftOffset: x);
-    mVolRenderer?.drawText(canvas: canvas, value: data, leftOffset: x);
-    mSecondaryRenderer?.drawText(canvas: canvas, value: data, leftOffset: x);
+    mMainRenderer.drawText(canvas: canvas, value: customData, leftOffset: x);
+    mVolRenderer?.drawText(canvas: canvas, value: customData, leftOffset: x);
+    mSecondaryRenderer?.drawText(
+        canvas: canvas, value: customData, leftOffset: x);
   }
 
   @override
-  void drawMaxAndMin(Canvas canvas) {
+  void drawMaxAndMin({required final Canvas canvas}) {
     if (isLine == true) return;
     //绘制最大值和最小值
-    double x = translateXtoX(getX(mMainMinIndex));
+    double x = translateXtoX(translateX: getX(position: mMainMinIndex));
     double y = getMainY(mMainLowMinValue);
     if (x < mWidth / 2) {
       //画右边
@@ -336,7 +344,7 @@ class ChartPainter extends BaseChartPainter {
           chartStyle.colors.minColor);
       tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
     }
-    x = translateXtoX(getX(mMainMaxIndex));
+    x = translateXtoX(translateX: getX(position: mMainMaxIndex));
     y = getMainY(mMainHighMaxValue);
     if (x < mWidth / 2) {
       //画右边
@@ -353,7 +361,7 @@ class ChartPainter extends BaseChartPainter {
   }
 
   @override
-  void drawNowPrice(Canvas canvas) {
+  void drawNowPrice({required final Canvas canvas}) {
     if (!showNowPrice) {
       return;
     }
@@ -392,14 +400,14 @@ class ChartPainter extends BaseChartPainter {
   }
 
   ///画交叉线
-  void drawCrossLine(Canvas canvas, Size size) {
-    var index = calculateSelectedX(selectX);
-    KLineEntity point = getItem(index);
+  void drawCrossLine({required final Canvas canvas, required final Size size}) {
+    var index = calculateSelectedX(selectX: selectX);
+    KLineEntity point = getItem(position: index);
     Paint paintY = Paint()
       ..color = chartStyle.colors.vCrossColor
       ..strokeWidth = chartStyle.vCrossWidth
       ..isAntiAlias = true;
-    double x = getX(index);
+    double x = getX(position: index);
     double y = getMainY(point.close);
     // k线图竖线
     canvas.drawLine(Offset(x, chartStyle.topPadding),
@@ -429,7 +437,7 @@ class ChartPainter extends BaseChartPainter {
     if (color == null) {
       color = chartStyle.colors.defaultTextColor;
     }
-    TextSpan span = TextSpan(text: "$text", style: getTextStyle(color));
+    TextSpan span = TextSpan(text: "$text", style: getTextStyle(color: color));
     TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
     tp.layout();
     return tp;
