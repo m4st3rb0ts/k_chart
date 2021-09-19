@@ -314,7 +314,9 @@ abstract class BaseChartPainter extends CustomPainter {
 
   ///获取平移的最小值
   double getMinTranslateX() {
-    var x = -dataSource.length + mWidth / scaleX - chartStyle.pointWidth * 0.5;
+    var x = -dataSource.length * chartStyle.pointWidth +
+        mWidth / scaleX -
+        chartStyle.pointWidth * 0.5;
     return x >= 0 ? 0.0 : x;
   }
 
