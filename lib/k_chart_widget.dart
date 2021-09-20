@@ -28,11 +28,9 @@ class TimeFormat {
 
 class KChartWidget extends StatefulWidget {
   final List<KLineEntity>? datas;
-  final PrimaryIndicator mainState;
   final bool volHidden;
   final SecondaryIndicator secondaryState;
   final Function()? onSecondaryTap;
-  final bool isLine;
   final bool hideGrid;
   @Deprecated('Use `translations` instead.')
   final bool isChinese;
@@ -47,21 +45,20 @@ class KChartWidget extends StatefulWidget {
   @Deprecated('Use `chartColors` instead.')
   final List<Color>? bgColor;
   final int fixedLength;
-  final List<int> maDayList;
   final int flingTime;
   final double flingRatio;
   final Curve flingCurve;
   final Function(bool)? isOnDrag;
   final ChartStyle chartStyle;
+  final CandlesIndicator candlesIndicator;
 
   const KChartWidget({
     required this.datas,
+    required this.candlesIndicator,
     required this.chartStyle,
-    this.mainState = PrimaryIndicator.MA,
     this.secondaryState = SecondaryIndicator.MACD,
     this.onSecondaryTap,
     this.volHidden = false,
-    this.isLine = false,
     this.hideGrid = false,
     @Deprecated('Use `translations` instead.') this.isChinese = false,
     this.showNowPrice = true,
@@ -71,7 +68,6 @@ class KChartWidget extends StatefulWidget {
     this.onLoadMore,
     @Deprecated('Use `chartColors` instead.') this.bgColor,
     this.fixedLength = 2,
-    this.maDayList = const [5, 10, 20],
     this.flingTime = 600,
     this.flingRatio = 0.5,
     this.flingCurve = Curves.decelerate,
@@ -122,13 +118,7 @@ class _KChartWidgetState extends State<KChartWidget>
       mScaleX = 1.0;
     }
     final _painter = ChartPainter(
-      candlesIndicator: CandlesIndicator(
-        dataSource: widget.datas ?? <KLineEntity>[],
-        height: 200,
-        displayTimeLineChart: false,
-        candleIndicator: CandlesIndicators.MA,
-        maDayList: widget.maDayList,
-      ),
+      candlesIndicator: widget.candlesIndicator,
       chartStyle: widget.chartStyle,
       dataSource: widget.datas ?? <KLineEntity>[],
       horizontalScale: mScaleX,
@@ -282,7 +272,7 @@ class _KChartWidgetState extends State<KChartWidget>
         stream: mInfoWindowStream?.stream,
         builder: (context, snapshot) {
           if (!isLongPress ||
-              widget.isLine == true ||
+              widget.candlesIndicator.displayTimeLineChart ||
               !snapshot.hasData ||
               snapshot.data?.kLineEntity == null) return Container();
           KLineEntity entity = snapshot.data!.kLineEntity;

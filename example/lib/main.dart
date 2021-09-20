@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:k_chart/chart_style.dart';
 import 'package:k_chart/chart_translations.dart';
 import 'package:k_chart/flutter_k_chart.dart';
+import 'package:k_chart/indicators/candles/candles_indicator.dart';
 import 'package:k_chart/k_chart_widget.dart';
 
 void main() => runApp(MyApp());
@@ -35,7 +36,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<KLineEntity>? datas;
   bool showLoading = true;
-  PrimaryIndicator _mainState = PrimaryIndicator.MA;
+  var _mainState = CandlesIndicators.MA;
   bool _volHidden = false;
   SecondaryIndicator _secondaryState = SecondaryIndicator.MACD;
   bool isLine = true;
@@ -102,8 +103,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: KChartWidget(
               datas: datas,
               chartStyle: chartStyle,
-              isLine: isLine,
-              mainState: _mainState,
               volHidden: _volHidden,
               secondaryState: _secondaryState,
               fixedLength: 2,
@@ -113,7 +112,13 @@ class _MyHomePageState extends State<MyHomePage> {
               //`isChinese` is Deprecated, Use `translations` instead.
               isChinese: isChinese,
               hideGrid: _hideGrid,
-              maDayList: [1, 100, 1000],
+              candlesIndicator: CandlesIndicator(
+                dataSource: datas ?? <KLineEntity>[],
+                height: 300,
+                displayTimeLineChart: isLine,
+                candleIndicator: _mainState,
+                maDayList: [1, 100, 1000],
+              ),
             ),
           ),
           if (showLoading)
@@ -144,11 +149,11 @@ class _MyHomePageState extends State<MyHomePage> {
       children: <Widget>[
         button("Time Mode", onPressed: () => isLine = true),
         button("K Line Mode", onPressed: () => isLine = false),
-        button("Line:MA", onPressed: () => _mainState = PrimaryIndicator.MA),
+        button("Line:MA", onPressed: () => _mainState = CandlesIndicators.MA),
         button("Line:BOLL",
-            onPressed: () => _mainState = PrimaryIndicator.BOLL),
+            onPressed: () => _mainState = CandlesIndicators.BOLL),
         button("Hide Line",
-            onPressed: () => _mainState = PrimaryIndicator.NONE),
+            onPressed: () => _mainState = CandlesIndicators.NONE),
         button("Secondary Chart:MACD",
             onPressed: () => _secondaryState = SecondaryIndicator.MACD),
         button("Secondary Chart:KDJ",
