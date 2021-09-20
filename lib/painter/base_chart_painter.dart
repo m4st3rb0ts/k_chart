@@ -15,9 +15,7 @@ abstract class BaseChartPainter extends CustomPainter {
   BaseChartPainter({
     required this.chartStyle,
     required this.dataSource,
-    this.primaryIndicator = PrimaryIndicator.MA,
     this.secondaryIndicator = SecondaryIndicator.MACD,
-    this.displayTimeLineChart = false,
     this.horizontalScale = 1.0,
     this.currentHorizontalScroll = 0.0,
     this.shouldDisplaySelection = false,
@@ -32,14 +30,8 @@ abstract class BaseChartPainter extends CustomPainter {
   /// Graph data
   final ChartStyle chartStyle;
 
-  /// First indicator to display in candles
-  final PrimaryIndicator primaryIndicator;
-
   /// Second indicator to display in another graph
   final SecondaryIndicator secondaryIndicator;
-
-  /// Should display line chart instead candles?
-  final bool displayTimeLineChart;
 
   /// Time format for display dates
   List<String> displayDateFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
@@ -71,16 +63,10 @@ abstract class BaseChartPainter extends CustomPainter {
   //TOREVIEW GOING DOWN
   int mStartIndex = 0;
   int mStopIndex = 0;
-  double mMainMaxValue = double.minPositive;
-  double mMainMinValue = double.maxFinite;
   double mVolMaxValue = double.minPositive;
   double mVolMinValue = double.maxFinite;
   double mSecondaryMaxValue = double.minPositive;
   double mSecondaryMinValue = double.maxFinite;
-  int mMainMaxIndex = 0;
-  int mMainMinIndex = 0;
-  double mMainHighMaxValue = double.minPositive;
-  double mMainLowMinValue = double.maxFinite;
 
   // Init data format
   void _initDateFormats() {
@@ -156,59 +142,9 @@ abstract class BaseChartPainter extends CustomPainter {
             translateToCurrentViewport(leftOffset: size.width, size: size));
     for (int i = mStartIndex; i <= mStopIndex; i++) {
       var item = dataSource[i];
-      getMainMaxMinValue(item: item, i: i);
       getVolMaxMinValue(item: item);
       getSecondaryMaxMinValue(item: item);
     }
-  }
-
-  void getMainMaxMinValue(
-      {required final KLineEntity item, required final int i}) {
-    double maxPrice, minPrice;
-    if (primaryIndicator == PrimaryIndicator.MA) {
-      maxPrice = max(item.high, _findMaxMA(a: item.maValueList ?? [0]));
-      minPrice = min(item.low, _findMinMA(a: item.maValueList ?? [0]));
-    } else if (primaryIndicator == PrimaryIndicator.BOLL) {
-      maxPrice = max(item.top ?? 0, item.high);
-      minPrice = min(item.bottom ?? 0, item.low);
-    } else {
-      maxPrice = item.high;
-      minPrice = item.low;
-    }
-    mMainMaxValue = max(mMainMaxValue, maxPrice);
-    mMainMinValue = min(mMainMinValue, minPrice);
-
-    if (mMainHighMaxValue < item.high) {
-      mMainHighMaxValue = item.high;
-      mMainMaxIndex = i;
-    }
-    if (mMainLowMinValue > item.low) {
-      mMainLowMinValue = item.low;
-      mMainMinIndex = i;
-    }
-
-    if (displayTimeLineChart == true) {
-      mMainMaxValue = max(mMainMaxValue, item.close);
-      mMainMinValue = min(mMainMinValue, item.close);
-    }
-  }
-
-  // [] Reviewed
-  double _findMaxMA({required final List<double> a}) {
-    double result = double.minPositive;
-    for (double i in a) {
-      result = max(result, i);
-    }
-    return result;
-  }
-
-  // [] Reviewed
-  double _findMinMA({required final List<double> a}) {
-    double result = double.maxFinite;
-    for (double i in a) {
-      result = min(result, i == 0 ? double.maxFinite : i);
-    }
-    return result;
   }
 
   // [] Reviewed

@@ -18,5 +18,6 @@ abstract class Candle implements Built<Candle, CandleBuilder> {
   double get top;
   double get middle;
   double get bottom;
+  double get bollMa;
   BuiltList<double> get maValueList;
 }

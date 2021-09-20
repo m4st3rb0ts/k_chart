@@ -22,6 +22,8 @@ class _$Candle extends Candle {
   @override
   final double bottom;
   @override
+  final double bollMa;
+  @override
   final BuiltList<double> maValueList;
 
   factory _$Candle([void Function(CandleBuilder)? updates]) =>
@@ -35,6 +37,7 @@ class _$Candle extends Candle {
       required this.top,
       required this.middle,
       required this.bottom,
+      required this.bollMa,
       required this.maValueList})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(open, 'Candle', 'open');
@@ -44,6 +47,7 @@ class _$Candle extends Candle {
     BuiltValueNullFieldError.checkNotNull(top, 'Candle', 'top');
     BuiltValueNullFieldError.checkNotNull(middle, 'Candle', 'middle');
     BuiltValueNullFieldError.checkNotNull(bottom, 'Candle', 'bottom');
+    BuiltValueNullFieldError.checkNotNull(bollMa, 'Candle', 'bollMa');
     BuiltValueNullFieldError.checkNotNull(maValueList, 'Candle', 'maValueList');
   }
 
@@ -65,6 +69,7 @@ class _$Candle extends Candle {
         top == other.top &&
         middle == other.middle &&
         bottom == other.bottom &&
+        bollMa == other.bollMa &&
         maValueList == other.maValueList;
   }
 
@@ -75,12 +80,14 @@ class _$Candle extends Candle {
             $jc(
                 $jc(
                     $jc(
-                        $jc($jc($jc(0, open.hashCode), close.hashCode),
-                            high.hashCode),
-                        low.hashCode),
-                    top.hashCode),
-                middle.hashCode),
-            bottom.hashCode),
+                        $jc(
+                            $jc($jc($jc(0, open.hashCode), close.hashCode),
+                                high.hashCode),
+                            low.hashCode),
+                        top.hashCode),
+                    middle.hashCode),
+                bottom.hashCode),
+            bollMa.hashCode),
         maValueList.hashCode));
   }
 
@@ -94,6 +101,7 @@ class _$Candle extends Candle {
           ..add('top', top)
           ..add('middle', middle)
           ..add('bottom', bottom)
+          ..add('bollMa', bollMa)
           ..add('maValueList', maValueList))
         .toString();
   }
@@ -130,6 +138,10 @@ class CandleBuilder implements Builder<Candle, CandleBuilder> {
   double? get bottom => _$this._bottom;
   set bottom(double? bottom) => _$this._bottom = bottom;
 
+  double? _bollMa;
+  double? get bollMa => _$this._bollMa;
+  set bollMa(double? bollMa) => _$this._bollMa = bollMa;
+
   ListBuilder<double>? _maValueList;
   ListBuilder<double> get maValueList =>
       _$this._maValueList ??= new ListBuilder<double>();
@@ -148,6 +160,7 @@ class CandleBuilder implements Builder<Candle, CandleBuilder> {
       _top = $v.top;
       _middle = $v.middle;
       _bottom = $v.bottom;
+      _bollMa = $v.bollMa;
       _maValueList = $v.maValueList.toBuilder();
       _$v = null;
     }
@@ -183,6 +196,8 @@ class CandleBuilder implements Builder<Candle, CandleBuilder> {
                   middle, 'Candle', 'middle'),
               bottom: BuiltValueNullFieldError.checkNotNull(
                   bottom, 'Candle', 'bottom'),
+              bollMa: BuiltValueNullFieldError.checkNotNull(
+                  bollMa, 'Candle', 'bollMa'),
               maValueList: maValueList.build());
     } catch (_) {
       late String _$failedField;

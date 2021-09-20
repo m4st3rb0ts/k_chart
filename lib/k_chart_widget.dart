@@ -123,9 +123,11 @@ class _KChartWidgetState extends State<KChartWidget>
     }
     final _painter = ChartPainter(
       candlesIndicator: CandlesIndicator(
-        dataSource: <KLineEntity>[],
+        dataSource: widget.datas ?? <KLineEntity>[],
+        height: 200,
         displayTimeLineChart: false,
         candleIndicator: CandlesIndicators.MA,
+        maDayList: widget.maDayList,
       ),
       chartStyle: widget.chartStyle,
       dataSource: widget.datas ?? <KLineEntity>[],
@@ -133,16 +135,13 @@ class _KChartWidgetState extends State<KChartWidget>
       currentHorizontalScroll: mScrollX,
       selectedHorizontalValue: mSelectX,
       shouldDisplaySelection: isLongPress,
-      primaryIndicator: widget.mainState,
       hideVolumeChart: widget.volHidden,
       secondaryIndicator: widget.secondaryState,
-      displayTimeLineChart: widget.isLine,
       hideGrid: widget.hideGrid,
       showNowPrice: widget.showNowPrice,
       sink: mInfoWindowStream?.sink,
       bgColor: widget.bgColor,
       fixedLength: widget.fixedLength,
-      maDayList: widget.maDayList,
     );
 
     return LayoutBuilder(
