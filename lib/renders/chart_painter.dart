@@ -10,9 +10,9 @@ import '../entity/k_line_entity.dart';
 import '../flutter_k_chart.dart';
 import '../utils/date_format_util.dart';
 import 'base_chart_painter.dart';
-import '../renders/base_chart_renderer.dart';
-import '../renders/macd_entity_renderer.dart';
-import '../renders/volume_renderer.dart';
+import 'base_chart_renderer.dart';
+import '../indicators/macd/macd_entity_renderer.dart';
+import '../indicators/volume/volume_renderer.dart';
 
 class ChartPainter extends BaseChartPainter {
   ChartPainter({

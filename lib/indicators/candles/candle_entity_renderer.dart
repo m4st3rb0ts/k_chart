@@ -3,11 +3,11 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:k_chart/indicators/candles/candle.dart';
 
 import '../../chart_style.dart';
 import '../../renders/base_chart_renderer.dart';
 import 'candles_indicator.dart';
+import 'candle.dart';
 
 /// Candle data render
 class CandleEntityRender extends BaseChartRenderer<Candle> {

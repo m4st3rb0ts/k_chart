@@ -8,12 +8,11 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../chart_style.dart';
+import '../../entity/k_line_entity.dart';
 import '../../utils/number_util.dart';
 
-import 'candle.dart';
 import '../indicator.dart';
-
-import '../../entity/k_line_entity.dart';
+import 'candle.dart';
 import 'candle_entity_renderer.dart';
 
 enum CandlesIndicators { MA, BOLL, NONE }

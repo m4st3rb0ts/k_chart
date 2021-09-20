@@ -2,11 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../chart_style.dart';
-import '../entity/volume_entity.dart';
-import '../extension/num_ext.dart';
-import '../utils/number_util.dart';
-import 'base_chart_renderer.dart';
+import '../../chart_style.dart';
+import '../../entity/volume_entity.dart';
+import '../../extension/num_ext.dart';
+import '../../utils/number_util.dart';
+import '../../renders/base_chart_renderer.dart';
 
 /// Volume indicator
 class VolumeRenderer extends BaseChartRenderer<VolumeEntity> {

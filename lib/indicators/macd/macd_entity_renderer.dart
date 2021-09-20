@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../chart_style.dart';
-import '../entity/macd_entity.dart';
-import '../k_chart_widget.dart' show SecondaryIndicator;
-import 'base_chart_renderer.dart';
+import '../../chart_style.dart';
+import '../../entity/macd_entity.dart';
+import '../../k_chart_widget.dart' show SecondaryIndicator;
+import '../../renders/base_chart_renderer.dart';
 
 /// MACD indicator
 class MACDEntityRenderer extends BaseChartRenderer<MACDEntity> {
