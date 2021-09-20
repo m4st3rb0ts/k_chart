@@ -15,10 +15,10 @@ abstract class Indicator<T> {
   void updateRender({
     required final Size size,
     required final double scale,
-    required final int startIndex,
-    required final int stopIndex,
+    required final int firstIndexToDisplay,
+    required final int finalIndexToDisplay,
   });
 
   BuiltList<T> get data;
-  BaseChartRenderer? get render;
+  BaseChartRenderer<T>? get render;
 }

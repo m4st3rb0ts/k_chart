@@ -6,9 +6,9 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
-import 'package:k_chart/chart_style.dart';
 
-import 'package:k_chart/utils/number_util.dart';
+import '../../chart_style.dart';
+import '../../utils/number_util.dart';
 
 import 'candle.dart';
 import '../indicator.dart';
@@ -75,11 +75,11 @@ class CandlesIndicator extends Indicator<Candle> {
   void updateRender({
     required final Size size,
     required final double scale,
-    required final int startIndex,
-    required final int stopIndex,
+    required final int firstIndexToDisplay,
+    required final int finalIndexToDisplay,
   }) {
-    final normalizedStartIndex = max(0, startIndex);
-    final normalizedStopIndex = min(data.length, stopIndex);
+    final normalizedStartIndex = max(0, firstIndexToDisplay);
+    final normalizedStopIndex = min(data.length, finalIndexToDisplay);
     for (var i = normalizedStartIndex; i < normalizedStopIndex; i++) {
       final item = data[i];
       _fixedDecimalsLength = max(

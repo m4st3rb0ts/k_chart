@@ -86,8 +86,8 @@ class ChartPainter extends BaseChartPainter {
     candlesIndicator.updateRender(
       size: size,
       scale: horizontalScale,
-      startIndex: mStartIndex,
-      stopIndex: mStopIndex,
+      firstIndexToDisplay: mStartIndex,
+      finalIndexToDisplay: mStopIndex,
     );
     // if (!hideVolumeChart) {
     mVolRenderer = VolumeRenderer(
