@@ -10,7 +10,6 @@ import '../flutter_k_chart.dart';
 import '../utils/date_format_util.dart';
 import 'base_chart_painter.dart';
 import '../renders/base_chart_renderer.dart';
-import '../renders/candle_entity_renderer.dart';
 import '../renders/macd_entity_renderer.dart';
 import '../renders/volume_renderer.dart';
 
@@ -64,7 +63,6 @@ class ChartPainter extends BaseChartPainter {
 
   // static get maxScrollX => BaseChartPainter.maxScrollX;
   final CandlesIndicator candlesIndicator;
-  late BaseChartRenderer mMainRenderer;
   BaseChartRenderer? mVolRenderer;
   BaseChartRenderer? mSecondaryRenderer;
   StreamSink<InfoWindowEntity?>? sink;
@@ -96,30 +94,33 @@ class ChartPainter extends BaseChartPainter {
     mainHeight -= volumeGraphHeight;
     mainHeight -= secondaryGraphHeight;
 
-    mMainRenderer = CandleEntityRender(
-      displayRect: Rect.fromLTRB(
-        0,
-        chartStyle.topPadding,
-        size.width,
-        chartStyle.topPadding + mainHeight,
-      ),
-      maxVerticalValue: mMainMaxValue,
-      minVerticalValue: mMainMinValue,
-      indicator: primaryIndicator,
-      isTimeLineMode: displayTimeLineChart,
-      fixedDecimalsLength: fixedLength,
-      chartStyle: chartStyle,
-      timelineHorizontalScale: horizontalScale,
-      maFactorsForTitles: maDayList,
-    );
+    candlesIndicator.updateRender(size: size);
+    // mMainRenderer = CandleEntityRender(
+    //   displayRect: Rect.fromLTRB(
+    //     0,
+    //     chartStyle.topPadding,
+    //     size.width,
+    //     chartStyle.topPadding + mainHeight,
+    //   ),
+    //   maxVerticalValue: mMainMaxValue,
+    //   minVerticalValue: mMainMinValue,
+    //   indicator: primaryIndicator,
+    //   isTimeLineMode: displayTimeLineChart,
+    //   fixedDecimalsLength: fixedLength,
+    //   chartStyle: chartStyle,
+    //   timelineHorizontalScale: horizontalScale,
+    //   maFactorsForTitles: maDayList,
+    // );
 
     if (!hideVolumeChart) {
       mVolRenderer = VolumeRenderer(
         displayRect: Rect.fromLTRB(
           0,
-          mMainRenderer.displayRect.bottom + chartStyle.childPadding,
+          candlesIndicator.render?.displayRect.bottom ??
+              0 + chartStyle.childPadding,
           size.width,
-          mMainRenderer.displayRect.bottom + volumeGraphHeight,
+          (candlesIndicator.render?.displayRect.bottom ?? 0) +
+              volumeGraphHeight,
         ),
         maxVerticalValue: mVolMaxValue,
         minVerticalValue: mVolMinValue,
@@ -131,11 +132,10 @@ class ChartPainter extends BaseChartPainter {
       mSecondaryRenderer = MACDEntityRenderer(
         displayRect: Rect.fromLTRB(
           0,
-          mMainRenderer.displayRect.bottom +
-              volumeGraphHeight +
-              chartStyle.childPadding,
+          candlesIndicator.render?.displayRect.bottom ??
+              0 + volumeGraphHeight + chartStyle.childPadding,
           size.width,
-          mMainRenderer.displayRect.bottom +
+          (candlesIndicator.render?.displayRect.bottom ?? 0) +
               volumeGraphHeight +
               secondaryGraphHeight,
         ),
@@ -157,8 +157,12 @@ class ChartPainter extends BaseChartPainter {
       end: Alignment.topCenter,
       colors: bgColor ?? chartStyle.colors.bgColor,
     );
-    Rect mainRect = Rect.fromLTRB(0, 0, mMainRenderer.displayRect.width,
-        mMainRenderer.displayRect.height + chartStyle.topPadding);
+    final mainRect = Rect.fromLTRB(
+      0,
+      0,
+      candlesIndicator.render?.displayRect.width ?? 0,
+      candlesIndicator.render?.displayRect.height ?? 0 + chartStyle.topPadding,
+    );
     canvas.drawRect(
         mainRect, mBgPaint..shader = mBgGradient.createShader(mainRect));
 
@@ -195,7 +199,7 @@ class ChartPainter extends BaseChartPainter {
     required final Size size,
   }) {
     if (!hideGrid) {
-      mMainRenderer.drawGrid(canvas: canvas);
+      candlesIndicator.render?.drawGrid(canvas: canvas);
       mVolRenderer?.drawGrid(canvas: canvas);
       mSecondaryRenderer?.drawGrid(canvas: canvas);
     }
@@ -212,7 +216,7 @@ class ChartPainter extends BaseChartPainter {
       double curX = getLeftOffsetByIndex(index: i);
       double lastX = i == 0 ? curX : getLeftOffsetByIndex(index: i - 1);
 
-      mMainRenderer.drawChart(
+      candlesIndicator.render?.drawChart(
         lastValue: RenderData<CandleEntity>(data: lastPoint, x: lastX),
         currentValue: RenderData<CandleEntity>(data: curPoint, x: curX),
         size: size,
@@ -242,7 +246,8 @@ class ChartPainter extends BaseChartPainter {
   }) {
     var textStyle = getTextStyle(color: chartStyle.colors.defaultTextColor);
     if (!hideGrid) {
-      mMainRenderer.drawRightText(canvas: canvas, textStyle: textStyle);
+      candlesIndicator.render
+          ?.drawRightText(canvas: canvas, textStyle: textStyle);
     }
     mVolRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
     mSecondaryRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
@@ -377,7 +382,8 @@ class ChartPainter extends BaseChartPainter {
       }
     }
     //松开显示最后一条数据
-    mMainRenderer.drawText(canvas: canvas, value: customData, leftOffset: x);
+    candlesIndicator.render
+        ?.drawText(canvas: canvas, value: customData, leftOffset: x);
     mVolRenderer?.drawText(canvas: canvas, value: customData, leftOffset: x);
     mSecondaryRenderer?.drawText(
         canvas: canvas, value: customData, leftOffset: x);
@@ -513,7 +519,7 @@ class ChartPainter extends BaseChartPainter {
       displayDateFormats);
 
   double getMainY(double y) =>
-      mMainRenderer.getVerticalPositionForPoint(value: y);
+      candlesIndicator.render?.getVerticalPositionForPoint(value: y) ?? 0;
 
   /// 点是否在SecondaryRect中
   bool isInSecondaryRect(Offset point) {

@@ -12,7 +12,9 @@ abstract class Indicator {
 
   final List<KLineEntity> dataSource;
 
-  BaseChartRenderer generateRender({
+  void updateRender({
     required final Size size,
   });
+
+  BaseChartRenderer? get render;
 }

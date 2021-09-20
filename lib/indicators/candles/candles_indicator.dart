@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:k_chart/chart_style.dart';
 
 import 'package:k_chart/renders/base_chart_renderer.dart';
+import 'package:k_chart/utils/number_util.dart';
 
 import 'candle.dart';
 import '../indicator.dart';
@@ -41,16 +42,16 @@ class CandlesIndicator extends Indicator {
     }
   }
 
-  BaseChartRenderer generateRender({
+  void updateRender({
     required final Size size,
   }) {
-    return CandleEntityRender(
+    render = CandleEntityRender(
       displayRect: null,
       maxVerticalValue: null,
       minVerticalValue: null,
       indicator: candleIndicator,
       isTimeLineMode: displayTimeLineChart,
-      fixedDecimalsLength: 2,
+      fixedDecimalsLength: null,
       chartStyle: ChartStyle(),
       timelineHorizontalScale: null,
     );
@@ -58,6 +59,9 @@ class CandlesIndicator extends Indicator {
 
   BuiltList<Candle> _candles = BuiltList<Candle>();
   BuiltList<Candle> get candles => _candles;
+
+  CandleEntityRender? _render;
+  BaseChartRenderer? get render => _render;
 
   final bool displayTimeLineChart;
   final CandlesIndicators candleIndicator;
@@ -84,11 +88,20 @@ class CandlesIndicator extends Indicator {
     double minValue = double.maxFinite;
     double maxHighValue = double.minPositive;
     double minLowValue = double.maxFinite;
-    int mMainMaxIndex = 0;
-    int mMainMinIndex = 0;
+    int itemIndexWithMaxValue = 0;
+    int itemIndexWithMinValue = 0;
+    int fixedLength = 2;
 
     for (var i = 0; i < candles.length; i++) {
       final item = candles[i];
+
+      fixedLength = NumberUtil.getMaxDecimalLength(
+        item.open,
+        item.close,
+        item.high,
+        item.low,
+      );
+
       late double maxPrice;
       late double minPrice;
       if (candleIndicator == CandlesIndicators.MA) {
@@ -106,11 +119,11 @@ class CandlesIndicator extends Indicator {
 
       if (maxHighValue < item.high) {
         maxHighValue = item.high;
-        mMainMaxIndex = i;
+        itemIndexWithMaxValue = i;
       }
       if (minLowValue > item.low) {
         minLowValue = item.low;
-        mMainMinIndex = i;
+        itemIndexWithMinValue = i;
       }
 
       if (displayTimeLineChart == true) {
