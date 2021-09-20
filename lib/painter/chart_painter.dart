@@ -353,7 +353,7 @@ class ChartPainter extends BaseChartPainter {
   }) {
     //长按显示按中的数据
     KLineEntity? customData = data;
-    var index = (dataSource.length * 0.5).ceil();
+    var index = 0;
     if (shouldDisplaySelection) {
       index = getIndexForSelectedHorizontalValue(size: size);
       customData = getDataItemByIndex(index: index);
@@ -361,6 +361,8 @@ class ChartPainter extends BaseChartPainter {
         //TODO: Review if return or assign to data
         return;
       }
+    } else {
+      index = dataIndexInViewportFor(leftOffset: currentHorizontalScroll);
     }
     //松开显示最后一条数据
     candlesIndicator.render?.drawText(

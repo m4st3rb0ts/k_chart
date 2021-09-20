@@ -119,7 +119,8 @@ abstract class BaseChartPainter extends CustomPainter {
 
       drawText(
           canvas: canvas,
-          data: dataSource[(dataSource.length * 0.5).ceil()],
+          data: dataSource[
+              dataIndexInViewportFor(leftOffset: currentHorizontalScroll)],
           x: 5,
           size: size);
       drawMaxAndMin(canvas: canvas, size: size);
