@@ -89,21 +89,22 @@ class ChartPainter extends BaseChartPainter {
       firstIndexToDisplay: mStartIndex,
       finalIndexToDisplay: mStopIndex,
     );
-    // if (!hideVolumeChart) {
-    mVolRenderer = VolumeRenderer(
-      displayRect: Rect.fromLTRB(
-        0,
-        candlesIndicator.render?.displayRect.bottom ??
-            0 + chartStyle.childPadding,
-        size.width,
-        (candlesIndicator.render?.displayRect.bottom ?? 0) + volumeGraphHeight,
-      ),
-      maxVerticalValue: mVolMaxValue,
-      minVerticalValue: mVolMinValue,
-      fixedDecimalsLength: fixedLength,
-      chartStyle: chartStyle,
-    );
-    // }
+    if (!hideVolumeChart) {
+      mVolRenderer = VolumeRenderer(
+        displayRect: Rect.fromLTRB(
+          0,
+          candlesIndicator.render?.displayRect.bottom ??
+              0 + chartStyle.childPadding,
+          size.width,
+          (candlesIndicator.render?.displayRect.bottom ?? 0) +
+              volumeGraphHeight,
+        ),
+        maxVerticalValue: mVolMaxValue,
+        minVerticalValue: mVolMinValue,
+        fixedDecimalsLength: fixedLength,
+        chartStyle: chartStyle,
+      );
+    }
     if (secondaryIndicator != SecondaryIndicator.NONE) {
       mSecondaryRenderer = MACDEntityRenderer(
         displayRect: Rect.fromLTRB(
@@ -352,7 +353,7 @@ class ChartPainter extends BaseChartPainter {
   }) {
     //长按显示按中的数据
     KLineEntity? customData = data;
-    var index = 0;
+    var index = (dataSource.length * 0.5).ceil();
     if (shouldDisplaySelection) {
       index = getIndexForSelectedHorizontalValue(size: size);
       customData = getDataItemByIndex(index: index);
@@ -510,7 +511,7 @@ class ChartPainter extends BaseChartPainter {
       displayDateFormats);
 
   double getMainY(double y) =>
-      candlesIndicator.render?.getVerticalPositionForPoint(value: y) ?? 0;
+      candlesIndicator.render?.getVerticalPositionForPoint(value: y) ?? 50;
 
   /// 点是否在SecondaryRect中
   bool isInSecondaryRect(Offset point) {

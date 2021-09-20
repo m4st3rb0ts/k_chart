@@ -117,7 +117,11 @@ abstract class BaseChartPainter extends CustomPainter {
       drawRightText(canvas: canvas, size: size);
       drawDate(canvas: canvas, size: size);
 
-      drawText(canvas: canvas, data: dataSource.last, x: 5, size: size);
+      drawText(
+          canvas: canvas,
+          data: dataSource[(dataSource.length * 0.5).ceil()],
+          x: 5,
+          size: size);
       drawMaxAndMin(canvas: canvas, size: size);
       drawNowPrice(canvas: canvas, size: size);
 
