@@ -134,12 +134,12 @@ class ChartPainter extends BaseChartPainter {
       end: Alignment.topCenter,
       colors: bgColor ?? chartStyle.colors.bgColor,
     );
-    final mainRect = Rect.fromLTRB(
-      0,
-      0,
-      candlesIndicator.render?.displayRect.width ?? 0,
-      candlesIndicator.render?.displayRect.height ?? 0 + chartStyle.topPadding,
-    );
+
+    final Rect mainRect = Rect.fromLTRB(
+        0,
+        0,
+        candlesIndicator.render?.displayRect.right ?? 0,
+        candlesIndicator.render?.displayRect.bottom ?? 0);
     canvas.drawRect(
         mainRect, mBgPaint..shader = mBgGradient.createShader(mainRect));
 

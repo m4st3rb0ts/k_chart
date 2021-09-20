@@ -37,9 +37,9 @@ class _MyHomePageState extends State<MyHomePage> {
   List<KLineEntity>? datas;
   bool showLoading = true;
   var _mainState = CandlesIndicators.MA;
-  bool _volHidden = false;
-  SecondaryIndicator _secondaryState = SecondaryIndicator.MACD;
-  bool isLine = true;
+  bool _volHidden = true;
+  SecondaryIndicator _secondaryState = SecondaryIndicator.NONE;
+  bool isLine = false;
   bool isChinese = true;
   bool _hideGrid = false;
   bool _showNowPrice = true;
