@@ -24,6 +24,7 @@ class CandlesIndicator extends Indicator<Candle> {
     required final this.height,
     required this.displayTimeLineChart,
     required this.candleIndicator,
+    required this.chartStyle,
     this.maDayList = const [5, 10, 20],
   }) : super(dataSource: dataSource) {
     for (var i = 0; i < dataSource.length; i++) {
@@ -49,6 +50,7 @@ class CandlesIndicator extends Indicator<Candle> {
 
   CandleEntityRender? _render;
   CandleEntityRender? get render => _render;
+  final ChartStyle chartStyle;
 
   final double height;
 
@@ -123,18 +125,18 @@ class CandlesIndicator extends Indicator<Candle> {
     }
 
     _render = CandleEntityRender(
-      displayRect: Rect.fromLTRB(
+      displayRect: Rect.fromLTWH(
         0,
-        ChartStyle().topPadding,
+        chartStyle.topPadding,
         size.width,
-        ChartStyle().topPadding + height,
+        height,
       ),
       maxVerticalValue: _maxValue,
       minVerticalValue: _minValue,
       indicator: candleIndicator,
       isTimeLineMode: displayTimeLineChart,
       fixedDecimalsLength: _fixedDecimalsLength,
-      chartStyle: ChartStyle(),
+      chartStyle: chartStyle,
       timelineHorizontalScale: scale,
       maFactorsForTitles: maDayList,
     );

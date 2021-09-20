@@ -115,6 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
               candlesIndicator: CandlesIndicator(
                 dataSource: datas ?? <KLineEntity>[],
                 height: 300,
+                chartStyle: chartStyle,
                 displayTimeLineChart: isLine,
                 candleIndicator: _mainState,
                 maDayList: [1, 100, 1000],
