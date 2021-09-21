@@ -515,7 +515,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     if (y > getMainY(currentMinLowValue) || y < getMainY(currentMaxHighValue)) {
       return;
     }
-    nowPricePaint
+    _nowPricePaint
       ..color = value >= dataSource.last.open
           ? chartStyle.colors.nowPriceUpColor
           : chartStyle.colors.nowPriceDnColor;
