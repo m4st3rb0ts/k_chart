@@ -82,6 +82,7 @@ class ChartPainter extends BaseChartPainter {
     }
     candlesIndicator.updateRender(
       size: size,
+      displayTop: 0,
       scale: horizontalScale,
       firstIndexToDisplay: mStartIndex,
       finalIndexToDisplay: mStopIndex,
@@ -89,6 +90,7 @@ class ChartPainter extends BaseChartPainter {
     if (!hideVolumeChart) {
       volumeIndicator.updateRender(
         size: size,
+        displayTop: candlesIndicator.height,
         scale: horizontalScale,
         firstIndexToDisplay: mStartIndex,
         finalIndexToDisplay: mStopIndex,
@@ -97,6 +99,7 @@ class ChartPainter extends BaseChartPainter {
     if (macdIndicator.indicator != MacdIndicators.NONE) {
       macdIndicator.updateRender(
         size: size,
+        displayTop: volumeIndicator.height + candlesIndicator.height,
         scale: horizontalScale,
         firstIndexToDisplay: mStartIndex,
         finalIndexToDisplay: mStopIndex,
