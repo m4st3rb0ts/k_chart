@@ -57,6 +57,9 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
       displayRect.bottom - contentPadding,
     );
     verticalScale = _contentRect.height / (maxVerticalValue - minVerticalValue);
+    _nowPricePaint = Paint()
+      ..strokeWidth = chartStyle.nowPriceLineWidth
+      ..isAntiAlias = true;
   }
 
   final double candleLineWidth;
@@ -522,7 +525,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     final space = chartStyle.nowPriceLineSpan + chartStyle.nowPriceLineLength;
     while (startX < max) {
       canvas.drawLine(Offset(startX, y),
-          Offset(startX + chartStyle.nowPriceLineLength, y), nowPricePaint);
+          Offset(startX + chartStyle.nowPriceLineLength, y), _nowPricePaint);
       startX += space;
     }
     //再画背景和文本
@@ -531,7 +534,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     double left = 0;
     double top = y - tp.height / 2;
     canvas.drawRect(Rect.fromLTRB(left, top, left + tp.width, top + tp.height),
-        nowPricePaint);
+        _nowPricePaint);
     tp.paint(canvas, Offset(0, top));
   }
 
