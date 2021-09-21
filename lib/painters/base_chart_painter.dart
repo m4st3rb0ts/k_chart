@@ -143,7 +143,6 @@ abstract class BaseChartPainter extends CustomPainter {
         break;
       }
     }
-    return mid;
   }
 
   /// Get the left offset for a giving index

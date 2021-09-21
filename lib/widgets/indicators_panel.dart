@@ -105,7 +105,8 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
   @override
   Widget build(BuildContext context) {
     if (widget.datas != null && widget.datas!.isEmpty) {
-      mScrollX = mSelectX = 0.0;
+      mScrollX = 0.0;
+      mSelectX = 0.0;
       mScaleX = 1.0;
     }
     final _painter = ChartPainter(
@@ -170,7 +171,7 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
           onLongPressStart: (details) {
             isLongPress = true;
             if (mSelectX != details.globalPosition.dx) {
-              mSelectX = details.globalPosition.dx;
+              mSelectX = details.localPosition.dx;
               notifyChanged();
             }
           },
