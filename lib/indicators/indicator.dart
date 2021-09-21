@@ -5,7 +5,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 
-import '../ticker.dart';
+import '../ticker/ticker.dart';
 import 'indicator_renderer.dart';
 
 abstract class Indicator<T> {

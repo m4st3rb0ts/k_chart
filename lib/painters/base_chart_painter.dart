@@ -6,7 +6,13 @@ import 'package:flutter/material.dart'
     show Color, TextStyle, Rect, Canvas, Size, CustomPainter;
 import 'package:intl/intl.dart';
 
+<<<<<<< HEAD
 import '../entity/k_line_entity.dart';
+=======
+import '../utils/date_format_util.dart';
+import '../chart_style.dart' show ChartStyle;
+import '../ticker/ticker.dart';
+>>>>>>> b57837c (trivial)
 
 export 'package:flutter/material.dart'
     show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;

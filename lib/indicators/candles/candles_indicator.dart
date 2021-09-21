@@ -7,7 +7,12 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 
+<<<<<<< HEAD
 import '../../entity/k_line_entity.dart';
+=======
+import '../../chart_style.dart';
+import '../../ticker/ticker.dart';
+>>>>>>> b57837c (trivial)
 import '../../utils/number_util.dart';
 
 import '../indicator.dart';

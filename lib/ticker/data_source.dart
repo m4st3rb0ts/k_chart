@@ -1,13 +1,13 @@
 import 'dart:math';
 
-import '../ticker.dart';
-import 'candles/candle_entity.dart';
-import 'macd/kdj_entity.dart';
-import 'macd/macd_entity.dart';
-import 'macd/rsi_entity.dart';
-import 'macd/rw_entity.dart';
-import 'volume/volume_entity.dart';
-import 'macd/cci_entity.dart';
+import 'ticker.dart';
+import '../indicators/candles/entity/candle_entity.dart';
+import '../indicators/macd/entity/kdj_entity.dart';
+import '../indicators/macd/entity/macd_entity.dart';
+import '../indicators/macd/entity/rsi_entity.dart';
+import '../indicators/macd/entity/rw_entity.dart';
+import '../indicators/volume/entity/volume_entity.dart';
+import '../indicators/macd/entity/cci_entity.dart';
 
 class DataSourceEntity
     with

@@ -5,6 +5,12 @@
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
+<<<<<<< HEAD
+=======
+import 'package:k_chart/chart_style.dart';
+import 'package:k_chart/ticker/ticker.dart';
+import 'package:k_chart/utils/number_util.dart';
+>>>>>>> b57837c (trivial)
 
 import 'dart:ui';
 

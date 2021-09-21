@@ -4,7 +4,7 @@
 
 import 'dart:math';
 
-import '../ticker.dart';
+import '../ticker/ticker.dart';
 import 'number_util.dart';
 
 // ignore_for_file: non_constant_identifier_names,library_prefixes,unused_import,camel_case_types

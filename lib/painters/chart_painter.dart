@@ -10,7 +10,12 @@ import 'package:intl/intl.dart' as intl;
 import '../entity/info_window_entity.dart';
 import '../entity/k_line_entity.dart';
 import '../indicators/indicator.dart';
+<<<<<<< HEAD
 import '../flutter_k_chart.dart';
+=======
+import '../ticker/ticker.dart';
+import '../utils/date_format_util.dart';
+>>>>>>> b57837c (trivial)
 import '../utils/number_util.dart';
 import 'base_chart_painter.dart';
 
