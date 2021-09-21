@@ -67,7 +67,13 @@ abstract class BaseChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     _lastPaintedSize = size;
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
-    calculateValue(size: size);
+
+    mStartIndex = dataIndexInViewportFor(
+        leftOffset: translateToCurrentViewport(leftOffset: 0, size: size));
+    mStopIndex = dataIndexInViewportFor(
+        leftOffset:
+            translateToCurrentViewport(leftOffset: size.width, size: size));
+
     initChartRenderer(size: size);
 
     canvas.save();
@@ -178,11 +184,10 @@ abstract class BaseChartPainter extends CustomPainter {
     }
   }
 
-  // [] Reviewed
-  ///translateX转化为view中的x
-  double translateXtoX(
-          {required final double translateX, required final Size size}) =>
-      (translateX + getCurrentOffset(size: size)) * horizontalScale;
+  /// Get the current offset for the leftOffset gived by param
+  double computeTranslationFor(
+          {required final double leftOffset, required final Size size}) =>
+      (leftOffset + getCurrentOffset(size: size)) * horizontalScale;
 
   // [] Reviewed
   // Duplicated in base chart rendered

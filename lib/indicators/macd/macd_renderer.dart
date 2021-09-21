@@ -3,6 +3,7 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:k_chart/indicators/macd/macd.dart';
 
 import '../indicator_renderer.dart';
 import 'macd.dart';
