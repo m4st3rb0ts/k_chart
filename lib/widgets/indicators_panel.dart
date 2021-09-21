@@ -258,8 +258,11 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
         stream: mInfoWindowStream?.stream,
         builder: (context, snapshot) {
           if (!isLongPress ||
+<<<<<<< HEAD:lib/widgets/indicators_panel.dart
               (widget.indicators.first as CandlesIndicator)
                   .displayTimeLineChart ||
+=======
+>>>>>>> dddcd31 (inject indicators as a list):lib/k_chart_widget.dart
               !snapshot.hasData ||
               snapshot.data?.kLineEntity == null) return Container();
           KLineEntity entity = snapshot.data!.kLineEntity;
