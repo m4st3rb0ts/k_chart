@@ -459,6 +459,83 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
   }
 
   @override
+  void drawMaxAndMin({
+    required final Canvas canvas,
+    required final Size size,
+  }) {
+    if (isTimeLineMode) {
+      return;
+    }
+    //绘制最大值和最小值
+    double x = computeTranslationFor(
+        leftOffset: getLeftOffsetByIndex(index: currentItemIndexWithMinValue),
+        size: size);
+    double y = getMainY(currentMinLowValue);
+    if (x < size.width / 2) {
+      //画右边
+      TextPainter tp = getTextPainter(
+          "── " + currentMinLowValue.toStringAsFixed(fixedLength),
+          chartStyle.colors.minColor);
+      tp.paint(canvas, Offset(x, y - tp.height / 2));
+    } else {
+      TextPainter tp = getTextPainter(
+          currentMinLowValue.toStringAsFixed(fixedLength) + " ──",
+          chartStyle.colors.minColor);
+      tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
+    }
+    x = computeTranslationFor(
+        leftOffset: getLeftOffsetByIndex(index: currentItemIndexWithMaxValue),
+        size: size);
+    y = getMainY(currentMaxHighValue);
+    if (x < size.width / 2) {
+      //画右边
+      TextPainter tp = getTextPainter(
+          "── " + currentMaxHighValue.toStringAsFixed(fixedLength),
+          chartStyle.colors.maxColor);
+      tp.paint(canvas, Offset(x, y - tp.height / 2));
+    } else {
+      TextPainter tp = getTextPainter(
+          currentMaxHighValue.toStringAsFixed(fixedLength) + " ──",
+          chartStyle.colors.maxColor);
+      tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
+    }
+  }
+
+  @override
+  void drawLastPrice({
+    required final Canvas canvas,
+    required final Size size,
+  }) {
+    double value = dataSource.last.close;
+    double y = getMainY(value);
+    //不在视图展示区域不绘制
+    if (y > getMainY(currentMinLowValue) || y < getMainY(currentMaxHighValue)) {
+      return;
+    }
+    nowPricePaint
+      ..color = value >= dataSource.last.open
+          ? chartStyle.colors.nowPriceUpColor
+          : chartStyle.colors.nowPriceDnColor;
+    //先画横线
+    double startX = 0;
+    final max = -getCurrentOffset(size: size) + size.width / horizontalScale;
+    final space = chartStyle.nowPriceLineSpan + chartStyle.nowPriceLineLength;
+    while (startX < max) {
+      canvas.drawLine(Offset(startX, y),
+          Offset(startX + chartStyle.nowPriceLineLength, y), nowPricePaint);
+      startX += space;
+    }
+    //再画背景和文本
+    TextPainter tp = getTextPainter(value.toStringAsFixed(fixedLength),
+        chartStyle.colors.nowPriceTextColor);
+    double left = 0;
+    double top = y - tp.height / 2;
+    canvas.drawRect(Rect.fromLTRB(left, top, left + tp.width, top + tp.height),
+        nowPricePaint);
+    tp.paint(canvas, Offset(0, top));
+  }
+
+  @override
   double getVerticalPositionForPoint({required double value}) {
     return (maxVerticalValue - value) * verticalScale + _contentRect.top;
   }

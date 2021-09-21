@@ -180,4 +180,16 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
       );
     }
   }
+
+  @override
+  void drawMaxAndMin({
+    required final Canvas canvas,
+    required final Size size,
+  }) {}
+
+  @override
+  void drawLastPrice({
+    required final Canvas canvas,
+    required final Size size,
+  }) {}
 }
