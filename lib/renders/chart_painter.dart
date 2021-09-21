@@ -3,6 +3,8 @@ import 'dart:async' show StreamSink;
 import 'package:flutter/material.dart';
 import 'package:k_chart/indicators/candles/candle.dart';
 import 'package:k_chart/indicators/candles/candles_indicator.dart';
+import 'package:k_chart/indicators/volume/volume.dart';
+import 'package:k_chart/indicators/volume/volume_indicator.dart';
 import 'package:k_chart/utils/number_util.dart';
 
 import '../entity/info_window_entity.dart';
@@ -17,6 +19,7 @@ import '../indicators/volume/volume_renderer.dart';
 class ChartPainter extends BaseChartPainter {
   ChartPainter({
     required this.candlesIndicator,
+    required this.volumeIndicator,
     required final ChartStyle chartStyle,
     required final List<KLineEntity> dataSource,
     required final double horizontalScale,
@@ -58,7 +61,7 @@ class ChartPainter extends BaseChartPainter {
   final bool hideVolumeChart;
 
   final CandlesIndicator candlesIndicator;
-  IndicatorRenderer? mVolRenderer;
+  final VolumeIndicator volumeIndicator;
   IndicatorRenderer? mSecondaryRenderer;
   StreamSink<InfoWindowEntity?>? sink;
   Color? upColor, dnColor;
@@ -90,19 +93,11 @@ class ChartPainter extends BaseChartPainter {
       finalIndexToDisplay: mStopIndex,
     );
     if (!hideVolumeChart) {
-      mVolRenderer = VolumeRenderer(
-        displayRect: Rect.fromLTRB(
-          0,
-          candlesIndicator.render?.displayRect.bottom ??
-              0 + chartStyle.childPadding,
-          size.width,
-          (candlesIndicator.render?.displayRect.bottom ?? 0) +
-              volumeGraphHeight,
-        ),
-        maxVerticalValue: mVolMaxValue,
-        minVerticalValue: mVolMinValue,
-        fixedDecimalsLength: fixedLength,
-        chartStyle: chartStyle,
+      volumeIndicator.updateRender(
+        size: size,
+        scale: horizontalScale,
+        firstIndexToDisplay: mStartIndex,
+        finalIndexToDisplay: mStopIndex,
       );
     }
     if (secondaryIndicator != SecondaryIndicator.NONE) {
@@ -143,12 +138,12 @@ class ChartPainter extends BaseChartPainter {
     canvas.drawRect(
         mainRect, mBgPaint..shader = mBgGradient.createShader(mainRect));
 
-    if (mVolRenderer != null) {
+    if (volumeIndicator.render != null) {
       Rect volRect = Rect.fromLTRB(
         0,
-        mVolRenderer?.displayRect.top ?? 0 - chartStyle.childPadding,
-        mVolRenderer?.displayRect.width ?? 0,
-        mVolRenderer?.displayRect.bottom ?? 0,
+        volumeIndicator.render?.displayRect.top ?? 0 - chartStyle.childPadding,
+        volumeIndicator.render?.displayRect.width ?? 0,
+        volumeIndicator.render?.displayRect.bottom ?? 0,
       );
       canvas.drawRect(
           volRect, mBgPaint..shader = mBgGradient.createShader(volRect));
@@ -177,7 +172,7 @@ class ChartPainter extends BaseChartPainter {
   }) {
     if (!hideGrid) {
       candlesIndicator.render?.drawGrid(canvas: canvas);
-      mVolRenderer?.drawGrid(canvas: canvas);
+      volumeIndicator.render?.drawGrid(canvas: canvas);
       mSecondaryRenderer?.drawGrid(canvas: canvas);
     }
   }
@@ -193,18 +188,23 @@ class ChartPainter extends BaseChartPainter {
       double curX = getLeftOffsetByIndex(index: i);
       double lastX = i == 0 ? curX : getLeftOffsetByIndex(index: i - 1);
 
-      final curCandle = candlesIndicator.data[i];
-      final lastCandle = i == 0 ? curCandle : candlesIndicator.data[i - 1];
+      final curIndex = i;
+      final lastIndex = i == 0 ? i : i - 1;
+
       candlesIndicator.render?.drawChart(
-        lastValue: RenderData<Candle>(data: lastCandle, x: lastX),
-        currentValue: RenderData<Candle>(data: curCandle, x: curX),
+        lastValue: RenderData<Candle>(
+            data: candlesIndicator.data[lastIndex], x: lastX),
+        currentValue:
+            RenderData<Candle>(data: candlesIndicator.data[curIndex], x: curX),
         size: size,
         canvas: canvas,
       );
 
-      mVolRenderer?.drawChart(
-        lastValue: RenderData<VolumeEntity>(data: lastPoint, x: lastX),
-        currentValue: RenderData<VolumeEntity>(data: curPoint, x: curX),
+      volumeIndicator.render?.drawChart(
+        lastValue:
+            RenderData<Volume>(data: volumeIndicator.data[lastIndex], x: lastX),
+        currentValue:
+            RenderData<Volume>(data: volumeIndicator.data[curIndex], x: curX),
         size: size,
         canvas: canvas,
       );
@@ -229,7 +229,7 @@ class ChartPainter extends BaseChartPainter {
       candlesIndicator.render
           ?.drawRightText(canvas: canvas, textStyle: textStyle);
     }
-    mVolRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
+    volumeIndicator.render?.drawRightText(canvas: canvas, textStyle: textStyle);
     mSecondaryRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
   }
 
@@ -367,7 +367,8 @@ class ChartPainter extends BaseChartPainter {
     //松开显示最后一条数据
     candlesIndicator.render?.drawText(
         canvas: canvas, value: candlesIndicator.data[index], leftOffset: x);
-    mVolRenderer?.drawText(canvas: canvas, value: customData, leftOffset: x);
+    volumeIndicator.render?.drawText(
+        canvas: canvas, value: volumeIndicator.data[index], leftOffset: x);
     mSecondaryRenderer?.drawText(
         canvas: canvas, value: customData, leftOffset: x);
   }

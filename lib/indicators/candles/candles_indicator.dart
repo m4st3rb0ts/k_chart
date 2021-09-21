@@ -82,9 +82,10 @@ class CandlesIndicator extends Indicator<Candle> {
   final double nowPriceLineSpan;
 
   List<Candle> _candles = <Candle>[];
+  @override
   BuiltList<Candle> get data => _candles.toBuiltList();
 
-  CandleEntityRender? _render;
+  @override
   CandleEntityRender? get render => _render;
 
   final bool displayTimeLineChart;
