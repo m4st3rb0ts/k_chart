@@ -11,7 +11,7 @@ export 'common.dart';
 export 'indicators/candles/candle_entity.dart';
 export 'indicators/macd/cci_entity.dart';
 export 'indicators/macd/kdj_entity.dart';
-export 'indicators/data_source_entity.dart';
+export 'indicators/data_source.dart';
 export 'ticker.dart';
 export 'indicators/macd/macd_entity.dart';
 export 'indicators/macd/rsi_entity.dart';
