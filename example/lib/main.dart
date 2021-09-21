@@ -31,7 +31,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<KLineEntity>? datas;
+  List<Ticker>? datas;
   bool showLoading = true;
   var _mainState = CandlesIndicators.MA;
   bool _volHidden = false;
@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isLine = false;
   bool _hideGrid = false;
   bool _showNowPrice = true;
-  List<DepthEntity>? _bids, _asks;
+  List<DepthChartData>? _bids, _asks;
   bool isChangeUI = false;
 
   @override
@@ -49,19 +49,19 @@ class _MyHomePageState extends State<MyHomePage> {
     rootBundle.loadString('assets/depth.json').then((result) {
       final parseJson = json.decode(result);
       final tick = parseJson['tick'] as Map<String, dynamic>;
-      final List<DepthEntity> bids = (tick['bids'] as List<dynamic>)
-          .map<DepthEntity>(
-              (item) => DepthEntity(item[0] as double, item[1] as double))
+      final List<DepthChartData> bids = (tick['bids'] as List<dynamic>)
+          .map<DepthChartData>(
+              (item) => DepthChartData(item[0] as double, item[1] as double))
           .toList();
-      final List<DepthEntity> asks = (tick['asks'] as List<dynamic>)
-          .map<DepthEntity>(
-              (item) => DepthEntity(item[0] as double, item[1] as double))
+      final List<DepthChartData> asks = (tick['asks'] as List<dynamic>)
+          .map<DepthChartData>(
+              (item) => DepthChartData(item[0] as double, item[1] as double))
           .toList();
       initDepth(bids, asks);
     });
   }
 
-  void initDepth(List<DepthEntity>? bids, List<DepthEntity>? asks) {
+  void initDepth(List<DepthChartData>? bids, List<DepthChartData>? asks) {
     if (bids == null || asks == null || bids.isEmpty || asks.isEmpty) return;
     _bids = [];
     _asks = [];
@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
               hideGrid: _hideGrid,
               indicators: [
                 CandlesIndicator(
-                  dataSource: datas ?? <KLineEntity>[],
+                  dataSource: datas ?? <Ticker>[],
                   height: 300,
                   displayTimeLineChart: isLine,
                   candleIndicator: _mainState,
@@ -206,11 +206,11 @@ class _MyHomePageState extends State<MyHomePage> {
       final Map parseJson = json.decode(result) as Map<dynamic, dynamic>;
       final list = parseJson['data'] as List<dynamic>;
       datas = list
-          .map((item) => KLineEntity.fromJson(item as Map<String, dynamic>))
+          .map((item) => Ticker.fromJson(item as Map<String, dynamic>))
           .toList()
           .reversed
           .toList()
-          .cast<KLineEntity>();
+          .cast<Ticker>();
       DataUtil.calculate(datas!);
       showLoading = false;
       setState(() {});

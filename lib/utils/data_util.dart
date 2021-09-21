@@ -4,12 +4,12 @@
 
 import 'dart:math';
 
-import '../entity/k_line_entity.dart';
+import '../ticker.dart';
 import 'number_util.dart';
 
 // ignore_for_file: non_constant_identifier_names,library_prefixes,unused_import,camel_case_types
 class DataUtil {
-  static calculate(List<KLineEntity> dataList,
+  static calculate(List<Ticker> dataList,
       [List<int> maDayList = const [5, 10, 20], int n = 20, k = 2]) {
     calcMA(dataList, maDayList);
     calcBOLL(dataList, n, k);
@@ -21,12 +21,12 @@ class DataUtil {
     calcCCI(dataList);
   }
 
-  static calcMA(List<KLineEntity> dataList, List<int> maDayList) {
+  static calcMA(List<Ticker> dataList, List<int> maDayList) {
     List<double> ma = List<double>.filled(maDayList.length, 0);
 
     if (dataList.isNotEmpty) {
       for (int i = 0; i < dataList.length; i++) {
-        KLineEntity entity = dataList[i];
+        Ticker entity = dataList[i];
         final closePrice = entity.close;
         entity.maValueList = List<double>.filled(maDayList.length, 0);
 
@@ -45,10 +45,10 @@ class DataUtil {
     }
   }
 
-  static void calcBOLL(List<KLineEntity> dataList, int n, int k) {
+  static void calcBOLL(List<Ticker> dataList, int n, int k) {
     _calcBOLLMA(n, dataList);
     for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      Ticker entity = dataList[i];
       if (i >= n) {
         double md = 0;
         for (int j = i - n + 1; j <= i; j++) {
@@ -66,10 +66,10 @@ class DataUtil {
     }
   }
 
-  static void _calcBOLLMA(int day, List<KLineEntity> dataList) {
+  static void _calcBOLLMA(int day, List<Ticker> dataList) {
     double ma = 0;
     for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      Ticker entity = dataList[i];
       ma += entity.close;
       if (i == day - 1) {
         entity.BOLLMA = ma / day;
@@ -82,7 +82,7 @@ class DataUtil {
     }
   }
 
-  static void calcMACD(List<KLineEntity> dataList) {
+  static void calcMACD(List<Ticker> dataList) {
     double ema12 = 0;
     double ema26 = 0;
     double dif = 0;
@@ -90,7 +90,7 @@ class DataUtil {
     double macd = 0;
 
     for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      Ticker entity = dataList[i];
       final closePrice = entity.close;
       if (i == 0) {
         ema12 = closePrice;
@@ -113,12 +113,12 @@ class DataUtil {
     }
   }
 
-  static void calcVolumeMA(List<KLineEntity> dataList) {
+  static void calcVolumeMA(List<Ticker> dataList) {
     double volumeMa5 = 0;
     double volumeMa10 = 0;
 
     for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entry = dataList[i];
+      Ticker entry = dataList[i];
 
       volumeMa5 += entry.vol;
       volumeMa10 += entry.vol;
@@ -143,12 +143,12 @@ class DataUtil {
     }
   }
 
-  static void calcRSI(List<KLineEntity> dataList) {
+  static void calcRSI(List<Ticker> dataList) {
     double? rsi;
     double rsiABSEma = 0;
     double rsiMaxEma = 0;
     for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      Ticker entity = dataList[i];
       final double closePrice = entity.close;
       if (i == 0) {
         rsi = 0;
@@ -168,7 +168,7 @@ class DataUtil {
     }
   }
 
-  static void calcKDJ(List<KLineEntity> dataList) {
+  static void calcKDJ(List<Ticker> dataList) {
     var preK = 50.0;
     var preD = 50.0;
     final tmp = dataList.first;
@@ -203,10 +203,10 @@ class DataUtil {
     }
   }
 
-  static void calcWR(List<KLineEntity> dataList) {
+  static void calcWR(List<Ticker> dataList) {
     double r;
     for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
+      Ticker entity = dataList[i];
       int startIndex = i - 14;
       if (startIndex < 0) {
         startIndex = 0;
@@ -230,7 +230,7 @@ class DataUtil {
     }
   }
 
-  static void calcCCI(List<KLineEntity> dataList) {
+  static void calcCCI(List<Ticker> dataList) {
     final size = dataList.length;
     final count = 14;
     for (int i = 0; i < size; i++) {

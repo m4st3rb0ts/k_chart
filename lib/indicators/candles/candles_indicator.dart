@@ -18,7 +18,7 @@ enum CandlesIndicators { MA, BOLL, NONE }
 
 class CandlesIndicator extends Indicator<Candle> {
   CandlesIndicator({
-    required final List<KLineEntity> dataSource,
+    required final List<Ticker> dataSource,
     required final double height,
     required this.displayTimeLineChart,
     required this.candleIndicator,

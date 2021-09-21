@@ -14,7 +14,7 @@ import 'macd_renderer.dart';
 
 class MacdIndicator extends Indicator<Macd> {
   MacdIndicator({
-    required final List<KLineEntity> dataSource,
+    required final List<Ticker> dataSource,
     required this.indicator,
     required final double height,
     this.macdDisplayItemWidth = 3.0,

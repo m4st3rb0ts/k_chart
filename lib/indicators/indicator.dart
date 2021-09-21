@@ -5,7 +5,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 
-import '../entity/k_line_entity.dart';
+import '../ticker.dart';
 import 'indicator_renderer.dart';
 
 abstract class Indicator<T> {
@@ -14,7 +14,7 @@ abstract class Indicator<T> {
     required this.height,
   });
 
-  final List<KLineEntity> dataSource;
+  final List<Ticker> dataSource;
   void updateRender({
     required final Size size,
     required final double displayRectTop,

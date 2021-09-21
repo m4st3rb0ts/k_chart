@@ -25,7 +25,7 @@ abstract class BaseChartPainter extends CustomPainter {
   final double pointWidth;
 
   /// Data to display in the graph
-  final List<KLineEntity> dataSource;
+  final List<Ticker> dataSource;
 
   /// Time format for display dates
   final DateFormat displayDateFormat;
@@ -159,7 +159,7 @@ abstract class BaseChartPainter extends CustomPainter {
 
   /// Get the data item by an index
   /// @param index
-  KLineEntity? getDataItemByIndex({required final int index}) {
+  Ticker? getDataItemByIndex({required final int index}) {
     if (index >= 0 && index < dataSource.length) {
       return dataSource[index];
     } else {
@@ -234,7 +234,7 @@ abstract class BaseChartPainter extends CustomPainter {
   void drawText({
     required final Canvas canvas,
     required final Size size,
-    required final KLineEntity data,
+    required final Ticker data,
     required final double x,
   });
 

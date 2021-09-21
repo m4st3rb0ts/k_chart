@@ -16,7 +16,7 @@ import 'volume_renderer.dart';
 
 class VolumeIndicator extends Indicator<Volume> {
   VolumeIndicator({
-    required final List<KLineEntity> dataSource,
+    required final List<Ticker> dataSource,
     required final double height,
     this.titlesTopPadding = 12,
     this.volumeItemWidth = 8.5,
