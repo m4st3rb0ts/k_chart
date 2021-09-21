@@ -62,7 +62,7 @@ class IndicatorsPanel extends StatefulWidget {
 class _IndicatorsPanelState extends State<IndicatorsPanel>
     with TickerProviderStateMixin {
   double mScaleX = 1.0, mScrollX = 0.0, mSelectX = 0.0;
-  StreamController<InfoWindowEntity?>? mInfoWindowStream;
+  StreamController<InfoWindowData?>? mInfoWindowStream;
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;
@@ -258,14 +258,11 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
         stream: mInfoWindowStream?.stream,
         builder: (context, snapshot) {
           if (!isLongPress ||
-<<<<<<< HEAD:lib/widgets/indicators_panel.dart
               (widget.indicators.first as CandlesIndicator)
                   .displayTimeLineChart ||
-=======
->>>>>>> dddcd31 (inject indicators as a list):lib/k_chart_widget.dart
               !snapshot.hasData ||
               snapshot.data?.kLineEntity == null) return Container();
-          KLineEntity entity = snapshot.data!.kLineEntity;
+          Ticker entity = snapshot.data!.kLineEntity;
           double upDown = entity.change ?? entity.close - entity.open;
           double upDownPercent = entity.ratio ?? (upDown / entity.open) * 100;
           infos = [

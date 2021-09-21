@@ -8,6 +8,18 @@ import 'package:flutter/material.dart';
 
 import 'package:k_chart/flutter_k_chart.dart';
 
+class DepthChartData {
+  double price;
+  double vol;
+
+  DepthChartData(this.price, this.vol);
+
+  @override
+  String toString() {
+    return 'Data{price: $price, vol: $vol}';
+  }
+}
+
 class DepthChart extends StatefulWidget {
   const DepthChart({
     required this.bids,
@@ -19,7 +31,7 @@ class DepthChart extends StatefulWidget {
     this.depthSellColor = const Color(0xffC15866),
   });
 
-  final List<DepthEntity> bids, asks;
+  final List<DepthChartData> bids, asks;
   final int fixedLength;
   final Color? buyPathColor;
   final Color? sellPathColor;
@@ -110,7 +122,7 @@ class DepthChartPainter extends CustomPainter {
   }
 
   //买入//卖出
-  List<DepthEntity>? mBuyData, mSellData;
+  List<DepthChartData>? mBuyData, mSellData;
   Offset? pressOffset;
   bool isLongPress;
   int? fixedLength;
@@ -323,7 +335,7 @@ class DepthChartPainter extends CustomPainter {
   }
 
   void drawSelectView(Canvas canvas, int index, bool isLeft) {
-    DepthEntity entity = isLeft ? mBuyData![index] : mSellData![index];
+    DepthChartData entity = isLeft ? mBuyData![index] : mSellData![index];
     double dx = isLeft ? getBuyX(index) : getSellX(index);
 
     double radius = 8.0;
