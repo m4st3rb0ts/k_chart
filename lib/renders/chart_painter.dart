@@ -28,7 +28,6 @@ class ChartPainter extends BaseChartPainter {
     required final bool shouldDisplaySelection,
     required final double selectedHorizontalValue,
     required this.hideVolumeChart,
-    required final SecondaryIndicator secondaryIndicator,
     this.sink,
     this.hideGrid = false,
     this.showNowPrice = true,
@@ -42,7 +41,6 @@ class ChartPainter extends BaseChartPainter {
           currentHorizontalScroll: currentHorizontalScroll,
           shouldDisplaySelection: shouldDisplaySelection,
           selectedHorizontalValue: selectedHorizontalValue,
-          secondaryIndicator: secondaryIndicator,
         ) {
     selectPointPaint = Paint()
       ..isAntiAlias = true
@@ -96,7 +94,7 @@ class ChartPainter extends BaseChartPainter {
         finalIndexToDisplay: mStopIndex,
       );
     }
-    if (secondaryIndicator != SecondaryIndicator.NONE) {
+    if (macdIndicator.indicator != MacdIndicators.NONE) {
       macdIndicator.updateRender(
         size: size,
         scale: horizontalScale,
