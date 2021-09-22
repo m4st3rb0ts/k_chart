@@ -1,12 +1,8 @@
-<<<<<<< HEAD
 //
 // Created by @OpenFlutter
 //
 
 import '../entity/k_entity.dart';
-=======
-import 'data_source.dart';
->>>>>>> b57837c (trivial)
 
 class Ticker extends DataSourceEntity {
   late double open;

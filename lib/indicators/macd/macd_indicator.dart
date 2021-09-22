@@ -6,13 +6,6 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:built_collection/built_collection.dart';
-<<<<<<< HEAD
-=======
-import 'package:k_chart/chart_style.dart';
-import 'package:k_chart/ticker/ticker.dart';
-
-import 'dart:ui';
->>>>>>> b57837c (trivial)
 
 import '../../entity/k_line_entity.dart';
 import '../indicator.dart';
