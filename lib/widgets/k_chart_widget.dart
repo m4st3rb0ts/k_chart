@@ -50,10 +50,30 @@ class IndicatorsPanel extends StatefulWidget {
   final Function(bool)? isOnDrag;
   final List<Indicator> indicators;
 
+<<<<<<< HEAD
   final Color infoWindowNormalColor;
   final Color infoWindowTitleColor;
   final Color infoWindowUpColor;
   final Color infoWindowDnColor;
+=======
+  const KChartWidget({
+    required this.datas,
+    required this.indicators,
+    required this.chartStyle,
+    this.onSecondaryTap,
+    this.hideGrid = false,
+    this.showNowPrice = true,
+    this.showInfoDialog = true,
+    this.translations = kChartTranslations,
+    this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
+    this.onLoadMore,
+    this.fixedLength = 2,
+    this.flingTime = 600,
+    this.flingRatio = 0.5,
+    this.flingCurve = Curves.decelerate,
+    this.isOnDrag,
+  });
+>>>>>>> aaec022 (update widget)
 
   @override
   _IndicatorsPanelState createState() => _IndicatorsPanelState();

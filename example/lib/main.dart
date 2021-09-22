@@ -87,6 +87,53 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          height: 450,
+          child: KChartWidget(
+            datas: datas,
+            chartStyle: chartStyle,
+            fixedLength: 2,
+            timeFormat: TimeFormat.YEAR_MONTH_DAY,
+            translations: kChartTranslations,
+            showNowPrice: _showNowPrice,
+            hideGrid: _hideGrid,
+            indicators: [
+              CandlesIndicator(
+                dataSource: datas ?? <Ticker>[],
+                height: 200,
+                chartStyle: chartStyle,
+                displayTimeLineChart: isLine,
+                candleIndicator: _mainState,
+                maDayList: [1, 100, 1000],
+              ),
+              // VolumeIndicator(
+              //   height: 150,
+              //   dataSource: datas ?? <Ticker>[],
+              // ),
+            ],
+          ),
+        ),
+        Flexible(
+          flex: 2,
+          child: Wrap(
+            alignment: WrapAlignment.spaceEvenly,
+            children: <Widget>[
+              button("Time Mode", onPressed: () => isLine = true),
+              button("K Line Mode", onPressed: () => isLine = false),
+              button("Line:MA",
+                  onPressed: () => _mainState = CandlesIndicators.MA),
+              button("Line:BOLL",
+                  onPressed: () => _mainState = CandlesIndicators.BOLL),
+              button("Hide Line",
+                  onPressed: () => _mainState = CandlesIndicators.NONE),
+            ],
+          ),
+        ),
+      ],
+    );
+
     return ListView(
       shrinkWrap: true,
       children: <Widget>[
