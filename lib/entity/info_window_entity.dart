@@ -2,10 +2,10 @@
 // Created by @OpenFlutter
 //
 
-import '../entity/k_line_entity.dart';
+import '../ticker/ticker.dart';
 
 class InfoWindowEntity {
-  KLineEntity kLineEntity;
+  Ticker kLineEntity;
   bool isLeft;
 
   InfoWindowEntity(

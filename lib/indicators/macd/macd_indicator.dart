@@ -7,7 +7,7 @@ import 'dart:ui';
 
 import 'package:built_collection/built_collection.dart';
 
-import '../../entity/k_line_entity.dart';
+import '../../ticker.dart';
 import '../indicator.dart';
 import 'macd.dart';
 import 'macd_renderer.dart';

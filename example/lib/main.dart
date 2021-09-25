@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:k_chart/chart_translations.dart';
 
 import 'package:k_chart/flutter_k_chart.dart';
 
@@ -91,11 +92,9 @@ class _MyHomePageState extends State<MyHomePage> {
       children: [
         Container(
           height: 450,
-          child: KChartWidget(
+          child: IndicatorsPanel(
             datas: datas,
-            chartStyle: chartStyle,
             fixedLength: 2,
-            timeFormat: TimeFormat.YEAR_MONTH_DAY,
             translations: kChartTranslations,
             showNowPrice: _showNowPrice,
             hideGrid: _hideGrid,
@@ -103,7 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
               CandlesIndicator(
                 dataSource: datas ?? <Ticker>[],
                 height: 200,
-                chartStyle: chartStyle,
                 displayTimeLineChart: isLine,
                 candleIndicator: _mainState,
                 maDayList: [1, 100, 1000],
@@ -134,63 +132,63 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
-    return ListView(
-      shrinkWrap: true,
-      children: <Widget>[
-        Stack(children: <Widget>[
-          Container(
-            width: double.infinity,
-            height: 500,
-            color: Colors.pink,
-            child: IndicatorsPanel(
-              datas: datas,
-              fixedLength: 2,
-              translations: kChartTranslations,
-              showNowPrice: _showNowPrice,
-              //`isChinese` is Deprecated, Use `translations` instead.
-              hideGrid: _hideGrid,
-              indicators: [
-                CandlesIndicator(
-                  dataSource: datas ?? <Ticker>[],
-                  height: 300,
-                  displayTimeLineChart: isLine,
-                  candleIndicator: _mainState,
-                  maDayList: [1, 100, 1000],
-                ),
-                if (!_volHidden)
-                  VolumeIndicator(
-                    dataSource: datas ?? <KLineEntity>[],
-                    height: 200,
-                  ),
-                // if (_secondaryState != MacdIndicators.NONE)
-                //   MacdIndicator(
-                //     dataSource: datas ?? <KLineEntity>[],
-                //     indicator: _secondaryState,
-                //     height: 200,
-                //     chartStyle: chartStyle,
-                //   ),
-              ],
-            ),
-          ),
-          if (showLoading)
-            Container(
-                width: double.infinity,
-                height: 450,
-                alignment: Alignment.center,
-                child: const CircularProgressIndicator()),
-        ]),
-        buildButtons(),
-        if (_bids != null && _asks != null)
-          Container(
-            height: 230,
-            width: double.infinity,
-            child: DepthChart(
-              bids: _bids!,
-              asks: _asks!,
-            ),
-          )
-      ],
-    );
+    // return ListView(
+    //   shrinkWrap: true,
+    //   children: <Widget>[
+    //     Stack(children: <Widget>[
+    //       Container(
+    //         width: double.infinity,
+    //         height: 500,
+    //         color: Colors.pink,
+    //         child: IndicatorsPanel(
+    //           datas: datas,
+    //           fixedLength: 2,
+    //           translations: kChartTranslations,
+    //           showNowPrice: _showNowPrice,
+    //           //`isChinese` is Deprecated, Use `translations` instead.
+    //           hideGrid: _hideGrid,
+    //           indicators: [
+    //             CandlesIndicator(
+    //               dataSource: datas ?? <Ticker>[],
+    //               height: 300,
+    //               displayTimeLineChart: isLine,
+    //               candleIndicator: _mainState,
+    //               maDayList: [1, 100, 1000],
+    //             ),
+    //             if (!_volHidden)
+    //               VolumeIndicator(
+    //                 dataSource: datas ?? <KLineEntity>[],
+    //                 height: 200,
+    //               ),
+    //             // if (_secondaryState != MacdIndicators.NONE)
+    //             //   MacdIndicator(
+    //             //     dataSource: datas ?? <KLineEntity>[],
+    //             //     indicator: _secondaryState,
+    //             //     height: 200,
+    //             //     chartStyle: chartStyle,
+    //             //   ),
+    //           ],
+    //         ),
+    //       ),
+    //       if (showLoading)
+    //         Container(
+    //             width: double.infinity,
+    //             height: 450,
+    //             alignment: Alignment.center,
+    //             child: const CircularProgressIndicator()),
+    //     ]),
+    //     buildButtons(),
+    //     if (_bids != null && _asks != null)
+    //       Container(
+    //         height: 230,
+    //         width: double.infinity,
+    //         child: DepthChart(
+    //           bids: _bids!,
+    //           asks: _asks!,
+    //         ),
+    //       )
+    //   ],
+    // );
   }
 
   Widget buildButtons() {

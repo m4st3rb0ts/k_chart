@@ -29,5 +29,4 @@ abstract class Indicator<T> {
   final double height;
   BuiltList<T> get data;
   IndicatorRenderer<T>? get render;
-  final double height;
 }

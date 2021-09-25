@@ -8,10 +8,10 @@ export 'widgets/indicators_panel.dart';
 export 'widgets/depth_chart.dart';
 export 'common.dart';
 export 'ticker.dart';
-export 'indicators/macd/macd_entity.dart';
-export 'indicators/macd/rsi_entity.dart';
-export 'indicators/macd/rw_entity.dart';
-export 'indicators/volume/volume_entity.dart';
+export 'indicators/macd/entity/macd_entity.dart';
+export 'indicators/macd/entity/rsi_entity.dart';
+export 'indicators/macd/entity/rw_entity.dart';
+export 'indicators/volume/entity/volume_entity.dart';
 
 export 'indicators/candles/candles_indicator.dart';
 export 'indicators/candles/candle.dart';

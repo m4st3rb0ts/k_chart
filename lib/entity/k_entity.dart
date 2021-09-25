@@ -2,13 +2,13 @@
 // Created by @OpenFlutter
 //
 
-import 'candle_entity.dart';
-import 'kdj_entity.dart';
-import 'macd_entity.dart';
-import 'rsi_entity.dart';
-import 'rw_entity.dart';
-import 'volume_entity.dart';
-import 'cci_entity.dart';
+import '../indicators/volume/entity/volume_entity.dart';
+import '../indicators/macd/entity/cci_entity.dart';
+import '../indicators/macd/entity/rsi_entity.dart';
+import '../indicators/macd/entity/kdj_entity.dart';
+import '../indicators/macd/entity/rw_entity.dart';
+import '../indicators/macd/entity/macd_entity.dart';
+import '../indicators/candles/entity/candle_entity.dart';
 
 class KEntity
     with

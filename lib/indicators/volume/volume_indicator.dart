@@ -8,7 +8,7 @@ import 'package:built_collection/built_collection.dart';
 
 import 'dart:ui';
 
-import '../../entity/k_line_entity.dart';
+import '../../ticker.dart';
 import '../../utils/number_util.dart';
 import '../indicator.dart';
 import 'volume.dart';
