@@ -20,6 +20,16 @@ class MacdIndicator extends Indicator<Macd> {
     required this.indicator,
     required final double height,
     required this.chartStyle,
+    this.defaultTextColor = const Color(0xff60738E),
+    this.macdColor = const Color(0xff4729AE),
+    this.difColor = const Color(0xffC9B885),
+    this.deaColor = const Color(0xff6CB0A6),
+    this.kColor = const Color(0xffC9B885),
+    this.dColor = const Color(0xff6CB0A6),
+    this.jColor = const Color(0xff9979C6),
+    this.rsiColor = const Color(0xffC9B885),
+    this.upColor = const Color(0xff4DAA90),
+    this.dnColor = const Color(0xffC15466),
   }) : super(dataSource: dataSource, height: height) {
     for (var i = 0; i < dataSource.length; i++) {
       final dataItem = dataSource[i];
@@ -49,6 +59,16 @@ class MacdIndicator extends Indicator<Macd> {
   @override
   MacdRenderer? get render => _render;
   MacdRenderer? _render;
+  final Color defaultTextColor;
+  final Color macdColor;
+  final Color difColor;
+  final Color deaColor;
+  final Color kColor;
+  final Color dColor;
+  final Color jColor;
+  final Color rsiColor;
+  final Color upColor;
+  final Color dnColor;
 
   @override
   void updateRender({
@@ -99,7 +119,16 @@ class MacdIndicator extends Indicator<Macd> {
       maxVerticalValue: maxValue,
       minVerticalValue: minValue,
       fixedDecimalsLength: fixedDecimalsLength,
-      chartStyle: chartStyle,
+      defaultTextColor: defaultTextColor,
+      macdColor: macdColor,
+      dColor: dColor,
+      deaColor: deaColor,
+      difColor: difColor,
+      jColor: jColor,
+      kColor: kColor,
+      rsiColor: rsiColor,
+      upColor: upColor,
+      dnColor: dnColor,
     );
   }
 }

@@ -18,17 +18,36 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
     required this.titleTopPadding,
     required this.indicator,
     required final int fixedDecimalsLength,
-    required final ChartStyle chartStyle,
+    required this.defaultTextColor,
+    required this.macdColor,
+    required this.difColor,
+    required this.deaColor,
+    required this.kColor,
+    required this.dColor,
+    required this.jColor,
+    required this.rsiColor,
+    required this.upColor,
+    required this.dnColor,
   }) : super(
           displayRect: displayRect,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
           fixedDecimalsLength: fixedDecimalsLength,
-          chartStyle: chartStyle,
+          chartStyle: ChartStyle(),
         );
 
   final MacdIndicators indicator;
   final double titleTopPadding;
+  final Color defaultTextColor;
+  final Color macdColor;
+  final Color difColor;
+  final Color deaColor;
+  final Color kColor;
+  final Color dColor;
+  final Color jColor;
+  final Color rsiColor;
+  final Color upColor;
+  final Color dnColor;
 
   @override
   void drawChart({
@@ -50,19 +69,19 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.k),
           currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.k),
           canvas: canvas,
-          color: chartStyle.colors.kColor,
+          color: kColor,
         );
         drawLine(
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.d),
           currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.d),
           canvas: canvas,
-          color: chartStyle.colors.dColor,
+          color: dColor,
         );
         drawLine(
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.j),
           currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.j),
           canvas: canvas,
-          color: chartStyle.colors.jColor,
+          color: jColor,
         );
         break;
       case MacdIndicators.RSI:
@@ -71,7 +90,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
           currentValue:
               RenderPoint(x: currentValue.x, y: currentValue.data.rsi),
           canvas: canvas,
-          color: chartStyle.colors.rsiColor,
+          color: rsiColor,
         );
         break;
       case MacdIndicators.WR:
@@ -79,7 +98,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.r),
           currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.r),
           canvas: canvas,
-          color: chartStyle.colors.rsiColor,
+          color: rsiColor,
         );
         break;
       case MacdIndicators.CCI:
@@ -88,7 +107,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
           currentValue:
               RenderPoint(x: currentValue.x, y: currentValue.data.cci),
           canvas: canvas,
-          color: chartStyle.colors.rsiColor,
+          color: rsiColor,
         );
         break;
       default:
@@ -114,7 +133,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
           currentValue.x + macdMidWidth,
           zeroy,
         ),
-        chartPaint..color = chartStyle.colors.upColor,
+        chartPaint..color = upColor,
       );
     } else {
       canvas.drawRect(
@@ -124,7 +143,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
           currentValue.x + macdMidWidth,
           currentMacdValueNormalized,
         ),
-        chartPaint..color = chartStyle.colors.dnColor,
+        chartPaint..color = dnColor,
       );
     }
     if (lastValue.data.dif != 0) {
@@ -132,7 +151,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
         lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.dif),
         currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.dif),
         canvas: canvas,
-        color: chartStyle.colors.difColor,
+        color: difColor,
       );
     }
     if (lastValue.data.dea != 0) {
@@ -140,7 +159,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
         lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.dea),
         currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.dea),
         canvas: canvas,
-        color: chartStyle.colors.deaColor,
+        color: deaColor,
       );
     }
   }
@@ -159,7 +178,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
             //TODO: Localize
             text: 'MACD(12,26,9)    ',
             style: getTextStyle(
-              color: chartStyle.colors.defaultTextColor,
+              color: defaultTextColor,
             ),
           ),
           if (value.macd != 0)
@@ -167,7 +186,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
               //TODO: Localize
               text: 'MACD:${format(n: value.macd)}    ',
               style: getTextStyle(
-                color: chartStyle.colors.macdColor,
+                color: macdColor,
               ),
             ),
           if (value.dif != 0)
@@ -175,7 +194,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
               //TODO: Localize
               text: 'DIF:${format(n: value.dif)}    ',
               style: getTextStyle(
-                color: chartStyle.colors.difColor,
+                color: difColor,
               ),
             ),
           if (value.dea != 0)
@@ -183,7 +202,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
               //TODO: Localize
               text: 'DEA:${format(n: value.dea)}    ',
               style: getTextStyle(
-                color: chartStyle.colors.deaColor,
+                color: deaColor,
               ),
             ),
         ];
@@ -194,7 +213,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
             //TODO: Localize
             text: 'KDJ(9,1,3)    ',
             style: getTextStyle(
-              color: chartStyle.colors.defaultTextColor,
+              color: defaultTextColor,
             ),
           ),
           if (value.macd != 0)
@@ -202,7 +221,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
               //TODO: Localize
               text: 'K:${format(n: value.k)}    ',
               style: getTextStyle(
-                color: chartStyle.colors.kColor,
+                color: kColor,
               ),
             ),
           if (value.dif != 0)
@@ -210,7 +229,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
               //TODO: Localize
               text: 'D:${format(n: value.d)}    ',
               style: getTextStyle(
-                color: chartStyle.colors.dColor,
+                color: dColor,
               ),
             ),
           if (value.dea != 0)
@@ -218,7 +237,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
               //TODO: Localize
               text: 'J:${format(n: value.j)}    ',
               style: getTextStyle(
-                color: chartStyle.colors.jColor,
+                color: jColor,
               ),
             ),
         ];
@@ -229,7 +248,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
             //TODO: Localize
             text: 'RSI(14):${format(n: value.rsi)}    ',
             style: getTextStyle(
-              color: chartStyle.colors.rsiColor,
+              color: rsiColor,
             ),
           ),
         ];
@@ -240,7 +259,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
             //TODO: Localize
             text: 'WR(14):${format(n: value.r)}    ',
             style: getTextStyle(
-              color: chartStyle.colors.rsiColor,
+              color: rsiColor,
             ),
           ),
         ];
@@ -251,7 +270,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
             //TODO: Localize
             text: 'CCI(14):${format(n: value.cci)}    ',
             style: getTextStyle(
-              color: chartStyle.colors.rsiColor,
+              color: rsiColor,
             ),
           ),
         ];

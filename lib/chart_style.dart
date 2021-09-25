@@ -16,15 +16,6 @@ class _ChartColors {
   Color dnColor = Color(0xffC15466);
   Color volColor = Color(0xff4729AE);
 
-  Color macdColor = Color(0xff4729AE);
-  Color difColor = Color(0xffC9B885);
-  Color deaColor = Color(0xff6CB0A6);
-
-  Color kColor = Color(0xffC9B885);
-  Color dColor = Color(0xff6CB0A6);
-  Color jColor = Color(0xff9979C6);
-  Color rsiColor = Color(0xffC9B885);
-
   Color defaultTextColor = Color(0xff60738E);
 
   Color nowPriceUpColor = Color(0xff4DAA90);
