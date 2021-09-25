@@ -2,6 +2,8 @@
 // Created by @OpenFlutter & @sh1l0n
 //
 
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 import 'ticker.dart';
@@ -24,7 +26,7 @@ class DataSourceEntity
         MACDEntity {}
 
 class DataSource {
-  const DataSource({
+  DataSource({
     required this.tickers,
     this.maDayList = const [5, 10, 20],
     this.n = 20,
@@ -34,11 +36,10 @@ class DataSource {
   }
 
   static Future<DataSource> fromUrl(final String url) async {
-    late String result;
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
-      result = response.body;
-      final Map parseJson = result.decode(result) as Map<dynamic, dynamic>;
+      final result = response.body;
+      final Map parseJson = jsonDecode(result) as Map<String, dynamic>;
       final list = parseJson['data'] as List<dynamic>;
       final tickers = list
           .map((item) => Ticker.fromJson(item as Map<String, dynamic>))
