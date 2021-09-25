@@ -46,7 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getData(period: '1day');
     rootBundle.loadString('assets/depth.json').then((result) {
       final parseJson = json.decode(result);
       final tick = parseJson['tick'] as Map<String, dynamic>;
@@ -92,25 +91,34 @@ class _MyHomePageState extends State<MyHomePage> {
       children: [
         Container(
           height: 450,
-          child: IndicatorsPanel(
-            datas: datas ?? <Ticker>[],
-            fixedLength: 2,
-            translations: kChartTranslations,
-            showNowPrice: _showNowPrice,
-            hideGrid: _hideGrid,
-            indicators: [
-              CandlesIndicator(
-                dataSource: datas ?? <Ticker>[],
-                height: 200,
-                displayTimeLineChart: isLine,
-                candleIndicator: _mainState,
-                maDayList: [1, 100, 1000],
-              ),
-              // VolumeIndicator(
-              //   height: 150,
-              //   dataSource: datas ?? <Ticker>[],
-              // ),
-            ],
+          child: FutureBuilder<DataSource>(
+            initialData: DataSource(tickers: []),
+            future: getDataSource(period: '1day'),
+            builder: (
+              final BuildContext context,
+              final AsyncSnapshot<DataSource> snapshot,
+            ) {
+              return IndicatorsPanel(
+                datas: snapshot.data?.tickers ?? <Ticker>[],
+                fixedLength: 2,
+                translations: kChartTranslations,
+                showNowPrice: _showNowPrice,
+                hideGrid: _hideGrid,
+                indicators: [
+                  CandlesIndicator(
+                    dataSource: datas ?? <Ticker>[],
+                    height: 200,
+                    displayTimeLineChart: isLine,
+                    candleIndicator: _mainState,
+                    maDayList: [1, 100, 1000],
+                  ),
+                  // VolumeIndicator(
+                  //   height: 150,
+                  //   dataSource: datas ?? <Ticker>[],
+                  // ),
+                ],
+              );
+            },
           ),
         ),
         Flexible(
@@ -245,38 +253,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void getData({required final String period}) {
-    final Future<String> future = getIPAddress(period);
-    future.then((String result) {
-      final Map parseJson = json.decode(result) as Map<dynamic, dynamic>;
-      final list = parseJson['data'] as List<dynamic>;
-      datas = list
-          .map((item) => Ticker.fromJson(item as Map<String, dynamic>))
-          .toList()
-          .reversed
-          .toList()
-          .cast<Ticker>();
-      DataUtil.calculate(datas!);
-      showLoading = false;
-      setState(() {});
-    }).catchError((_) {
-      showLoading = false;
-      setState(() {});
-      print('### datas error $_');
-    });
-  }
-
-  //获取火币数据，需要翻墙
-  Future<String> getIPAddress(String? period) async {
-    var url =
-        'https://api.huobi.br.com/market/history/kline?period=${period ?? '1day'}&size=300&symbol=btcusdt';
-    late String result;
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      result = response.body;
-    } else {
-      print('Failed getting IP address');
-    }
-    return result;
-  }
+  Future<DataSource> getDataSource({required final String period}) async =>
+      await DataSource.fromUrl(
+          'https://api.huobi.br.com/market/history/kline?period=$period&size=300&symbol=btcusdt');
 }

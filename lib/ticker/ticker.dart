@@ -28,7 +28,7 @@ abstract class Ticker implements Built<Ticker, TickerBuilder> {
       serializers.serializeWith(Ticker.serializer, this)
           as Map<String, dynamic>?;
 
-  Ticker? fromJson(final Map<dynamic, String> json) {
+  static Ticker? fromJson(final Map<String, dynamic> json) {
     return serializers.deserializeWith(Ticker.serializer, json);
   }
 }

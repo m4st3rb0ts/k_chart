@@ -1,3 +1,9 @@
+//
+// Created by @OpenFlutter & @sh1l0n
+//
+
+import 'package:http/http.dart' as http;
+
 import 'ticker.dart';
 import '../indicators/candles/entity/candle_entity.dart';
 import '../indicators/macd/entity/kdj_entity.dart';
@@ -23,10 +29,26 @@ class DataSource {
     this.maDayList = const [5, 10, 20],
     this.n = 20,
     this.k = 2,
-  });
+  }) {
+    // DataUtil.calculate(datas!);
+  }
 
-  factory DataSource.fromDepthFile(final String filePath) {
-    return DataSource(tickers: []);
+  static Future<DataSource> fromUrl(final String url) async {
+    late String result;
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      result = response.body;
+      final Map parseJson = result.decode(result) as Map<dynamic, dynamic>;
+      final list = parseJson['data'] as List<dynamic>;
+      final tickers = list
+          .map((item) => Ticker.fromJson(item as Map<String, dynamic>))
+          .toList()
+          .reversed
+          .toList();
+      return DataSource(tickers: tickers.cast<Ticker>());
+    } else {
+      return DataSource(tickers: []);
+    }
   }
 
   final List<Ticker> tickers;
