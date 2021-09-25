@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:k_chart/indicators/volume/volume.dart';
 
 import '../../common.dart';
-import '../../utils/number_util.dart';
+import '../../common.dart';
 import '../indicator_renderer.dart';
 import 'volume.dart';
 

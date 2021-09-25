@@ -5,13 +5,12 @@
 import 'dart:math';
 
 import '../ticker/ticker.dart';
-import 'number_util.dart';
+import '../common.dart';
 
 // ignore_for_file: non_constant_identifier_names,library_prefixes,unused_import,camel_case_types
 class DataUtil {
   static calculate(List<Ticker> dataList,
       [List<int> maDayList = const [5, 10, 20], int n = 20, k = 2]) {
-    calcMA(dataList, maDayList);
     calcBOLL(dataList, n, k);
     calcVolumeMA(dataList);
     calcKDJ(dataList);
@@ -19,30 +18,6 @@ class DataUtil {
     calcRSI(dataList);
     calcWR(dataList);
     calcCCI(dataList);
-  }
-
-  static calcMA(List<Ticker> dataList, List<int> maDayList) {
-    List<double> ma = List<double>.filled(maDayList.length, 0);
-
-    if (dataList.isNotEmpty) {
-      for (int i = 0; i < dataList.length; i++) {
-        Ticker entity = dataList[i];
-        final closePrice = entity.close;
-        entity.maValueList = List<double>.filled(maDayList.length, 0);
-
-        for (int j = 0; j < maDayList.length; j++) {
-          ma[j] += closePrice;
-          if (i == maDayList[j] - 1) {
-            entity.maValueList?[j] = ma[j] / maDayList[j];
-          } else if (i >= maDayList[j]) {
-            ma[j] -= dataList[i - maDayList[j]].close;
-            entity.maValueList?[j] = ma[j] / maDayList[j];
-          } else {
-            entity.maValueList?[j] = 0;
-          }
-        }
-      }
-    }
   }
 
   static void calcBOLL(List<Ticker> dataList, int n, int k) {

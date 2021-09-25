@@ -9,7 +9,7 @@ import 'package:built_collection/built_collection.dart';
 import 'dart:ui';
 
 import '../../ticker/ticker.dart';
-import '../../utils/number_util.dart';
+import '../../common.dart';
 import '../indicator.dart';
 import 'volume.dart';
 import 'volume_renderer.dart';

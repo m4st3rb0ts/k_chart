@@ -22,4 +22,3 @@ export 'indicators/macd/macd_indicator.dart';
 export 'indicators/macd/macd.dart';
 
 export 'utils/data_util.dart';
-export 'utils/number_util.dart';

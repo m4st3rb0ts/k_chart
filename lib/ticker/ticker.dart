@@ -22,6 +22,8 @@ abstract class Ticker implements Built<Ticker, TickerBuilder> {
   double? get ratio;
   int? get time;
 
+  List<double>? get maValueList;
+
   static Serializer<Ticker> get serializer => _$tickerSerializer;
 
   Map<String, dynamic>? toJson() =>

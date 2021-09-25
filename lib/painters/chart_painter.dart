@@ -10,7 +10,7 @@ import 'package:intl/intl.dart' as intl;
 import '../ticker/ticker.dart';
 import '../entity/info_window_entity.dart';
 import '../indicators/indicator.dart';
-import '../utils/number_util.dart';
+import '../../common.dart';
 import 'base_chart_painter.dart';
 
 class ChartPainter extends BaseChartPainter {

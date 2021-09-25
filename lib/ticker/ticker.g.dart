@@ -54,6 +54,14 @@ class _$TickerSerializer implements StructuredSerializer<Ticker> {
         ..add('time')
         ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
+    value = object.maValueList;
+    if (value != null) {
+      result
+        ..add('maValueList')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(List, const [const FullType(double)])));
+    }
     return result;
   }
 
@@ -104,6 +112,12 @@ class _$TickerSerializer implements StructuredSerializer<Ticker> {
           result.time = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
+        case 'maValueList':
+          result.maValueList = serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(List, const [const FullType(double)]))
+              as List<double>;
+          break;
       }
     }
 
@@ -130,6 +144,8 @@ class _$Ticker extends Ticker {
   final double? ratio;
   @override
   final int? time;
+  @override
+  final List<double>? maValueList;
 
   factory _$Ticker([void Function(TickerBuilder)? updates]) =>
       (new TickerBuilder()..update(updates)).build();
@@ -143,7 +159,8 @@ class _$Ticker extends Ticker {
       required this.amount,
       this.change,
       this.ratio,
-      this.time})
+      this.time,
+      this.maValueList})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(open, 'Ticker', 'open');
     BuiltValueNullFieldError.checkNotNull(high, 'Ticker', 'high');
@@ -172,7 +189,8 @@ class _$Ticker extends Ticker {
         amount == other.amount &&
         change == other.change &&
         ratio == other.ratio &&
-        time == other.time;
+        time == other.time &&
+        maValueList == other.maValueList;
   }
 
   @override
@@ -183,14 +201,16 @@ class _$Ticker extends Ticker {
                 $jc(
                     $jc(
                         $jc(
-                            $jc($jc($jc(0, open.hashCode), high.hashCode),
-                                low.hashCode),
-                            close.hashCode),
-                        vol.hashCode),
-                    amount.hashCode),
-                change.hashCode),
-            ratio.hashCode),
-        time.hashCode));
+                            $jc(
+                                $jc($jc($jc(0, open.hashCode), high.hashCode),
+                                    low.hashCode),
+                                close.hashCode),
+                            vol.hashCode),
+                        amount.hashCode),
+                    change.hashCode),
+                ratio.hashCode),
+            time.hashCode),
+        maValueList.hashCode));
   }
 
   @override
@@ -204,7 +224,8 @@ class _$Ticker extends Ticker {
           ..add('amount', amount)
           ..add('change', change)
           ..add('ratio', ratio)
-          ..add('time', time))
+          ..add('time', time)
+          ..add('maValueList', maValueList))
         .toString();
   }
 }
@@ -248,6 +269,11 @@ class TickerBuilder implements Builder<Ticker, TickerBuilder> {
   int? get time => _$this._time;
   set time(int? time) => _$this._time = time;
 
+  List<double>? _maValueList;
+  List<double>? get maValueList => _$this._maValueList;
+  set maValueList(List<double>? maValueList) =>
+      _$this._maValueList = maValueList;
+
   TickerBuilder();
 
   TickerBuilder get _$this {
@@ -262,6 +288,7 @@ class TickerBuilder implements Builder<Ticker, TickerBuilder> {
       _change = $v.change;
       _ratio = $v.ratio;
       _time = $v.time;
+      _maValueList = $v.maValueList;
       _$v = null;
     }
     return this;
@@ -292,7 +319,8 @@ class TickerBuilder implements Builder<Ticker, TickerBuilder> {
                 amount, 'Ticker', 'amount'),
             change: change,
             ratio: ratio,
-            time: time);
+            time: time,
+            maValueList: maValueList);
     replace(_$result);
     return _$result;
   }
