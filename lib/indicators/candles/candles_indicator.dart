@@ -7,7 +7,6 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 
-import '../../chart_style.dart';
 import '../../entity/k_line_entity.dart';
 import '../../utils/number_util.dart';
 
@@ -23,6 +22,7 @@ class CandlesIndicator extends Indicator<Candle> {
     required final double height,
     required this.displayTimeLineChart,
     required this.candleIndicator,
+    this.titlesTopPadding = 30.0,
     this.candleLineWidth = 1.5,
     this.candleItemWidth = 8.5,
     this.lineFillColor = const Color(0x554C86CD),
@@ -55,6 +55,7 @@ class CandlesIndicator extends Indicator<Candle> {
     }
   }
 
+  final double titlesTopPadding;
   final double candleLineWidth;
   final double candleItemWidth;
   final Color lineFillColor;
@@ -150,7 +151,7 @@ class CandlesIndicator extends Indicator<Candle> {
         size.width,
         height + displayRectTop,
       ),
-      titlesTopPadding: chartStyle.topPadding,
+      titlesTopPadding: titlesTopPadding,
       maxVerticalValue: _maxValue,
       minVerticalValue: _minValue,
       indicator: candleIndicator,

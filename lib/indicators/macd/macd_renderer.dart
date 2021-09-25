@@ -297,6 +297,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
   @override
   void drawRightText({
     required final Canvas canvas,
+    required final int numberOfGridRows,
     required final TextStyle textStyle,
   }) {
     final maxVerticalValuePainter = TextPainter(

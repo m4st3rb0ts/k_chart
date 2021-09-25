@@ -113,6 +113,7 @@ abstract class IndicatorRenderer<T> {
   /// @gridRows the number of the row which the text will be painted
   void drawRightText({
     required final Canvas canvas,
+    required final int numberOfGridRows,
     required final TextStyle textStyle,
   });
 

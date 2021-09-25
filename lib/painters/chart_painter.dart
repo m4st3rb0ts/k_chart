@@ -126,11 +126,8 @@ class ChartPainter extends BaseChartPainter {
     canvas.translate(getCurrentOffset(size: size) * horizontalScale, 0.0);
     canvas.scale(horizontalScale, 1.0);
     for (int i = mStartIndex; i <= mStopIndex; i++) {
-      final curPoint = dataSource[i];
-      KLineEntity lastPoint = i == 0 ? curPoint : dataSource[i - 1];
-      double curX = getLeftOffsetByIndex(index: i);
-      double lastX = i == 0 ? curX : getLeftOffsetByIndex(index: i - 1);
-
+      final curX = getLeftOffsetByIndex(index: i);
+      final lastX = i == 0 ? curX : getLeftOffsetByIndex(index: i - 1);
       for (final indicator in indicators) {
         final currentItem = indicator.data[i];
         final lastItem = indicator.data[i == 0 ? i : i - 1];
@@ -151,10 +148,16 @@ class ChartPainter extends BaseChartPainter {
     required final Canvas canvas,
     required final Size size,
   }) {
-    var textStyle = getTextStyle(color: defaultTextColor);
+    var textStyle = getTextStyle(
+      color: const Color(0xff60738E),
+    );
     if (!hideGrid) {
       for (final indicator in indicators) {
-        indicator.render?.drawRightText(canvas: canvas, textStyle: textStyle);
+        indicator.render?.drawRightText(
+          canvas: canvas,
+          numberOfGridRows: chartStyle.numberOfGridRows,
+          textStyle: textStyle,
+        );
       }
     }
   }
@@ -425,7 +428,7 @@ class ChartPainter extends BaseChartPainter {
 
   TextPainter getTextPainter(text, color) {
     if (color == null) {
-      color = chartStyle.colors.defaultTextColor;
+      color = const Color(0xff60738E);
     }
     TextSpan span = TextSpan(text: "$text", style: getTextStyle(color: color));
     TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);

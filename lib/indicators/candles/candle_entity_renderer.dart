@@ -384,13 +384,13 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
   @override
   void drawRightText({
     required final Canvas canvas,
+    required final int numberOfGridRows,
     required final TextStyle textStyle,
   }) {
-    final rowSpace = displayRect.height / chartStyle.numberOfGridRows;
-    for (var row = 0; row <= chartStyle.numberOfGridRows; ++row) {
-      final value =
-          (chartStyle.numberOfGridRows - row) * rowSpace / verticalScale +
-              minVerticalValue;
+    final rowSpace = displayRect.height / numberOfGridRows;
+    for (var row = 0; row <= numberOfGridRows; ++row) {
+      final value = (numberOfGridRows - row) * rowSpace / verticalScale +
+          minVerticalValue;
       final rightText = TextSpan(
         text: '${format(n: value)}',
         style: textStyle,

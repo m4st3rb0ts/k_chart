@@ -135,6 +135,7 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
   @override
   void drawRightText({
     required final Canvas canvas,
+    required final int numberOfGridRows,
     required final TextStyle textStyle,
   }) {
     final rightText = TextSpan(
