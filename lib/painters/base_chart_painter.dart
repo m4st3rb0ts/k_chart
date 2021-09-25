@@ -10,7 +10,6 @@ import 'package:flutter/material.dart'
 import '../utils/date_format_util.dart';
 import '../chart_style.dart' show ChartStyle;
 import '../entity/k_line_entity.dart';
-import '../widgets/k_chart_widget.dart' show SecondaryIndicator;
 
 export 'package:flutter/material.dart'
     show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;
@@ -19,7 +18,6 @@ abstract class BaseChartPainter extends CustomPainter {
   BaseChartPainter({
     required this.chartStyle,
     required this.dataSource,
-    this.secondaryIndicator = SecondaryIndicator.MACD,
     this.horizontalScale = 1.0,
     this.currentHorizontalScroll = 0.0,
     this.shouldDisplaySelection = false,
@@ -33,9 +31,6 @@ abstract class BaseChartPainter extends CustomPainter {
 
   /// Graph data
   final ChartStyle chartStyle;
-
-  /// Second indicator to display in another graph
-  final SecondaryIndicator secondaryIndicator;
 
   /// Time format for display dates
   List<String> displayDateFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
@@ -67,10 +62,6 @@ abstract class BaseChartPainter extends CustomPainter {
   //TOREVIEW GOING DOWN
   int mStartIndex = 0;
   int mStopIndex = 0;
-  double mVolMaxValue = double.minPositive;
-  double mVolMinValue = double.maxFinite;
-  double mSecondaryMaxValue = double.minPositive;
-  double mSecondaryMinValue = double.maxFinite;
 
   // Init data format
   void _initDateFormats() {
@@ -149,54 +140,6 @@ abstract class BaseChartPainter extends CustomPainter {
     mStopIndex = dataIndexInViewportFor(
         leftOffset:
             translateToCurrentViewport(leftOffset: size.width, size: size));
-    for (int i = mStartIndex; i <= mStopIndex; i++) {
-      var item = dataSource[i];
-      getVolMaxMinValue(item: item);
-      getSecondaryMaxMinValue(item: item);
-    }
-  }
-
-  // [] Reviewed
-  void getVolMaxMinValue({required final KLineEntity item}) {
-    mVolMaxValue = max(mVolMaxValue,
-        max(item.vol, max(item.MA5Volume ?? 0, item.MA10Volume ?? 0)));
-    mVolMinValue = min(mVolMinValue,
-        min(item.vol, min(item.MA5Volume ?? 0, item.MA10Volume ?? 0)));
-  }
-
-  // [] Reviewed
-  void getSecondaryMaxMinValue({required final KLineEntity item}) {
-    if (secondaryIndicator == SecondaryIndicator.MACD) {
-      if (item.macd != null) {
-        mSecondaryMaxValue =
-            max(mSecondaryMaxValue, max(item.macd!, max(item.dif!, item.dea!)));
-        mSecondaryMinValue =
-            min(mSecondaryMinValue, min(item.macd!, min(item.dif!, item.dea!)));
-      }
-    } else if (secondaryIndicator == SecondaryIndicator.KDJ) {
-      if (item.d != null) {
-        mSecondaryMaxValue =
-            max(mSecondaryMaxValue, max(item.k!, max(item.d!, item.j!)));
-        mSecondaryMinValue =
-            min(mSecondaryMinValue, min(item.k!, min(item.d!, item.j!)));
-      }
-    } else if (secondaryIndicator == SecondaryIndicator.RSI) {
-      if (item.rsi != null) {
-        mSecondaryMaxValue = max(mSecondaryMaxValue, item.rsi!);
-        mSecondaryMinValue = min(mSecondaryMinValue, item.rsi!);
-      }
-    } else if (secondaryIndicator == SecondaryIndicator.WR) {
-      mSecondaryMaxValue = 0;
-      mSecondaryMinValue = -100;
-    } else if (secondaryIndicator == SecondaryIndicator.CCI) {
-      if (item.cci != null) {
-        mSecondaryMaxValue = max(mSecondaryMaxValue, item.cci!);
-        mSecondaryMinValue = min(mSecondaryMinValue, item.cci!);
-      }
-    } else {
-      mSecondaryMaxValue = 0;
-      mSecondaryMinValue = 0;
-    }
   }
 
   /// Translate a leftOffset position to the current viewport

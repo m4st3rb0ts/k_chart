@@ -12,9 +12,6 @@ import 'package:k_chart/indicators/indicator.dart';
 
 import '../painters/chart_painter.dart';
 
-enum PrimaryIndicator { MA, BOLL, NONE }
-enum SecondaryIndicator { MACD, KDJ, RSI, WR, CCI, NONE }
-
 class TimeFormat {
   static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
   static const List<String> YEAR_MONTH_DAY_WITH_HOUR = [
@@ -30,8 +27,8 @@ class TimeFormat {
   ];
 }
 
-class IndicatorsWidget extends StatefulWidget {
-  const IndicatorsWidget({
+class IndicatorsPanel extends StatefulWidget {
+  const IndicatorsPanel({
     required this.datas,
     required this.indicators,
     required this.chartStyle,
@@ -69,10 +66,10 @@ class IndicatorsWidget extends StatefulWidget {
   final List<Indicator> indicators;
 
   @override
-  _IndicatorsWidgetState createState() => _IndicatorsWidgetState();
+  _IndicatorsPanelState createState() => _IndicatorsPanelState();
 }
 
-class _IndicatorsWidgetState extends State<IndicatorsWidget>
+class _IndicatorsPanelState extends State<IndicatorsPanel>
     with TickerProviderStateMixin {
   double mScaleX = 1.0, mScrollX = 0.0, mSelectX = 0.0;
   StreamController<InfoWindowEntity?>? mInfoWindowStream;
