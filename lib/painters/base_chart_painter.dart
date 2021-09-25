@@ -6,7 +6,7 @@ import 'package:flutter/material.dart'
     show Color, TextStyle, Rect, Canvas, Size, CustomPainter;
 import 'package:intl/intl.dart';
 
-import '../entity/k_line_entity.dart';
+import '../ticker/ticker.dart';
 
 export 'package:flutter/material.dart'
     show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;
@@ -149,6 +149,7 @@ abstract class BaseChartPainter extends CustomPainter {
         break;
       }
     }
+    return mid;
   }
 
   /// Get the left offset for a giving index

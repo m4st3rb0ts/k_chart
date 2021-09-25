@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:k_chart/chart_translations.dart';
+import 'package:k_chart/entity/info_window_entity.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:k_chart/indicators/candles/candles_indicator.dart';
 import 'package:k_chart/indicators/indicator.dart';
@@ -33,7 +34,7 @@ class IndicatorsPanel extends StatefulWidget {
     this.infoWindowDnColor = const Color(0xffff0000),
   });
 
-  final List<KLineEntity>? datas;
+  final List<Ticker> datas;
   final Function()? onSecondaryTap;
   final bool hideGrid;
   final bool showNowPrice;
@@ -77,9 +78,9 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
     mInfoWindowStream = StreamController<InfoWindowEntity?>();
 
     displayDateFormat = DateFormat('MM/dd/yy');
-    if ((widget.datas?.length ?? 0) > 1) {
-      final firstTime = widget.datas?.first.time ?? 0;
-      final secondTime = widget.datas?[1].time ?? 0;
+    if (widget.datas.length > 1) {
+      final firstTime = widget.datas.first.time ?? 0;
+      final secondTime = widget.datas[1].time ?? 0;
       final time = (secondTime - firstTime) ~/ 1000;
       if (time >= 24 * 60 * 60 * 28) {
         displayDateFormat = DateFormat('MM/yy');
@@ -104,14 +105,14 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.datas != null && widget.datas!.isEmpty) {
+    if (widget.datas.isEmpty) {
       mScrollX = 0.0;
       mSelectX = 0.0;
       mScaleX = 1.0;
     }
     final _painter = ChartPainter(
       indicators: widget.indicators,
-      dataSource: widget.datas ?? <KLineEntity>[],
+      dataSource: widget.datas,
       displayDateFormat: displayDateFormat,
       horizontalScale: mScaleX,
       currentHorizontalScroll: mScrollX,

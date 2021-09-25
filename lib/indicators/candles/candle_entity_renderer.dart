@@ -57,9 +57,6 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
       displayRect.bottom - contentPadding,
     );
     verticalScale = _contentRect.height / (maxVerticalValue - minVerticalValue);
-    _nowPricePaint = Paint()
-      ..strokeWidth = chartStyle.nowPriceLineWidth
-      ..isAntiAlias = true;
   }
 
   final double candleLineWidth;

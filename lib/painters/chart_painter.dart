@@ -7,17 +7,16 @@ import 'dart:async' show StreamSink;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
 
+import '../ticker/ticker.dart';
 import '../entity/info_window_entity.dart';
-import '../entity/k_line_entity.dart';
 import '../indicators/indicator.dart';
-import '../flutter_k_chart.dart';
 import '../utils/number_util.dart';
 import 'base_chart_painter.dart';
 
 class ChartPainter extends BaseChartPainter {
   ChartPainter({
     required this.indicators,
-    required final List<KLineEntity> dataSource,
+    required final List<Ticker> dataSource,
     required final intl.DateFormat displayDateFormat,
     required final double horizontalScale,
     required final double currentHorizontalScroll,
@@ -301,11 +300,11 @@ class ChartPainter extends BaseChartPainter {
   void drawText({
     required final Canvas canvas,
     required final Size size,
-    required final KLineEntity data,
+    required final Ticker data,
     required final double x,
   }) {
     //长按显示按中的数据
-    KLineEntity? customData = data;
+    Ticker? customData = data;
     var index = 0;
     if (shouldDisplaySelection) {
       index = getIndexForSelectedHorizontalValue(size: size);
