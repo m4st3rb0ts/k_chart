@@ -29,7 +29,14 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     required this.ma30Color,
     required this.upColor,
     required this.dnColor,
-    this.maFactorsForTitles = const [5, 10, 20],
+    required this.nowPriceUpColor,
+    required this.nowPriceDnColor,
+    required this.nowPriceTextColor,
+    required this.maxColor,
+    required this.minColor,
+    required this.nowPriceLineLength,
+    required this.nowPriceLineSpan,
+    required this.maFactorsForTitles,
   }) : super(
           displayRect: displayRect,
           titlesTopPadding: titlesTopPadding,
@@ -62,6 +69,13 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
   final Color ma30Color;
   final Color upColor;
   final Color dnColor;
+  final Color nowPriceUpColor;
+  final Color nowPriceDnColor;
+  final Color nowPriceTextColor;
+  final Color maxColor;
+  final Color minColor;
+  final double nowPriceLineLength;
+  final double nowPriceLineSpan;
 
   /// Indicator which together the candle graph should display (MA, BOLL, NONE)
   final CandlesIndicators indicator;

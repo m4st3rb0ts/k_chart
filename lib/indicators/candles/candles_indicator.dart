@@ -33,6 +33,13 @@ class CandlesIndicator extends Indicator<Candle> {
     this.ma30Color = const Color(0xff9979C6),
     this.upColor = const Color(0xff4DAA90),
     this.dnColor = const Color(0xffC15466),
+    this.nowPriceUpColor = const Color(0xff4DAA90),
+    this.nowPriceDnColor = const Color(0xffC15466),
+    this.nowPriceTextColor = const Color(0xffffffff),
+    this.maxColor = const Color(0xffffffff),
+    this.minColor = const Color(0xffffffff),
+    this.nowPriceLineLength = 1,
+    this.nowPriceLineSpan = 1,
     this.maDayList = const [5, 10, 20],
   }) : super(dataSource: dataSource, height: height) {
     for (var i = 0; i < dataSource.length; i++) {
@@ -66,6 +73,13 @@ class CandlesIndicator extends Indicator<Candle> {
   final Color ma30Color;
   final Color upColor;
   final Color dnColor;
+  final Color nowPriceUpColor;
+  final Color nowPriceDnColor;
+  final Color nowPriceTextColor;
+  final Color maxColor;
+  final Color minColor;
+  final double nowPriceLineLength;
+  final double nowPriceLineSpan;
 
   List<Candle> _candles = <Candle>[];
   BuiltList<Candle> get data => _candles.toBuiltList();
@@ -169,6 +183,13 @@ class CandlesIndicator extends Indicator<Candle> {
       ma10Color: ma10Color,
       ma30Color: ma30Color,
       upColor: upColor,
+      maxColor: maxColor,
+      minColor: minColor,
+      nowPriceDnColor: nowPriceDnColor,
+      nowPriceLineLength: nowPriceLineLength,
+      nowPriceLineSpan: nowPriceLineSpan,
+      nowPriceTextColor: nowPriceTextColor,
+      nowPriceUpColor: nowPriceUpColor,
     );
   }
 

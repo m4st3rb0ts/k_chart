@@ -5,7 +5,6 @@
 library flutter_k_chart;
 
 export 'widgets/indicators_panel.dart';
-export 'chart_style.dart';
 export 'widgets/depth_chart.dart';
 export 'common.dart';
 
