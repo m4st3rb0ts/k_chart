@@ -28,20 +28,22 @@ class CandlesIndicator extends Indicator<Candle> {
   }) : super(dataSource: dataSource, height: height) {
     for (var i = 0; i < dataSource.length; i++) {
       final dataItem = dataSource[i];
-      var candle = Candle((c) => c
-        ..open = dataItem.open
-        ..close = dataItem.close
-        ..high = dataItem.high
-        ..low = dataItem.low
-        ..top = 0
-        ..middle = 0
-        ..bottom = 0
-        ..bollMa = 0
-        ..maValueList = BuiltList<double>().toBuilder());
+      var candle = Candle(
+        (c) => c
+          ..open = dataItem.open
+          ..close = dataItem.close
+          ..high = dataItem.high
+          ..low = dataItem.low
+          ..top = dataItem.top ?? 0
+          ..middle = dataItem.middle ?? 0
+          ..bottom = dataItem.bottom ?? 0
+          ..bollMa = dataItem.BOLLMA ?? 0
+          ..maValueList = (dataItem.maValueList?.toList() ?? <double>[])
+              .toBuiltList()
+              .toBuilder(),
+      );
       _candles.add(candle);
     }
-    _calcMA();
-    _calcBOLL();
   }
 
   List<Candle> _candles = <Candle>[];
@@ -129,6 +131,7 @@ class CandlesIndicator extends Indicator<Candle> {
         size.width,
         height,
       ),
+      titleTopPadding: chartStyle.topPadding,
       maxVerticalValue: _maxValue,
       minVerticalValue: _minValue,
       indicator: candleIndicator,
@@ -155,73 +158,5 @@ class CandlesIndicator extends Indicator<Candle> {
       result = min(result, maValue == 0 ? double.maxFinite : maValue);
     }
     return result;
-  }
-
-  void _calcMA() {
-    var ma = List<double>.filled(maDayList.length, 0);
-    if (data.isNotEmpty) {
-      for (var i = 0; i < data.length; i++) {
-        var maValueList = List<double>.filled(maDayList.length, 0);
-        for (var j = 0; j < maDayList.length; j++) {
-          ma[j] += data[i].close;
-          if (i == maDayList[j] - 1) {
-            maValueList[j] = ma[j] / maDayList[j];
-          } else if (i >= maDayList[j]) {
-            ma[j] -= data[i - maDayList[j]].close;
-            maValueList[j] = ma[j] / maDayList[j];
-          } else {
-            maValueList[j] = 0;
-          }
-        }
-        _candles[i] = _candles[i].rebuild(
-          (c) => c
-            ..maValueList =
-                c.maValueList = maValueList.toBuiltList().toBuilder(),
-        );
-      }
-    }
-  }
-
-  void _calcBOLL() {
-    final n = 20;
-    final k = 2;
-    _calcBOLLMA(n);
-    for (var i = 0; i < data.length; i++) {
-      final entity = data[i];
-      if (i >= n) {
-        var md = 0.0;
-        for (var j = i - n + 1; j <= i; j++) {
-          final c = data[j].close;
-          final m = entity.bollMa;
-          final value = c - m;
-          md += value * value;
-        }
-        md = md / (n - 1);
-        md = sqrt(md);
-        _candles[i] = _candles[i].rebuild(
-          (c) => c
-            ..middle = entity.bollMa
-            ..top = entity.bollMa + k * md
-            ..bottom = entity.bollMa - k * md,
-        );
-      }
-    }
-  }
-
-  void _calcBOLLMA(final int day) {
-    var ma = 0.0;
-    for (var i = 0; i < data.length; i++) {
-      ma += data[i].close;
-      if (i == day - 1) {
-        _candles[i] = _candles[i].rebuild(
-          (c) => c..bollMa = ma / day,
-        );
-      } else if (i >= day) {
-        ma -= data[i - day].close;
-        _candles[i] = _candles[i].rebuild(
-          (c) => c..bollMa = ma / day,
-        );
-      }
-    }
   }
 }

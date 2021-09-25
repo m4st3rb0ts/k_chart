@@ -157,4 +157,16 @@ class VolumeRenderer extends IndicatorRenderer<VolumeEntity> {
           gridPaint);
     }
   }
+
+  @override
+  void drawBackground({
+    required final Canvas canvas,
+    required Size size,
+    required Gradient gradient,
+  }) {
+    canvas.drawRect(
+      displayRect,
+      Paint()..shader = gradient.createShader(displayRect),
+    );
+  }
 }

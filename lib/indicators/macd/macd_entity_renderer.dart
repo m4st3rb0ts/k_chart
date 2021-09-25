@@ -92,6 +92,17 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
     }
   }
 
+  @override
+  void drawBackground(
+      {required Canvas canvas,
+      required Size size,
+      required Gradient gradient}) {
+    canvas.drawRect(
+      displayRect,
+      Paint()..shader = gradient.createShader(displayRect),
+    );
+  }
+
   void drawMACD({
     required final Canvas canvas,
     required final RenderData<MACDEntity> lastValue,

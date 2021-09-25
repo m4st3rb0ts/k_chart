@@ -104,6 +104,12 @@ abstract class IndicatorRenderer<T> {
     required Size size,
   });
 
+  void drawBackground({
+    required final Canvas canvas,
+    required Size size,
+    required Gradient gradient,
+  });
+
   /// Draws a line
   /// @lastValue from
   /// @currentValue to

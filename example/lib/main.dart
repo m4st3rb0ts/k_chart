@@ -100,6 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             height: 450,
             width: double.infinity,
+            color: Colors.pink,
             child: KChartWidget(
               datas: datas,
               chartStyle: chartStyle,

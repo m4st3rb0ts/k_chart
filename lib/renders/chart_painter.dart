@@ -81,7 +81,7 @@ class ChartPainter extends BaseChartPainter {
     final volumeGraphHeight = 150.0;
     final secondaryGraphHeight = 150.0;
 
-    var displayRectTop = chartStyle.topPadding;
+    var displayRectTop = 0.0;
     for (final indicator in indicators) {
       indicator.updateRender(
         size: size,
@@ -137,11 +137,8 @@ class ChartPainter extends BaseChartPainter {
     );
 
     for (final indicator in indicators) {
-      final displayRect = indicator.render?.displayRect;
-      if (displayRect != null) {
-        canvas.drawRect(displayRect,
-            mBgPaint..shader = mBgGradient.createShader(displayRect));
-      }
+      indicator.render
+          ?.drawBackground(canvas: canvas, size: size, gradient: mBgGradient);
     }
 
     if (mVolRenderer != null) {

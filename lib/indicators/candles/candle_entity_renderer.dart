@@ -20,6 +20,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     required final int fixedDecimalsLength,
     required final ChartStyle chartStyle,
     required this.timelineHorizontalScale,
+    required this.titleTopPadding,
     this.maFactorsForTitles = const [5, 10, 20],
   }) : super(
           displayRect: displayRect,
@@ -35,7 +36,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
       ..color = chartStyle.colors.kLineColor;
     _contentRect = Rect.fromLTRB(
       displayRect.left,
-      displayRect.top + contentPadding,
+      displayRect.top + contentPadding + titleTopPadding,
       displayRect.right,
       displayRect.bottom - contentPadding,
     );
@@ -50,6 +51,8 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
 
   /// Padding for content
   final double contentPadding = 5.0;
+
+  final double titleTopPadding;
 
   // Suffix for MA titles computing
   final List<int> maFactorsForTitles;
@@ -119,7 +122,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
       canvas,
       Offset(
         leftOffset,
-        displayRect.top - chartStyle.topPadding,
+        displayRect.top,
       ),
     );
   }
@@ -375,7 +378,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
           canvas,
           Offset(
             0,
-            chartStyle.topPadding,
+            titleTopPadding,
           ),
         );
       } else {
@@ -383,7 +386,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
           canvas,
           Offset(
             0,
-            rowSpace * row - rightTextPainter.height + chartStyle.topPadding,
+            rowSpace * row - rightTextPainter.height + titleTopPadding,
           ),
         );
       }
@@ -397,19 +400,31 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     final rowSpace = displayRect.height / chartStyle.numberOfGridRows;
     for (var row = 0; row <= chartStyle.numberOfGridRows; row++) {
       canvas.drawLine(
-        Offset(0, rowSpace * row + chartStyle.topPadding),
-        Offset(displayRect.width, rowSpace * row + chartStyle.topPadding),
+        Offset(0, rowSpace * row + titleTopPadding),
+        Offset(displayRect.width, rowSpace * row + titleTopPadding),
         gridPaint,
       );
     }
     final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
     for (var i = 0; i <= columnSpace; i++) {
       canvas.drawLine(
-        Offset(columnSpace * i, chartStyle.topPadding / 3),
+        Offset(columnSpace * i, titleTopPadding / 3),
         Offset(columnSpace * i, displayRect.bottom),
         gridPaint,
       );
     }
+  }
+
+  @override
+  void drawBackground({
+    required final Canvas canvas,
+    required Size size,
+    required Gradient gradient,
+  }) {
+    canvas.drawRect(
+      displayRect,
+      Paint()..shader = gradient.createShader(displayRect),
+    );
   }
 
   @override
