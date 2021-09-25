@@ -1,17 +1,14 @@
 import 'dart:async' show StreamSink;
 
 import 'package:flutter/material.dart';
-import 'package:k_chart/indicators/indicator.dart';
-import 'package:k_chart/indicators/macd/macd.dart';
-import 'package:k_chart/utils/number_util.dart';
 
 import '../entity/info_window_entity.dart';
 import '../entity/k_line_entity.dart';
+import '../indicators/indicator.dart';
 import '../flutter_k_chart.dart';
 import '../utils/date_format_util.dart';
+import '../utils/number_util.dart';
 import 'base_chart_painter.dart';
-import '../indicators/indicator_renderer.dart';
-import '../indicators/macd/macd_renderer.dart';
 
 class ChartPainter extends BaseChartPainter {
   ChartPainter({
@@ -25,10 +22,8 @@ class ChartPainter extends BaseChartPainter {
     this.sink,
     this.hideGrid = false,
     this.showNowPrice = true,
-    this.bgColor,
     this.fixedLength = 2,
-  })  : assert(bgColor == null || bgColor.length >= 2),
-        super(
+  }) : super(
           chartStyle: chartStyle,
           dataSource: dataSource,
           horizontalScale: horizontalScale,
@@ -58,7 +53,6 @@ class ChartPainter extends BaseChartPainter {
   Color? ma5Color, ma10Color, ma30Color;
   Color? volColor;
   Color? macdColor, difColor, deaColor, jColor;
-  List<Color>? bgColor;
   int fixedLength;
   late Paint selectPointPaint, selectorBorderPaint, nowPricePaint;
   final bool hideGrid;
@@ -91,7 +85,7 @@ class ChartPainter extends BaseChartPainter {
     Gradient mBgGradient = LinearGradient(
       begin: Alignment.bottomCenter,
       end: Alignment.topCenter,
-      colors: bgColor ?? chartStyle.colors.bgColor,
+      colors: chartStyle.colors.bgColor,
     );
 
     for (final indicator in indicators) {

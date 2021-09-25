@@ -54,4 +54,5 @@ const kChartTranslations = {
     change: '涨跌幅',
     amount: '成交额',
   ),
+  'en_US': ChartTranslations(),
 };

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:k_chart/chart_translations.dart';
-import 'package:k_chart/extension/map_ext.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:k_chart/indicators/candles/candles_indicator.dart';
 import 'package:k_chart/indicators/indicator.dart';
@@ -27,12 +26,28 @@ class TimeFormat {
   ];
 }
 
-class KChartWidget extends StatefulWidget {
+class IndicatorsWidget extends StatefulWidget {
+  const IndicatorsWidget({
+    required this.datas,
+    required this.indicators,
+    required this.chartStyle,
+    this.onSecondaryTap,
+    this.hideGrid = false,
+    this.showNowPrice = true,
+    this.showInfoDialog = true,
+    this.translations = kChartTranslations,
+    this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
+    this.onLoadMore,
+    this.fixedLength = 2,
+    this.flingTime = 600,
+    this.flingRatio = 0.5,
+    this.flingCurve = Curves.decelerate,
+    this.isOnDrag,
+  });
+
   final List<KLineEntity>? datas;
   final Function()? onSecondaryTap;
   final bool hideGrid;
-  @Deprecated('Use `translations` instead.')
-  final bool isChinese;
   final bool showNowPrice;
   final bool showInfoDialog;
   final Map<String, ChartTranslations> translations;
@@ -41,8 +56,6 @@ class KChartWidget extends StatefulWidget {
   //当屏幕滚动到尽头会调用，真为拉到屏幕右侧尽头，假为拉到屏幕左侧尽头
   final Function(bool)? onLoadMore;
 
-  @Deprecated('Use `chartColors` instead.')
-  final List<Color>? bgColor;
   final int fixedLength;
   final int flingTime;
   final double flingRatio;
@@ -51,31 +64,11 @@ class KChartWidget extends StatefulWidget {
   final ChartStyle chartStyle;
   final List<Indicator> indicators;
 
-  const KChartWidget({
-    required this.datas,
-    required this.indicators,
-    required this.chartStyle,
-    this.onSecondaryTap,
-    this.hideGrid = false,
-    @Deprecated('Use `translations` instead.') this.isChinese = false,
-    this.showNowPrice = true,
-    this.showInfoDialog = true,
-    this.translations = kChartTranslations,
-    this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
-    this.onLoadMore,
-    @Deprecated('Use `chartColors` instead.') this.bgColor,
-    this.fixedLength = 2,
-    this.flingTime = 600,
-    this.flingRatio = 0.5,
-    this.flingCurve = Curves.decelerate,
-    this.isOnDrag,
-  });
-
   @override
-  _KChartWidgetState createState() => _KChartWidgetState();
+  _IndicatorsWidgetState createState() => _IndicatorsWidgetState();
 }
 
-class _KChartWidgetState extends State<KChartWidget>
+class _IndicatorsWidgetState extends State<IndicatorsWidget>
     with TickerProviderStateMixin {
   double mScaleX = 1.0, mScrollX = 0.0, mSelectX = 0.0;
   StreamController<InfoWindowEntity?>? mInfoWindowStream;
@@ -89,16 +82,12 @@ class _KChartWidgetState extends State<KChartWidget>
 
   double _lastScale = 1.0;
   bool isScale = false, isDrag = false, isLongPress = false;
+  late List<String> infos;
 
   @override
   void initState() {
     super.initState();
     mInfoWindowStream = StreamController<InfoWindowEntity?>();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
@@ -125,7 +114,6 @@ class _KChartWidgetState extends State<KChartWidget>
       hideGrid: widget.hideGrid,
       showNowPrice: widget.showNowPrice,
       sink: mInfoWindowStream?.sink,
-      bgColor: widget.bgColor,
       fixedLength: widget.fixedLength,
     );
 
@@ -259,8 +247,6 @@ class _KChartWidgetState extends State<KChartWidget>
 
   void notifyChanged() => setState(() {});
 
-  late List<String> infos;
-
   Widget _buildInfoDialog() {
     return StreamBuilder<InfoWindowEntity?>(
         stream: mInfoWindowStream?.stream,
@@ -302,13 +288,11 @@ class _KChartWidgetState extends State<KChartWidget>
               itemExtent: 14.0,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                final translations = widget.isChinese
-                    ? kChartTranslations['zh_CN']!
-                    : widget.translations.of(context);
+                final translations = kChartTranslations['en_US'];
 
                 return _buildItem(
                   infos[index],
-                  translations.byIndex(index),
+                  translations?.byIndex(index) ?? '',
                 );
               },
             ),

@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             width: double.infinity,
             color: Colors.pink,
-            child: KChartWidget(
+            child: IndicatorsWidget(
               datas: datas,
               chartStyle: chartStyle,
               fixedLength: 2,
@@ -111,7 +111,6 @@ class _MyHomePageState extends State<MyHomePage> {
               translations: kChartTranslations,
               showNowPrice: _showNowPrice,
               //`isChinese` is Deprecated, Use `translations` instead.
-              isChinese: isChinese,
               hideGrid: _hideGrid,
               indicators: [
                 CandlesIndicator(
