@@ -6,11 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:k_chart/chart_style.dart';
 import 'package:k_chart/chart_translations.dart';
 import 'package:k_chart/flutter_k_chart.dart';
-import 'package:k_chart/indicators/candles/candles_indicator.dart';
-import 'package:k_chart/indicators/volume/volume_indicator.dart';
-import 'package:k_chart/indicators/macd/macd_indicator.dart';
-import 'package:k_chart/indicators/macd/macd.dart';
-import 'package:k_chart/k_chart_widget.dart';
 
 void main() => runApp(MyApp());
 

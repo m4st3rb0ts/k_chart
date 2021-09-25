@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'volume.dart';
 
 import '../../chart_style.dart';
-import '../../extension/num_ext.dart';
+import '../../common.dart';
 import '../../utils/number_util.dart';
 import '../indicator_renderer.dart';
 
