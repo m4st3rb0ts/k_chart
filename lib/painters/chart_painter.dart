@@ -224,7 +224,7 @@ class ChartPainter extends BaseChartPainter {
   void drawCrossLineText(
       {required final Canvas canvas, required final Size size}) {
     final index = getIndexForSelectedHorizontalValue(size: size);
-    KLineEntity? point = getDataItemByIndex(index: index);
+    Ticker? point = getDataItemByIndex(index: index);
     if (point == null) {
       return;
     }

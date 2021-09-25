@@ -7,7 +7,7 @@ import 'dart:ui';
 
 import 'package:built_collection/built_collection.dart';
 
-import '../../ticker.dart';
+import '../../ticker/ticker.dart';
 import '../indicator.dart';
 import 'macd.dart';
 import 'macd_renderer.dart';
