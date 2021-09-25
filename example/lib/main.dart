@@ -93,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Container(
           height: 450,
           child: IndicatorsPanel(
-            datas: datas,
+            datas: datas ?? <Ticker>[],
             fixedLength: 2,
             translations: kChartTranslations,
             showNowPrice: _showNowPrice,
