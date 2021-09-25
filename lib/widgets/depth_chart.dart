@@ -146,10 +146,10 @@ class DepthChartPainter extends CustomPainter {
 
     selectPaint = Paint()
       ..isAntiAlias = true
-      ..color = chartStyle.colors.selectFillColor;
+      ..color = const Color(0xff0D1722);
     selectBorderPaint = Paint()
       ..isAntiAlias = true
-      ..color = chartStyle.colors.selectBorderColor
+      ..color = const Color(0xff6C7A86)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.5;
   }

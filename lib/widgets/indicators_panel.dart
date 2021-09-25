@@ -104,7 +104,6 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
     }
     final _painter = ChartPainter(
       indicators: widget.indicators,
-      chartStyle: widget.chartStyle,
       dataSource: widget.datas ?? <KLineEntity>[],
       displayDateFormat: displayDateFormat,
       horizontalScale: mScaleX,
@@ -186,7 +185,7 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
                 size: Size(double.infinity, double.infinity),
                 painter: _painter,
               ),
-              if (widget.showInfoDialog) _buildInfoDialog()
+              if (widget.showInfoDialog) _buildInfoDialog(_painter)
             ],
           ),
         );
@@ -247,7 +246,7 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
 
   void notifyChanged() => setState(() {});
 
-  Widget _buildInfoDialog() {
+  Widget _buildInfoDialog(final ChartPainter painter) {
     return StreamBuilder<InfoWindowEntity?>(
         stream: mInfoWindowStream?.stream,
         builder: (context, snapshot) {
@@ -276,9 +275,9 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
             ),
             width: mWidth / 3,
             decoration: BoxDecoration(
-              color: widget.chartStyle.colors.selectFillColor,
+              color: painter.selectedFillColor,
               border: Border.all(
-                color: widget.chartStyle.colors.selectBorderColor,
+                color: painter.selectedBorderColor,
                 width: 0.5,
               ),
             ),

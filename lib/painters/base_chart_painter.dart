@@ -6,7 +6,6 @@ import 'package:flutter/material.dart'
     show Color, TextStyle, Rect, Canvas, Size, CustomPainter;
 import 'package:intl/intl.dart';
 
-import '../chart_style.dart' show ChartStyle;
 import '../entity/k_line_entity.dart';
 
 export 'package:flutter/material.dart'
@@ -14,20 +13,19 @@ export 'package:flutter/material.dart'
 
 abstract class BaseChartPainter extends CustomPainter {
   BaseChartPainter({
-    required this.chartStyle,
     required this.dataSource,
     required this.displayDateFormat,
+    required this.pointWidth,
     this.horizontalScale = 1.0,
     this.currentHorizontalScroll = 0.0,
     this.shouldDisplaySelection = false,
     required this.selectedHorizontalValue,
   });
 
+  final double pointWidth;
+
   /// Data to display in the graph
   final List<KLineEntity> dataSource;
-
-  /// Graph data
-  final ChartStyle chartStyle;
 
   /// Time format for display dates
   final DateFormat displayDateFormat;
@@ -45,9 +43,9 @@ abstract class BaseChartPainter extends CustomPainter {
   final double selectedHorizontalValue;
 
   double maxHorizontalScrollWidth({required final Size size}) {
-    final dataWidth = -dataSource.length * chartStyle.pointWidth +
+    final dataWidth = -dataSource.length * pointWidth +
         size.width / horizontalScale -
-        chartStyle.pointWidth * 0.5;
+        pointWidth * 0.5;
     return dataWidth >= 0 ? 0.0 : dataWidth.abs();
   }
 
@@ -152,7 +150,7 @@ abstract class BaseChartPainter extends CustomPainter {
   /// @param index
   double getLeftOffsetByIndex({required final int index}) =>
       //*0.5 Prevent the first and last bars from displaying incorrectly
-      index * chartStyle.pointWidth + chartStyle.pointWidth * 0.5;
+      index * pointWidth + pointWidth * 0.5;
 
   /// Get the data item by an index
   /// @param index

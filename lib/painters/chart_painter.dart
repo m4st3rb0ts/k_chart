@@ -17,7 +17,6 @@ import 'base_chart_painter.dart';
 class ChartPainter extends BaseChartPainter {
   ChartPainter({
     required this.indicators,
-    required final ChartStyle chartStyle,
     required final List<KLineEntity> dataSource,
     required final intl.DateFormat displayDateFormat,
     required final double horizontalScale,
@@ -28,8 +27,26 @@ class ChartPainter extends BaseChartPainter {
     this.hideGrid = false,
     this.showNowPrice = true,
     this.fixedLength = 2,
+    final double pointWidth = 11.0,
+    this.nowPriceLineWidth = 1,
+    this.childPadding = 12.0,
+    this.topPadding = 30.0,
+    this.bottomPadding = 20.0,
+    this.selectedFillColor = const Color(0xff0D1722),
+    this.selectedBorderColor = const Color(0xff6C7A86),
+    this.backgroundGradientColors = const [
+      Color(0xff18191d),
+      Color(0xff18191d)
+    ],
+    this.numberOfGridColumns = 4,
+    this.numberOfGridRows = 4,
+    this.crossTextColor = const Color(0xffffffff),
+    this.vCrossColor = const Color(0x1Effffff),
+    this.vCrossWidth = 8.5,
+    this.hCrossColor = const Color(0xffffffff),
+    this.hCrossWidth = 0.5,
   }) : super(
-          chartStyle: chartStyle,
+          pointWidth: pointWidth,
           dataSource: dataSource,
           displayDateFormat: displayDateFormat,
           horizontalScale: horizontalScale,
@@ -40,18 +57,31 @@ class ChartPainter extends BaseChartPainter {
     selectPointPaint = Paint()
       ..isAntiAlias = true
       ..strokeWidth = 0.5
-      ..color = chartStyle.colors.selectFillColor;
+      ..color = selectedFillColor;
     selectorBorderPaint = Paint()
       ..isAntiAlias = true
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke
-      ..color = chartStyle.colors.selectBorderColor;
+      ..color = selectedBorderColor;
     nowPricePaint = Paint()
-      ..strokeWidth = chartStyle.nowPriceLineWidth
+      ..strokeWidth = nowPriceLineWidth
       ..isAntiAlias = true;
   }
 
-  /// Should display volume?
+  final double nowPriceLineWidth;
+  final double childPadding;
+  final double topPadding;
+  final double bottomPadding;
+  final Color selectedFillColor;
+  final Color selectedBorderColor;
+  final List<Color> backgroundGradientColors;
+  final int numberOfGridColumns;
+  final int numberOfGridRows;
+  final Color crossTextColor;
+  final Color vCrossColor;
+  final double vCrossWidth;
+  final Color hCrossColor;
+  final double hCrossWidth;
 
   final List<Indicator> indicators;
   StreamSink<InfoWindowEntity?>? sink;
@@ -80,7 +110,7 @@ class ChartPainter extends BaseChartPainter {
         firstIndexToDisplay: mStartIndex,
         finalIndexToDisplay: mStopIndex,
       );
-      displayRectTop += indicator.height + chartStyle.childPadding;
+      displayRectTop += indicator.height + childPadding;
     }
   }
 
@@ -91,15 +121,15 @@ class ChartPainter extends BaseChartPainter {
     Gradient mBgGradient = LinearGradient(
       begin: Alignment.bottomCenter,
       end: Alignment.topCenter,
-      colors: chartStyle.colors.bgColor,
+      colors: backgroundGradientColors,
     );
 
     for (final indicator in indicators) {
       indicator.render
           ?.drawBackground(canvas: canvas, size: size, gradient: mBgGradient);
     }
-    Rect dateRect = Rect.fromLTRB(
-        0, size.height - chartStyle.bottomPadding, size.width, size.height);
+    Rect dateRect =
+        Rect.fromLTRB(0, size.height - bottomPadding, size.width, size.height);
     canvas.drawRect(
         dateRect, mBgPaint..shader = mBgGradient.createShader(dateRect));
   }
@@ -113,8 +143,8 @@ class ChartPainter extends BaseChartPainter {
       for (final indicator in indicators) {
         indicator.render?.drawGrid(
           canvas: canvas,
-          numberOfGridColumns: chartStyle.numberOfGridColumns,
-          numberOfGridRows: chartStyle.numberOfGridRows,
+          numberOfGridColumns: numberOfGridColumns,
+          numberOfGridRows: numberOfGridRows,
         );
       }
     }
@@ -155,7 +185,7 @@ class ChartPainter extends BaseChartPainter {
       for (final indicator in indicators) {
         indicator.render?.drawRightText(
           canvas: canvas,
-          numberOfGridRows: chartStyle.numberOfGridRows,
+          numberOfGridRows: numberOfGridRows,
           textStyle: textStyle,
         );
       }
@@ -164,14 +194,12 @@ class ChartPainter extends BaseChartPainter {
 
   @override
   void drawDate({required final Canvas canvas, required final Size size}) {
-    double columnSpace = size.width / chartStyle.numberOfGridColumns;
-    double startX =
-        getLeftOffsetByIndex(index: mStartIndex) - chartStyle.pointWidth * 0.5;
-    double stopX =
-        getLeftOffsetByIndex(index: mStopIndex) + chartStyle.pointWidth * 0.5;
+    double columnSpace = size.width / numberOfGridColumns;
+    double startX = getLeftOffsetByIndex(index: mStartIndex) - pointWidth * 0.5;
+    double stopX = getLeftOffsetByIndex(index: mStopIndex) + pointWidth * 0.5;
     double x = 0.0;
     double y = 0.0;
-    for (var i = 0; i <= chartStyle.numberOfGridColumns; ++i) {
+    for (var i = 0; i <= numberOfGridColumns; ++i) {
       double translateX =
           translateToCurrentViewport(leftOffset: columnSpace * i, size: size);
 
@@ -183,9 +211,7 @@ class ChartPainter extends BaseChartPainter {
           return;
         }
         TextPainter tp = getTextPainter(getDate(item.time), null);
-        y = size.height -
-            (chartStyle.bottomPadding - tp.height) / 2 -
-            tp.height;
+        y = size.height - (bottomPadding - tp.height) / 2 - tp.height;
         x = columnSpace * i - tp.width / 2;
         // Prevent date text out of canvas
         if (x < 0) x = 0;
@@ -204,8 +230,7 @@ class ChartPainter extends BaseChartPainter {
       return;
     }
 
-    TextPainter tp =
-        getTextPainter(point.close, chartStyle.colors.crossTextColor);
+    TextPainter tp = getTextPainter(point.close, crossTextColor);
     double textHeight = tp.height;
     double textWidth = tp.width;
 
@@ -245,13 +270,12 @@ class ChartPainter extends BaseChartPainter {
       tp.paint(canvas, Offset(x + w1 + w2, y - textHeight / 2));
     }
 
-    TextPainter dateTp =
-        getTextPainter(getDate(point.time), chartStyle.colors.crossTextColor);
+    TextPainter dateTp = getTextPainter(getDate(point.time), crossTextColor);
     textWidth = dateTp.width;
     r = textHeight / 2;
     x = translateXtoX(
         translateX: getLeftOffsetByIndex(index: index), size: size);
-    y = size.height - chartStyle.bottomPadding;
+    y = size.height - bottomPadding;
 
     if (x < textWidth + 2 * w1) {
       x = 1 + textWidth / 2 + w1;
@@ -394,19 +418,20 @@ class ChartPainter extends BaseChartPainter {
     if (point == null) {
       return;
     }
+
     Paint paintY = Paint()
-      ..color = chartStyle.colors.vCrossColor
-      ..strokeWidth = chartStyle.vCrossWidth
+      ..color = vCrossColor
+      ..strokeWidth = vCrossWidth
       ..isAntiAlias = true;
     double x = getLeftOffsetByIndex(index: index);
     double y = getMainY(point.close);
     // k线图竖线
-    canvas.drawLine(Offset(x, chartStyle.topPadding),
-        Offset(x, size.height - chartStyle.bottomPadding), paintY);
+    canvas.drawLine(
+        Offset(x, topPadding), Offset(x, size.height - bottomPadding), paintY);
 
     Paint paintX = Paint()
-      ..color = chartStyle.colors.hCrossColor
-      ..strokeWidth = chartStyle.hCrossWidth
+      ..color = hCrossColor
+      ..strokeWidth = hCrossWidth
       ..isAntiAlias = true;
     // k线图横线
     canvas.drawLine(
