@@ -8,6 +8,8 @@ import 'package:k_chart/chart_translations.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:k_chart/indicators/candles/candles_indicator.dart';
 import 'package:k_chart/indicators/volume/volume_indicator.dart';
+import 'package:k_chart/indicators/macd/macd_indicator.dart';
+import 'package:k_chart/indicators/macd/macd.dart';
 import 'package:k_chart/k_chart_widget.dart';
 
 void main() => runApp(MyApp());
@@ -39,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool showLoading = true;
   var _mainState = CandlesIndicators.MA;
   bool _volHidden = false;
-  SecondaryIndicator _secondaryState = SecondaryIndicator.NONE;
+  MacdIndicators _secondaryState = MacdIndicators.NONE;
   bool isLine = false;
   bool isChinese = true;
   bool _hideGrid = false;
@@ -99,13 +101,11 @@ class _MyHomePageState extends State<MyHomePage> {
       children: <Widget>[
         Stack(children: <Widget>[
           Container(
-            height: 450,
             width: double.infinity,
             color: Colors.pink,
             child: KChartWidget(
               datas: datas,
               chartStyle: chartStyle,
-              secondaryState: _secondaryState,
               fixedLength: 2,
               timeFormat: TimeFormat.YEAR_MONTH_DAY,
               translations: kChartTranslations,
@@ -125,6 +125,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (!_volHidden)
                   VolumeIndicator(
                     dataSource: datas ?? <KLineEntity>[],
+                    height: 200,
+                    chartStyle: chartStyle,
+                  ),
+                if (_secondaryState != MacdIndicators.NONE)
+                  MacdIndicator(
+                    dataSource: datas ?? <KLineEntity>[],
+                    indicator: _secondaryState,
                     height: 200,
                     chartStyle: chartStyle,
                   ),
@@ -165,17 +172,17 @@ class _MyHomePageState extends State<MyHomePage> {
         button("Hide Line",
             onPressed: () => _mainState = CandlesIndicators.NONE),
         button("Secondary Chart:MACD",
-            onPressed: () => _secondaryState = SecondaryIndicator.MACD),
+            onPressed: () => _secondaryState = MacdIndicators.MACD),
         button("Secondary Chart:KDJ",
-            onPressed: () => _secondaryState = SecondaryIndicator.KDJ),
+            onPressed: () => _secondaryState = MacdIndicators.KDJ),
         button("Secondary Chart:RSI",
-            onPressed: () => _secondaryState = SecondaryIndicator.RSI),
+            onPressed: () => _secondaryState = MacdIndicators.RSI),
         button("Secondary Chart:WR",
-            onPressed: () => _secondaryState = SecondaryIndicator.WR),
+            onPressed: () => _secondaryState = MacdIndicators.WR),
         button("Secondary Chart:CCI",
-            onPressed: () => _secondaryState = SecondaryIndicator.CCI),
+            onPressed: () => _secondaryState = MacdIndicators.CCI),
         button("Secondary Chart:Hide",
-            onPressed: () => _secondaryState = SecondaryIndicator.NONE),
+            onPressed: () => _secondaryState = MacdIndicators.NONE),
         button(_volHidden ? "Show Vol" : "Hide Vol",
             onPressed: () => _volHidden = !_volHidden),
         button("Change Language", onPressed: () => isChinese = !isChinese),

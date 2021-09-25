@@ -1,8 +1,8 @@
 import 'dart:async' show StreamSink;
 
 import 'package:flutter/material.dart';
-import 'package:k_chart/indicators/candles/candle.dart';
 import 'package:k_chart/indicators/indicator.dart';
+import 'package:k_chart/indicators/macd/macd.dart';
 import 'package:k_chart/utils/number_util.dart';
 
 import '../entity/info_window_entity.dart';
@@ -11,7 +11,7 @@ import '../flutter_k_chart.dart';
 import '../utils/date_format_util.dart';
 import 'base_chart_painter.dart';
 import '../indicators/indicator_renderer.dart';
-import '../indicators/macd/macd_entity_renderer.dart';
+import '../indicators/macd/macd_renderer.dart';
 
 class ChartPainter extends BaseChartPainter {
   ChartPainter({
@@ -22,7 +22,6 @@ class ChartPainter extends BaseChartPainter {
     required final double currentHorizontalScroll,
     required final bool shouldDisplaySelection,
     required final double selectedHorizontalValue,
-    required final SecondaryIndicator secondaryIndicator,
     this.sink,
     this.hideGrid = false,
     this.showNowPrice = true,
@@ -36,7 +35,6 @@ class ChartPainter extends BaseChartPainter {
           currentHorizontalScroll: currentHorizontalScroll,
           shouldDisplaySelection: shouldDisplaySelection,
           selectedHorizontalValue: selectedHorizontalValue,
-          secondaryIndicator: secondaryIndicator,
         ) {
     selectPointPaint = Paint()
       ..isAntiAlias = true
@@ -55,7 +53,6 @@ class ChartPainter extends BaseChartPainter {
   /// Should display volume?
 
   final List<Indicator> indicators;
-  IndicatorRenderer? mSecondaryRenderer;
   StreamSink<InfoWindowEntity?>? sink;
   Color? upColor, dnColor;
   Color? ma5Color, ma10Color, ma30Color;
@@ -74,9 +71,6 @@ class ChartPainter extends BaseChartPainter {
       fixedLength =
           NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
     }
-    final volumeGraphHeight = 150.0;
-    final secondaryGraphHeight = 150.0;
-
     var displayRectTop = 0.0;
     for (final indicator in indicators) {
       indicator.updateRender(
@@ -86,24 +80,7 @@ class ChartPainter extends BaseChartPainter {
         firstIndexToDisplay: mStartIndex,
         finalIndexToDisplay: mStopIndex,
       );
-      displayRectTop += indicators.first.height + chartStyle.childPadding;
-    }
-
-    displayRectTop += volumeGraphHeight + chartStyle.childPadding;
-    if (secondaryIndicator != SecondaryIndicator.NONE) {
-      mSecondaryRenderer = MACDEntityRenderer(
-        displayRect: Rect.fromLTWH(
-          0,
-          displayRectTop,
-          size.width,
-          secondaryGraphHeight,
-        ),
-        maxVerticalValue: mSecondaryMaxValue,
-        minVerticalValue: mSecondaryMinValue,
-        indicator: secondaryIndicator,
-        fixedDecimalsLength: fixedLength,
-        chartStyle: chartStyle,
-      );
+      displayRectTop += indicator.height + chartStyle.childPadding;
     }
   }
 
@@ -121,17 +98,6 @@ class ChartPainter extends BaseChartPainter {
       indicator.render
           ?.drawBackground(canvas: canvas, size: size, gradient: mBgGradient);
     }
-
-    if (mSecondaryRenderer != null) {
-      Rect secondaryRect = Rect.fromLTRB(
-        0,
-        mSecondaryRenderer?.displayRect.top ?? 0 - chartStyle.childPadding,
-        mSecondaryRenderer?.displayRect.width ?? 0,
-        mSecondaryRenderer?.displayRect.bottom ?? 0,
-      );
-      canvas.drawRect(secondaryRect,
-          mBgPaint..shader = mBgGradient.createShader(secondaryRect));
-    }
     Rect dateRect = Rect.fromLTRB(
         0, size.height - chartStyle.bottomPadding, size.width, size.height);
     canvas.drawRect(
@@ -147,7 +113,6 @@ class ChartPainter extends BaseChartPainter {
       for (final indicator in indicators) {
         indicator.render?.drawGrid(canvas: canvas);
       }
-      mSecondaryRenderer?.drawGrid(canvas: canvas);
     }
   }
 
@@ -172,12 +137,6 @@ class ChartPainter extends BaseChartPainter {
           canvas: canvas,
         );
       }
-      mSecondaryRenderer?.drawChart(
-        lastValue: RenderData<MACDEntity>(data: lastPoint, x: lastX),
-        currentValue: RenderData<MACDEntity>(data: curPoint, x: curX),
-        size: size,
-        canvas: canvas,
-      );
     }
 
     canvas.restore();
@@ -194,7 +153,6 @@ class ChartPainter extends BaseChartPainter {
         indicator.render?.drawRightText(canvas: canvas, textStyle: textStyle);
       }
     }
-    mSecondaryRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
   }
 
   @override
@@ -334,8 +292,6 @@ class ChartPainter extends BaseChartPainter {
       indicator.render?.drawText(
           canvas: canvas, value: indicator.data[index], leftOffset: x);
     }
-    mSecondaryRenderer?.drawText(
-        canvas: canvas, value: customData, leftOffset: x);
   }
 
   @override
@@ -480,9 +436,4 @@ class ChartPainter extends BaseChartPainter {
 
   double getMainY(double y) =>
       indicators.first.render?.getVerticalPositionForPoint(value: y) ?? 50;
-
-  /// 点是否在SecondaryRect中
-  bool isInSecondaryRect(Offset point) {
-    return mSecondaryRenderer?.displayRect.contains(point) ?? false;
-  }
 }

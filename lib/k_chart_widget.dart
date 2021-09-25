@@ -29,7 +29,6 @@ class TimeFormat {
 
 class KChartWidget extends StatefulWidget {
   final List<KLineEntity>? datas;
-  final SecondaryIndicator secondaryState;
   final Function()? onSecondaryTap;
   final bool hideGrid;
   @Deprecated('Use `translations` instead.')
@@ -56,7 +55,6 @@ class KChartWidget extends StatefulWidget {
     required this.datas,
     required this.indicators,
     required this.chartStyle,
-    this.secondaryState = SecondaryIndicator.NONE,
     this.onSecondaryTap,
     this.hideGrid = false,
     @Deprecated('Use `translations` instead.') this.isChinese = false,
@@ -124,7 +122,6 @@ class _KChartWidgetState extends State<KChartWidget>
       currentHorizontalScroll: mScrollX,
       selectedHorizontalValue: mSelectX,
       shouldDisplaySelection: isLongPress,
-      secondaryIndicator: widget.secondaryState,
       hideGrid: widget.hideGrid,
       showNowPrice: widget.showNowPrice,
       sink: mInfoWindowStream?.sink,
@@ -139,8 +136,7 @@ class _KChartWidgetState extends State<KChartWidget>
 
         return GestureDetector(
           onTapUp: (details) {
-            if (widget.onSecondaryTap != null &&
-                _painter.isInSecondaryRect(details.localPosition)) {
+            if (widget.onSecondaryTap != null) {
               widget.onSecondaryTap!();
             }
           },

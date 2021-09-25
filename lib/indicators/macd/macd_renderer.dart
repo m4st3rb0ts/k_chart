@@ -3,16 +3,15 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../chart_style.dart';
-import '../../entity/macd_entity.dart';
-import '../../k_chart_widget.dart' show SecondaryIndicator;
 import '../indicator_renderer.dart';
+import 'macd.dart';
 
-/// MACD indicator
-class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
-  MACDEntityRenderer({
+class MacdRenderer extends IndicatorRenderer<Macd> {
+  MacdRenderer({
     required final Rect displayRect,
     required final double maxVerticalValue,
     required final double minVerticalValue,
+    required this.titleTopPadding,
     required this.indicator,
     required final int fixedDecimalsLength,
     required final ChartStyle chartStyle,
@@ -24,24 +23,25 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
           chartStyle: chartStyle,
         );
 
-  final SecondaryIndicator indicator;
+  final MacdIndicators indicator;
+  final double titleTopPadding;
 
   @override
   void drawChart({
     required final Canvas canvas,
-    required final RenderData<MACDEntity> lastValue,
-    required final RenderData<MACDEntity> currentValue,
+    required final RenderData<Macd> lastValue,
+    required final RenderData<Macd> currentValue,
     required final Size size,
   }) {
     switch (indicator) {
-      case SecondaryIndicator.MACD:
+      case MacdIndicators.MACD:
         drawMACD(
           lastValue: lastValue,
           currentValue: currentValue,
           canvas: canvas,
         );
         break;
-      case SecondaryIndicator.KDJ:
+      case MacdIndicators.KDJ:
         drawLine(
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.k),
           currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.k),
@@ -61,7 +61,7 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
           color: chartStyle.colors.jColor,
         );
         break;
-      case SecondaryIndicator.RSI:
+      case MacdIndicators.RSI:
         drawLine(
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.rsi),
           currentValue:
@@ -70,7 +70,7 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
           color: chartStyle.colors.rsiColor,
         );
         break;
-      case SecondaryIndicator.WR:
+      case MacdIndicators.WR:
         drawLine(
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.r),
           currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.r),
@@ -78,7 +78,7 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
           color: chartStyle.colors.rsiColor,
         );
         break;
-      case SecondaryIndicator.CCI:
+      case MacdIndicators.CCI:
         drawLine(
           lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.cci),
           currentValue:
@@ -92,23 +92,12 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
     }
   }
 
-  @override
-  void drawBackground(
-      {required Canvas canvas,
-      required Size size,
-      required Gradient gradient}) {
-    canvas.drawRect(
-      displayRect,
-      Paint()..shader = gradient.createShader(displayRect),
-    );
-  }
-
   void drawMACD({
     required final Canvas canvas,
-    required final RenderData<MACDEntity> lastValue,
-    required final RenderData<MACDEntity> currentValue,
+    required final RenderData<Macd> lastValue,
+    required final RenderData<Macd> currentValue,
   }) {
-    final currentMacdValue = currentValue.data.macd ?? 0;
+    final currentMacdValue = currentValue.data.macd;
     final currentMacdValueNormalized =
         getVerticalPositionForPoint(value: currentMacdValue);
     final macdMidWidth = chartStyle.macdWidth * 0.5;
@@ -155,12 +144,12 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
   @override
   void drawText({
     required final Canvas canvas,
-    required final MACDEntity value,
+    required final Macd value,
     required final double leftOffset,
   }) {
     var titles = <TextSpan>[];
     switch (indicator) {
-      case SecondaryIndicator.MACD:
+      case MacdIndicators.MACD:
         titles = [
           TextSpan(
             //TODO: Localize
@@ -195,7 +184,7 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
             ),
         ];
         break;
-      case SecondaryIndicator.KDJ:
+      case MacdIndicators.KDJ:
         titles = [
           TextSpan(
             //TODO: Localize
@@ -230,7 +219,7 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
             ),
         ];
         break;
-      case SecondaryIndicator.RSI:
+      case MacdIndicators.RSI:
         titles = [
           TextSpan(
             //TODO: Localize
@@ -241,7 +230,7 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
           ),
         ];
         break;
-      case SecondaryIndicator.WR:
+      case MacdIndicators.WR:
         titles = [
           TextSpan(
             //TODO: Localize
@@ -252,7 +241,7 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
           ),
         ];
         break;
-      case SecondaryIndicator.CCI:
+      case MacdIndicators.CCI:
         titles = [
           TextSpan(
             //TODO: Localize
@@ -344,5 +333,22 @@ class MACDEntityRenderer extends IndicatorRenderer<MACDEntity> {
         gridPaint,
       );
     }
+  }
+
+  @override
+  void drawBackground({
+    required final Canvas canvas,
+    required Size size,
+    required Gradient gradient,
+  }) {
+    canvas.drawRect(
+      Rect.fromLTWH(
+        displayRect.left,
+        displayRect.top,
+        displayRect.width,
+        displayRect.height + titleTopPadding,
+      ),
+      Paint()..shader = gradient.createShader(displayRect),
+    );
   }
 }
