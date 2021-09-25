@@ -18,16 +18,17 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     required this.indicator,
     required this.isTimeLineMode,
     required final int fixedDecimalsLength,
-    required final ChartStyle chartStyle,
+    required this.chartStyle,
     required this.timelineHorizontalScale,
-    required this.titleTopPadding,
+    required final double titlesTopPadding,
     this.maFactorsForTitles = const [5, 10, 20],
   }) : super(
           displayRect: displayRect,
+          titlesTopPadding: titlesTopPadding,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
           fixedDecimalsLength: fixedDecimalsLength,
-          chartStyle: chartStyle,
+          gridColor: chartStyle.colors.gridColor,
         ) {
     _timelinePaint = Paint()
       ..isAntiAlias = true
@@ -36,12 +37,14 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
       ..color = chartStyle.colors.kLineColor;
     _contentRect = Rect.fromLTRB(
       displayRect.left,
-      displayRect.top + contentPadding + titleTopPadding,
+      displayRect.top + contentPadding + titlesTopPadding,
       displayRect.right,
       displayRect.bottom - contentPadding,
     );
     verticalScale = _contentRect.height / (maxVerticalValue - minVerticalValue);
   }
+
+  final ChartStyle chartStyle;
 
   /// Indicator which together the candle graph should display (MA, BOLL, NONE)
   final CandlesIndicators indicator;
@@ -51,8 +54,6 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
 
   /// Padding for content
   final double contentPadding = 5.0;
-
-  final double titleTopPadding;
 
   // Suffix for MA titles computing
   final List<int> maFactorsForTitles;
@@ -378,7 +379,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
           canvas,
           Offset(
             0,
-            titleTopPadding,
+            titlesTopPadding,
           ),
         );
       } else {
@@ -386,7 +387,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
           canvas,
           Offset(
             0,
-            rowSpace * row - rightTextPainter.height + titleTopPadding,
+            rowSpace * row - rightTextPainter.height + titlesTopPadding,
           ),
         );
       }
@@ -396,40 +397,25 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
   @override
   void drawGrid({
     required final Canvas canvas,
+    required final int numberOfGridColumns,
+    required final int numberOfGridRows,
   }) {
-    final rowSpace = displayRect.height / chartStyle.numberOfGridRows;
-    for (var row = 0; row <= chartStyle.numberOfGridRows; row++) {
+    final rowSpace = displayRect.height / numberOfGridRows;
+    for (var row = 0; row <= numberOfGridRows; row++) {
       canvas.drawLine(
-        Offset(0, rowSpace * row + titleTopPadding),
-        Offset(displayRect.width, rowSpace * row + titleTopPadding),
+        Offset(0, rowSpace * row + titlesTopPadding),
+        Offset(displayRect.width, rowSpace * row + titlesTopPadding),
         gridPaint,
       );
     }
-    final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
+    final columnSpace = displayRect.width / numberOfGridColumns;
     for (var i = 0; i <= columnSpace; i++) {
       canvas.drawLine(
-        Offset(columnSpace * i, titleTopPadding / 3),
-        Offset(columnSpace * i, displayRect.bottom + titleTopPadding),
+        Offset(columnSpace * i, titlesTopPadding / 3),
+        Offset(columnSpace * i, displayRect.bottom + titlesTopPadding),
         gridPaint,
       );
     }
-  }
-
-  @override
-  void drawBackground({
-    required final Canvas canvas,
-    required Size size,
-    required Gradient gradient,
-  }) {
-    canvas.drawRect(
-      Rect.fromLTWH(
-        displayRect.left,
-        displayRect.top,
-        displayRect.width,
-        displayRect.height + titleTopPadding,
-      ),
-      Paint()..shader = gradient.createShader(displayRect),
-    );
   }
 
   @override

@@ -19,17 +19,18 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
     required final double maxVerticalValue,
     required final double minVerticalValue,
     required final int fixedDecimalsLength,
-    required this.titleTopPadding,
-    required final ChartStyle chartStyle,
+    required final double titlesTopPadding,
+    required this.chartStyle,
   }) : super(
           displayRect: displayRect,
+          titlesTopPadding: titlesTopPadding,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
           fixedDecimalsLength: fixedDecimalsLength,
-          chartStyle: chartStyle,
+          gridColor: chartStyle.colors.gridColor,
         );
 
-  final double titleTopPadding;
+  final ChartStyle chartStyle;
 
   @override
   void drawChart({
@@ -149,39 +150,24 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
   @override
   void drawGrid({
     required final Canvas canvas,
+    required final int numberOfGridColumns,
+    required final int numberOfGridRows,
   }) {
-    final rowSpace = displayRect.height / chartStyle.numberOfGridRows;
-    for (var row = 0; row <= chartStyle.numberOfGridRows; row++) {
+    final rowSpace = displayRect.height / numberOfGridRows;
+    for (var row = 0; row <= numberOfGridRows; row++) {
       canvas.drawLine(
-        Offset(0, rowSpace * row + titleTopPadding),
-        Offset(displayRect.width, rowSpace * row + titleTopPadding),
+        Offset(0, rowSpace * row + titlesTopPadding),
+        Offset(displayRect.width, rowSpace * row + titlesTopPadding),
         gridPaint,
       );
     }
-    final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
+    final columnSpace = displayRect.width / numberOfGridColumns;
     for (var i = 0; i <= columnSpace; i++) {
       canvas.drawLine(
-        Offset(columnSpace * i, titleTopPadding / 3),
-        Offset(columnSpace * i, displayRect.bottom + titleTopPadding),
+        Offset(columnSpace * i, titlesTopPadding / 3),
+        Offset(columnSpace * i, displayRect.bottom + titlesTopPadding),
         gridPaint,
       );
     }
-  }
-
-  @override
-  void drawBackground({
-    required final Canvas canvas,
-    required Size size,
-    required Gradient gradient,
-  }) {
-    canvas.drawRect(
-      Rect.fromLTWH(
-        displayRect.left,
-        displayRect.top,
-        displayRect.width,
-        displayRect.height + titleTopPadding,
-      ),
-      Paint()..shader = gradient.createShader(displayRect),
-    );
   }
 }

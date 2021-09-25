@@ -3,13 +3,11 @@
 //
 
 import 'dart:math';
-
-import 'package:built_collection/built_collection.dart';
-import 'package:k_chart/chart_style.dart';
-import 'package:k_chart/entity/k_line_entity.dart';
-
 import 'dart:ui';
 
+import 'package:built_collection/built_collection.dart';
+
+import '../../entity/k_line_entity.dart';
 import '../indicator.dart';
 import 'macd.dart';
 import 'macd_renderer.dart';
@@ -19,7 +17,8 @@ class MacdIndicator extends Indicator<Macd> {
     required final List<KLineEntity> dataSource,
     required this.indicator,
     required final double height,
-    required this.chartStyle,
+    this.macdDisplayItemWidth = 3.0,
+    this.titlesTopPadding = 12,
     this.defaultTextColor = const Color(0xff60738E),
     this.macdColor = const Color(0xff4729AE),
     this.difColor = const Color(0xffC9B885),
@@ -30,6 +29,7 @@ class MacdIndicator extends Indicator<Macd> {
     this.rsiColor = const Color(0xffC9B885),
     this.upColor = const Color(0xff4DAA90),
     this.dnColor = const Color(0xffC15466),
+    this.gridColor = const Color(0xff4c5c74),
   }) : super(dataSource: dataSource, height: height) {
     for (var i = 0; i < dataSource.length; i++) {
       final dataItem = dataSource[i];
@@ -54,11 +54,13 @@ class MacdIndicator extends Indicator<Macd> {
   List<Macd> _macd = <Macd>[];
 
   final MacdIndicators indicator;
-  final ChartStyle chartStyle;
 
   @override
   MacdRenderer? get render => _render;
   MacdRenderer? _render;
+
+  final double titlesTopPadding;
+  final double macdDisplayItemWidth;
   final Color defaultTextColor;
   final Color macdColor;
   final Color difColor;
@@ -69,6 +71,7 @@ class MacdIndicator extends Indicator<Macd> {
   final Color rsiColor;
   final Color upColor;
   final Color dnColor;
+  final Color gridColor;
 
   @override
   void updateRender({
@@ -114,7 +117,8 @@ class MacdIndicator extends Indicator<Macd> {
         size.width,
         height,
       ),
-      titleTopPadding: chartStyle.childPadding,
+      macdDisplayItemWidth: macdDisplayItemWidth,
+      titlesTopPadding: titlesTopPadding,
       indicator: indicator,
       maxVerticalValue: maxValue,
       minVerticalValue: minValue,
@@ -129,6 +133,7 @@ class MacdIndicator extends Indicator<Macd> {
       rsiColor: rsiColor,
       upColor: upColor,
       dnColor: dnColor,
+      gridColor: gridColor,
     );
   }
 }

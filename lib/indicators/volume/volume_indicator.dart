@@ -12,7 +12,6 @@ import 'package:k_chart/utils/number_util.dart';
 import 'dart:ui';
 
 import '../indicator.dart';
-import '../indicator_renderer.dart';
 import 'volume.dart';
 import 'volume_renderer.dart';
 
@@ -86,7 +85,7 @@ class VolumeIndicator extends Indicator<Volume> {
         size.width,
         height,
       ),
-      titleTopPadding: chartStyle.childPadding,
+      titlesTopPadding: chartStyle.childPadding,
       maxVerticalValue: maxValue,
       minVerticalValue: minValue,
       fixedDecimalsLength: fixedDecimalsLength,

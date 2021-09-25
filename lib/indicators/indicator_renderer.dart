@@ -13,7 +13,8 @@ abstract class IndicatorRenderer<T> {
     required this.maxVerticalValue,
     required this.minVerticalValue,
     required this.fixedDecimalsLength,
-    required this.chartStyle,
+    required this.titlesTopPadding,
+    required final Color gridColor,
   })  : chartPaint = Paint()
           ..isAntiAlias = true
           ..filterQuality = FilterQuality.high
@@ -23,7 +24,7 @@ abstract class IndicatorRenderer<T> {
           ..isAntiAlias = true
           ..filterQuality = FilterQuality.high
           ..strokeWidth = 0.5
-          ..color = chartStyle.colors.gridColor {
+          ..color = gridColor {
     if (maxVerticalValue == minVerticalValue) {
       maxVerticalValue *= 1.5;
       minVerticalValue /= 2;
@@ -43,6 +44,8 @@ abstract class IndicatorRenderer<T> {
   /// Full chart rect size where all content will be drawed
   final Rect displayRect;
 
+  final double titlesTopPadding;
+
   /// Fixed number of decimals
   final int fixedDecimalsLength;
 
@@ -51,9 +54,6 @@ abstract class IndicatorRenderer<T> {
 
   /// Custom paint for the grid
   final Paint gridPaint;
-
-  /// Defined style of chart
-  final ChartStyle chartStyle;
 
   /// Gets the vertical position in the chart given a y value
   /// @value the value for computing the y position
@@ -72,11 +72,32 @@ abstract class IndicatorRenderer<T> {
 
   /// Draws the chart grid
   /// @canvas surface to paint
-  /// @gridRows number of rows
-  /// @gridColumns number of columns
+  /// @numberOfGridColumns
+  /// @numberOfGridRows
   void drawGrid({
     required final Canvas canvas,
-  });
+    required final int numberOfGridColumns,
+    required final int numberOfGridRows,
+  }) {
+    canvas.drawLine(
+      Offset(0, displayRect.top),
+      Offset(displayRect.width, displayRect.top),
+      gridPaint,
+    );
+    canvas.drawLine(
+      Offset(0, displayRect.bottom),
+      Offset(displayRect.width, displayRect.bottom),
+      gridPaint,
+    );
+    final columnSpace = displayRect.width / numberOfGridColumns;
+    for (var column = 0; column <= columnSpace; column++) {
+      canvas.drawLine(
+        Offset(columnSpace * column, displayRect.top - titlesTopPadding),
+        Offset(columnSpace * column, displayRect.bottom),
+        gridPaint,
+      );
+    }
+  }
 
   /// Draws a text at the top of the chart
   /// @canvas surface to paint
@@ -112,7 +133,17 @@ abstract class IndicatorRenderer<T> {
     required final Canvas canvas,
     required Size size,
     required Gradient gradient,
-  });
+  }) {
+    canvas.drawRect(
+      Rect.fromLTWH(
+        displayRect.left,
+        displayRect.top,
+        displayRect.width,
+        displayRect.height + titlesTopPadding,
+      ),
+      Paint()..shader = gradient.createShader(displayRect),
+    );
+  }
 
   /// Draws a line
   /// @lastValue from

@@ -12,7 +12,6 @@ import '../../entity/k_line_entity.dart';
 import '../../utils/number_util.dart';
 
 import '../indicator.dart';
-import '../indicator_renderer.dart';
 import 'candle.dart';
 import 'candle_entity_renderer.dart';
 
@@ -132,7 +131,7 @@ class CandlesIndicator extends Indicator<Candle> {
         size.width,
         height + displayRectTop,
       ),
-      titleTopPadding: chartStyle.topPadding,
+      titlesTopPadding: chartStyle.topPadding,
       maxVerticalValue: _maxValue,
       minVerticalValue: _minValue,
       indicator: candleIndicator,

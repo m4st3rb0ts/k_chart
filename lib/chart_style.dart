@@ -79,9 +79,6 @@ class ChartStyle {
   //vol柱子宽度
   double volWidth = 8.5;
 
-  //macd柱子宽度
-  double macdWidth = 3.0;
-
   //垂直交叉线宽度
   double vCrossWidth = 8.5;
 

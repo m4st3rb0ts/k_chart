@@ -120,7 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 //   VolumeIndicator(
                 //     dataSource: datas ?? <KLineEntity>[],
                 //     height: 200,
-                //     chartStyle: chartStyle,
                 //   ),
                 // if (_secondaryState != MacdIndicators.NONE)
                 //   MacdIndicator(

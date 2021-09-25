@@ -6,7 +6,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../../chart_style.dart';
 import '../indicator_renderer.dart';
 import 'macd.dart';
 
@@ -15,9 +14,10 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
     required final Rect displayRect,
     required final double maxVerticalValue,
     required final double minVerticalValue,
-    required this.titleTopPadding,
+    required final double titlesTopPadding,
     required this.indicator,
     required final int fixedDecimalsLength,
+    required this.macdDisplayItemWidth,
     required this.defaultTextColor,
     required this.macdColor,
     required this.difColor,
@@ -28,16 +28,18 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
     required this.rsiColor,
     required this.upColor,
     required this.dnColor,
+    required final Color gridColor,
   }) : super(
           displayRect: displayRect,
+          titlesTopPadding: titlesTopPadding,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
           fixedDecimalsLength: fixedDecimalsLength,
-          chartStyle: ChartStyle(),
+          gridColor: gridColor,
         );
 
   final MacdIndicators indicator;
-  final double titleTopPadding;
+  final double macdDisplayItemWidth;
   final Color defaultTextColor;
   final Color macdColor;
   final Color difColor;
@@ -123,7 +125,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
     final currentMacdValue = currentValue.data.macd;
     final currentMacdValueNormalized =
         getVerticalPositionForPoint(value: currentMacdValue);
-    final macdMidWidth = chartStyle.macdWidth * 0.5;
+    final macdMidWidth = macdDisplayItemWidth * 0.5;
     final zeroy = getVerticalPositionForPoint(value: 0);
     if (currentMacdValue > 0) {
       canvas.drawRect(
@@ -289,7 +291,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
       canvas,
       Offset(
         leftOffset,
-        displayRect.top - chartStyle.childPadding,
+        displayRect.top - titlesTopPadding,
       ),
     );
   }
@@ -322,7 +324,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
       canvas,
       Offset(
         displayRect.width - maxVerticalValuePainter.width,
-        displayRect.top - chartStyle.childPadding,
+        displayRect.top - titlesTopPadding,
       ),
     );
     minVerticalValuePainter.paint(
@@ -331,47 +333,6 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
         displayRect.width - minVerticalValuePainter.width,
         displayRect.bottom - minVerticalValuePainter.height,
       ),
-    );
-  }
-
-  @override
-  void drawGrid({
-    required final Canvas canvas,
-  }) {
-    canvas.drawLine(
-      Offset(0, displayRect.top),
-      Offset(displayRect.width, displayRect.top),
-      gridPaint,
-    );
-    canvas.drawLine(
-      Offset(0, displayRect.bottom),
-      Offset(displayRect.width, displayRect.bottom),
-      gridPaint,
-    );
-    final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
-    for (var column = 0; column <= columnSpace; column++) {
-      canvas.drawLine(
-        Offset(columnSpace * column, displayRect.top - chartStyle.childPadding),
-        Offset(columnSpace * column, displayRect.bottom),
-        gridPaint,
-      );
-    }
-  }
-
-  @override
-  void drawBackground({
-    required final Canvas canvas,
-    required Size size,
-    required Gradient gradient,
-  }) {
-    canvas.drawRect(
-      Rect.fromLTWH(
-        displayRect.left,
-        displayRect.top,
-        displayRect.width,
-        displayRect.height + titleTopPadding,
-      ),
-      Paint()..shader = gradient.createShader(displayRect),
     );
   }
 }

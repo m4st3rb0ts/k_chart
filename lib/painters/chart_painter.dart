@@ -111,7 +111,11 @@ class ChartPainter extends BaseChartPainter {
   }) {
     if (!hideGrid) {
       for (final indicator in indicators) {
-        indicator.render?.drawGrid(canvas: canvas);
+        indicator.render?.drawGrid(
+          canvas: canvas,
+          numberOfGridColumns: chartStyle.numberOfGridColumns,
+          numberOfGridRows: chartStyle.numberOfGridRows,
+        );
       }
     }
   }
