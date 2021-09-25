@@ -166,8 +166,8 @@ class ChartPainter extends BaseChartPainter {
         final currentItem = indicator.data[i];
         final lastItem = indicator.data[i == 0 ? i : i - 1];
         indicator.render?.drawChart(
-          lastValue: RenderData<Candle>(data: lastItem, x: lastX),
-          currentValue: RenderData<Candle>(data: currentItem, x: curX),
+          lastValue: indicator.getRenderData(lastItem, lastX),
+          currentValue: indicator.getRenderData(currentItem, curX),
           size: size,
           canvas: canvas,
         );

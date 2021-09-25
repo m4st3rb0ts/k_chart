@@ -122,11 +122,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   candleIndicator: _mainState,
                   maDayList: [1, 100, 1000],
                 ),
-                // if (!_volHidden)
-                //   VolumeIndicator(
-                //     dataSource: datas ?? <KLineEntity>[],
-                //     height: 150,
-                //   ),
+                if (!_volHidden)
+                  VolumeIndicator(
+                    dataSource: datas ?? <KLineEntity>[],
+                    height: 200,
+                    chartStyle: chartStyle,
+                  ),
               ],
             ),
           ),

@@ -23,6 +23,9 @@ abstract class Indicator<T> {
     required final int finalIndexToDisplay,
   });
 
+  RenderData<T> getRenderData(final T data, final double dx) =>
+      RenderData<T>(data: data, x: dx);
+
   final double height;
   BuiltList<T> get data;
   IndicatorRenderer<T>? get render;

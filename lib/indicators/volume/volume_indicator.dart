@@ -12,6 +12,7 @@ import 'package:k_chart/utils/number_util.dart';
 import 'dart:ui';
 
 import '../indicator.dart';
+import '../indicator_renderer.dart';
 import 'volume.dart';
 import 'volume_renderer.dart';
 
@@ -19,6 +20,7 @@ class VolumeIndicator extends Indicator<Volume> {
   VolumeIndicator({
     required final List<KLineEntity> dataSource,
     required final double height,
+    required this.chartStyle,
   }) : super(dataSource: dataSource, height: height) {
     for (var i = 0; i < dataSource.length; i++) {
       final dataItem = dataSource[i];
@@ -41,6 +43,8 @@ class VolumeIndicator extends Indicator<Volume> {
   @override
   VolumeRenderer? get render => _render;
   VolumeRenderer? _render;
+
+  final ChartStyle chartStyle;
 
   @override
   void updateRender({
@@ -82,10 +86,11 @@ class VolumeIndicator extends Indicator<Volume> {
         size.width,
         height,
       ),
+      titleTopPadding: chartStyle.childPadding,
       maxVerticalValue: maxValue,
       minVerticalValue: minValue,
       fixedDecimalsLength: fixedDecimalsLength,
-      chartStyle: ChartStyle(),
+      chartStyle: chartStyle,
     );
   }
 }

@@ -15,6 +15,7 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
     required final double maxVerticalValue,
     required final double minVerticalValue,
     required final int fixedDecimalsLength,
+    required this.titleTopPadding,
     required final ChartStyle chartStyle,
   }) : super(
           displayRect: displayRect,
@@ -23,6 +24,8 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
           fixedDecimalsLength: fixedDecimalsLength,
           chartStyle: chartStyle,
         );
+
+  final double titleTopPadding;
 
   @override
   void drawChart({
@@ -92,13 +95,13 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
         if (value.ma5Volume.notNullOrZero)
           TextSpan(
             //TODO: Localize
-            text: 'MA5:${NumberUtil.format(value.ma5Volume!)}    ',
+            text: 'MA5:${NumberUtil.format(value.ma5Volume)}    ',
             style: getTextStyle(color: chartStyle.colors.ma5Color),
           ),
         if (value.ma10Volume.notNullOrZero)
           TextSpan(
             //TODO: Localize
-            text: 'MA10:${NumberUtil.format(value.ma10Volume!)}    ',
+            text: 'MA10:${NumberUtil.format(value.ma10Volume)}    ',
             style: getTextStyle(color: chartStyle.colors.ma10Color),
           ),
       ],
@@ -143,18 +146,21 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
   void drawGrid({
     required final Canvas canvas,
   }) {
-    canvas.drawLine(
-      Offset(0, displayRect.bottom),
-      Offset(displayRect.width, displayRect.bottom),
-      gridPaint,
-    );
-    final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
-    for (var column = 0; column <= columnSpace; column++) {
+    final rowSpace = displayRect.height / chartStyle.numberOfGridRows;
+    for (var row = 0; row <= chartStyle.numberOfGridRows; row++) {
       canvas.drawLine(
-          Offset(
-              columnSpace * column, displayRect.top - chartStyle.childPadding),
-          Offset(columnSpace * column, displayRect.bottom),
-          gridPaint);
+        Offset(0, rowSpace * row + titleTopPadding),
+        Offset(displayRect.width, rowSpace * row + titleTopPadding),
+        gridPaint,
+      );
+    }
+    final columnSpace = displayRect.width / chartStyle.numberOfGridColumns;
+    for (var i = 0; i <= columnSpace; i++) {
+      canvas.drawLine(
+        Offset(columnSpace * i, titleTopPadding / 3),
+        Offset(columnSpace * i, displayRect.bottom + titleTopPadding),
+        gridPaint,
+      );
     }
   }
 
@@ -165,7 +171,12 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
     required Gradient gradient,
   }) {
     canvas.drawRect(
-      displayRect,
+      Rect.fromLTWH(
+        displayRect.left,
+        displayRect.top,
+        displayRect.width,
+        displayRect.height + titleTopPadding,
+      ),
       Paint()..shader = gradient.createShader(displayRect),
     );
   }
