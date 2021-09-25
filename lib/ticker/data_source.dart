@@ -25,6 +25,10 @@ class DataSource {
     this.k = 2,
   });
 
+  factory DataSource.fromDepthFile(final String filePath) {
+    return DataSource(tickers: []);
+  }
+
   final List<Ticker> tickers;
   final List<int> maDayList;
   final int n;
