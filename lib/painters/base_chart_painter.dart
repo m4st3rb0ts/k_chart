@@ -2,12 +2,10 @@
 // Created by @OpenFlutter & @sh1l0n
 //
 
-import 'dart:math';
-
 import 'package:flutter/material.dart'
     show Color, TextStyle, Rect, Canvas, Size, CustomPainter;
+import 'package:intl/intl.dart';
 
-import '../utils/date_format_util.dart';
 import '../chart_style.dart' show ChartStyle;
 import '../entity/k_line_entity.dart';
 
@@ -18,13 +16,12 @@ abstract class BaseChartPainter extends CustomPainter {
   BaseChartPainter({
     required this.chartStyle,
     required this.dataSource,
+    required this.displayDateFormat,
     this.horizontalScale = 1.0,
     this.currentHorizontalScroll = 0.0,
     this.shouldDisplaySelection = false,
     required this.selectedHorizontalValue,
-  }) {
-    _initDateFormats();
-  }
+  });
 
   /// Data to display in the graph
   final List<KLineEntity> dataSource;
@@ -33,7 +30,7 @@ abstract class BaseChartPainter extends CustomPainter {
   final ChartStyle chartStyle;
 
   /// Time format for display dates
-  List<String> displayDateFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
+  final DateFormat displayDateFormat;
 
   /// current scale
   final double horizontalScale;
@@ -62,34 +59,6 @@ abstract class BaseChartPainter extends CustomPainter {
   //TOREVIEW GOING DOWN
   int mStartIndex = 0;
   int mStopIndex = 0;
-
-  // Init data format
-  void _initDateFormats() {
-    if (chartStyle.dateTimeFormat != null) {
-      displayDateFormats = chartStyle.dateTimeFormat!;
-      return;
-    }
-
-    if (dataSource.length < 2) {
-      displayDateFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
-      return;
-    }
-
-    final firstTime = dataSource.first.time ?? 0;
-    final secondTime = dataSource[1].time ?? 0;
-    final time = (secondTime - firstTime) ~/ 1000;
-
-    if (time >= 24 * 60 * 60 * 28) {
-      //Monthly line
-      displayDateFormats = [yy, '-', mm];
-    } else if (time >= 24 * 60 * 60) {
-      //Daily line
-      displayDateFormats = [yy, '-', mm, '-', dd];
-    } else {
-      //Hourly line
-      displayDateFormats = [mm, '-', dd, ' ', HH, ':', nn];
-    }
-  }
 
   double getCurrentOffset({required final Size size}) {
     return currentHorizontalScroll - maxHorizontalScrollWidth(size: size);
@@ -225,6 +194,12 @@ abstract class BaseChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(BaseChartPainter oldDelegate) => true;
+
+  String getDate(final int? date) => displayDateFormat.format(
+        DateTime.fromMillisecondsSinceEpoch(
+          date ?? DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
 
   // Implement in child classes
   void initChartRenderer({required final Size size});

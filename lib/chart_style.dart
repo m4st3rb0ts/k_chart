@@ -110,8 +110,5 @@ class ChartStyle {
 
   int numberOfGridColumns = 4;
 
-  //下方時間客製化
-  List<String>? dateTimeFormat;
-
   final _ChartColors colors = _ChartColors();
 }

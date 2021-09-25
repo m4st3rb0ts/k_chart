@@ -5,27 +5,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:k_chart/chart_translations.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:k_chart/indicators/candles/candles_indicator.dart';
 import 'package:k_chart/indicators/indicator.dart';
 
 import '../painters/chart_painter.dart';
-
-class TimeFormat {
-  static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
-  static const List<String> YEAR_MONTH_DAY_WITH_HOUR = [
-    yyyy,
-    '-',
-    mm,
-    '-',
-    dd,
-    ' ',
-    HH,
-    ':',
-    nn
-  ];
-}
 
 class IndicatorsPanel extends StatefulWidget {
   const IndicatorsPanel({
@@ -37,7 +23,6 @@ class IndicatorsPanel extends StatefulWidget {
     this.showNowPrice = true,
     this.showInfoDialog = true,
     this.translations = kChartTranslations,
-    this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
     this.onLoadMore,
     this.fixedLength = 2,
     this.flingTime = 600,
@@ -52,7 +37,6 @@ class IndicatorsPanel extends StatefulWidget {
   final bool showNowPrice;
   final bool showInfoDialog;
   final Map<String, ChartTranslations> translations;
-  final List<String> timeFormat;
 
   //当屏幕滚动到尽头会调用，真为拉到屏幕右侧尽头，假为拉到屏幕左侧尽头
   final Function(bool)? onLoadMore;
@@ -76,11 +60,7 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;
-
-  double getMinScrollX() {
-    return mScaleX;
-  }
-
+  late DateFormat displayDateFormat;
   double _lastScale = 1.0;
   bool isScale = false, isDrag = false, isLongPress = false;
   late List<String> infos;
@@ -89,6 +69,20 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
   void initState() {
     super.initState();
     mInfoWindowStream = StreamController<InfoWindowEntity?>();
+
+    displayDateFormat = DateFormat('MM/dd/yy');
+    if ((widget.datas?.length ?? 0) > 1) {
+      final firstTime = widget.datas?.first.time ?? 0;
+      final secondTime = widget.datas?[1].time ?? 0;
+      final time = (secondTime - firstTime) ~/ 1000;
+      if (time >= 24 * 60 * 60 * 28) {
+        displayDateFormat = DateFormat('MM/yy');
+      } else if (time >= 24 * 60 * 60) {
+        displayDateFormat = DateFormat('MM/dd/yy');
+      } else {
+        displayDateFormat = DateFormat('MM/dd/yy HH:mm');
+      }
+    }
   }
 
   @override
@@ -96,6 +90,10 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
     mInfoWindowStream?.close();
     _controller?.dispose();
     super.dispose();
+  }
+
+  double getMinScrollX() {
+    return mScaleX;
   }
 
   @override
@@ -108,6 +106,7 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
       indicators: widget.indicators,
       chartStyle: widget.chartStyle,
       dataSource: widget.datas ?? <KLineEntity>[],
+      displayDateFormat: displayDateFormat,
       horizontalScale: mScaleX,
       currentHorizontalScroll: mScrollX,
       selectedHorizontalValue: mSelectX,
@@ -332,9 +331,9 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
     );
   }
 
-  String getDate(int? date) => dateFormat(
-      DateTime.fromMillisecondsSinceEpoch(
-        date ?? DateTime.now().millisecondsSinceEpoch,
-      ),
-      widget.timeFormat);
+  String getDate(final int? date) => displayDateFormat.format(
+        DateTime.fromMillisecondsSinceEpoch(
+          date ?? DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
 }

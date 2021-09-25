@@ -97,12 +97,12 @@ class _MyHomePageState extends State<MyHomePage> {
         Stack(children: <Widget>[
           Container(
             width: double.infinity,
+            height: 500,
             color: Colors.pink,
-            child: IndicatorsWidget(
+            child: IndicatorsPanel(
               datas: datas,
               chartStyle: chartStyle,
               fixedLength: 2,
-              timeFormat: TimeFormat.YEAR_MONTH_DAY,
               translations: kChartTranslations,
               showNowPrice: _showNowPrice,
               //`isChinese` is Deprecated, Use `translations` instead.
@@ -116,19 +116,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   candleIndicator: _mainState,
                   maDayList: [1, 100, 1000],
                 ),
-                if (!_volHidden)
-                  VolumeIndicator(
-                    dataSource: datas ?? <KLineEntity>[],
-                    height: 200,
-                    chartStyle: chartStyle,
-                  ),
-                if (_secondaryState != MacdIndicators.NONE)
-                  MacdIndicator(
-                    dataSource: datas ?? <KLineEntity>[],
-                    indicator: _secondaryState,
-                    height: 200,
-                    chartStyle: chartStyle,
-                  ),
+                // if (!_volHidden)
+                //   VolumeIndicator(
+                //     dataSource: datas ?? <KLineEntity>[],
+                //     height: 200,
+                //     chartStyle: chartStyle,
+                //   ),
+                // if (_secondaryState != MacdIndicators.NONE)
+                //   MacdIndicator(
+                //     dataSource: datas ?? <KLineEntity>[],
+                //     indicator: _secondaryState,
+                //     height: 200,
+                //     chartStyle: chartStyle,
+                //   ),
               ],
             ),
           ),

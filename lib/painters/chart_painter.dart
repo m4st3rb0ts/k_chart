@@ -5,12 +5,12 @@
 import 'dart:async' show StreamSink;
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' as intl;
 
 import '../entity/info_window_entity.dart';
 import '../entity/k_line_entity.dart';
 import '../indicators/indicator.dart';
 import '../flutter_k_chart.dart';
-import '../utils/date_format_util.dart';
 import '../utils/number_util.dart';
 import 'base_chart_painter.dart';
 
@@ -19,6 +19,7 @@ class ChartPainter extends BaseChartPainter {
     required this.indicators,
     required final ChartStyle chartStyle,
     required final List<KLineEntity> dataSource,
+    required final intl.DateFormat displayDateFormat,
     required final double horizontalScale,
     required final double currentHorizontalScroll,
     required final bool shouldDisplaySelection,
@@ -30,6 +31,7 @@ class ChartPainter extends BaseChartPainter {
   }) : super(
           chartStyle: chartStyle,
           dataSource: dataSource,
+          displayDateFormat: displayDateFormat,
           horizontalScale: horizontalScale,
           currentHorizontalScroll: currentHorizontalScroll,
           shouldDisplaySelection: shouldDisplaySelection,
@@ -426,11 +428,6 @@ class ChartPainter extends BaseChartPainter {
     tp.layout();
     return tp;
   }
-
-  String getDate(int? date) => dateFormat(
-      DateTime.fromMillisecondsSinceEpoch(
-          date ?? DateTime.now().millisecondsSinceEpoch),
-      displayDateFormats);
 
   double getMainY(double y) =>
       indicators.first.render?.getVerticalPositionForPoint(value: y) ?? 50;

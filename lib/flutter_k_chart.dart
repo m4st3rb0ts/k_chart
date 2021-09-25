@@ -4,7 +4,7 @@
 
 library flutter_k_chart;
 
-export 'widgets/k_chart_widget.dart';
+export 'widgets/indicators_panel.dart';
 export 'chart_style.dart';
 export 'widgets/depth_chart.dart';
 export 'common.dart';
@@ -29,5 +29,4 @@ export 'indicators/macd/macd_indicator.dart';
 export 'indicators/macd/macd.dart';
 
 export 'utils/data_util.dart';
-export 'utils/date_format_util.dart';
 export 'utils/number_util.dart';
