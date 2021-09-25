@@ -15,14 +15,16 @@ class DepthChart extends StatefulWidget {
     this.fixedLength = 2,
     this.buyPathColor,
     this.sellPathColor,
-    required this.chartStyle,
+    this.depthBuyColor = const Color(0xff60A893),
+    this.depthSellColor = const Color(0xffC15866),
   });
 
   final List<DepthEntity> bids, asks;
   final int fixedLength;
   final Color? buyPathColor;
   final Color? sellPathColor;
-  final ChartStyle chartStyle;
+  final Color depthBuyColor;
+  final Color depthSellColor;
 
   @override
   _DepthChartState createState() => _DepthChartState();
@@ -54,14 +56,16 @@ class _DepthChartState extends State<DepthChart> {
       child: CustomPaint(
         size: Size(double.infinity, double.infinity),
         painter: DepthChartPainter(
-            mBuyData: widget.bids,
-            mSellData: widget.asks,
-            pressOffset: pressOffset,
-            isLongPress: isLongPress,
-            fixedLength: widget.fixedLength,
-            mBuyPathColor: widget.buyPathColor,
-            mSellPathColor: widget.sellPathColor,
-            chartStyle: widget.chartStyle),
+          mBuyData: widget.bids,
+          mSellData: widget.asks,
+          pressOffset: pressOffset,
+          isLongPress: isLongPress,
+          fixedLength: widget.fixedLength,
+          mBuyPathColor: widget.buyPathColor,
+          mSellPathColor: widget.sellPathColor,
+          depthBuyColor: widget.depthBuyColor,
+          depthSellColor: widget.depthSellColor,
+        ),
       ),
     );
   }
@@ -76,28 +80,29 @@ class DepthChartPainter extends CustomPainter {
     required this.fixedLength,
     required this.mBuyPathColor,
     required this.mSellPathColor,
-    required this.chartStyle,
+    required final Color depthBuyColor,
+    required final Color depthSellColor,
   }) {
     mBuyLinePaint ??= Paint()
       ..isAntiAlias = true
-      ..color = chartStyle.colors.depthBuyColor
+      ..color = depthBuyColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
     mSellLinePaint ??= Paint()
       ..isAntiAlias = true
-      ..color = chartStyle.colors.depthSellColor
+      ..color = depthSellColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
     mBuyPathPaint ??= Paint()
       ..isAntiAlias = true
       ..color = (mBuyPathColor == null
-          ? chartStyle.colors.depthBuyColor.withOpacity(0.2)
+          ? depthBuyColor.withOpacity(0.2)
           : mBuyPathColor)!;
     mSellPathPaint ??= Paint()
       ..isAntiAlias = true
       ..color = (mSellPathColor == null
-          ? chartStyle.colors.depthSellColor.withOpacity(0.2)
+          ? depthSellColor.withOpacity(0.2)
           : mSellPathColor)!;
     mBuyPath ??= Path();
     mSellPath ??= Path();
@@ -122,8 +127,6 @@ class DepthChartPainter extends CustomPainter {
   int mLineCount = 4;
 
   Path? mBuyPath, mSellPath;
-
-  final ChartStyle chartStyle;
 
   //买卖出区域边线绘制画笔  //买卖出取悦绘制画笔
   Paint? mBuyLinePaint,

@@ -10,14 +10,12 @@ import 'package:k_chart/chart_translations.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:k_chart/indicators/candles/candles_indicator.dart';
 import 'package:k_chart/indicators/indicator.dart';
-
-import '../painters/chart_painter.dart';
+import 'package:k_chart/painters/chart_painter.dart';
 
 class IndicatorsPanel extends StatefulWidget {
   const IndicatorsPanel({
     required this.datas,
     required this.indicators,
-    required this.chartStyle,
     this.onSecondaryTap,
     this.hideGrid = false,
     this.showNowPrice = true,
@@ -29,6 +27,10 @@ class IndicatorsPanel extends StatefulWidget {
     this.flingRatio = 0.5,
     this.flingCurve = Curves.decelerate,
     this.isOnDrag,
+    this.infoWindowNormalColor = const Color(0xffffffff),
+    this.infoWindowTitleColor = const Color(0xffffffff),
+    this.infoWindowUpColor = const Color(0xff00ff00),
+    this.infoWindowDnColor = const Color(0xffff0000),
   });
 
   final List<KLineEntity>? datas;
@@ -46,8 +48,12 @@ class IndicatorsPanel extends StatefulWidget {
   final double flingRatio;
   final Curve flingCurve;
   final Function(bool)? isOnDrag;
-  final ChartStyle chartStyle;
   final List<Indicator> indicators;
+
+  final Color infoWindowNormalColor;
+  final Color infoWindowTitleColor;
+  final Color infoWindowUpColor;
+  final Color infoWindowDnColor;
 
   @override
   _IndicatorsPanelState createState() => _IndicatorsPanelState();
@@ -300,11 +306,10 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
   }
 
   Widget _buildItem(String info, String infoName) {
-    Color color = widget.chartStyle.colors.infoWindowNormalColor;
+    Color color = widget.infoWindowNormalColor;
     if (info.startsWith("+"))
-      color = widget.chartStyle.colors.infoWindowUpColor;
-    else if (info.startsWith("-"))
-      color = widget.chartStyle.colors.infoWindowDnColor;
+      color = widget.infoWindowUpColor;
+    else if (info.startsWith("-")) color = widget.infoWindowDnColor;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -314,7 +319,7 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
           child: Text(
             "$infoName",
             style: TextStyle(
-              color: widget.chartStyle.colors.infoWindowTitleColor,
+              color: widget.infoWindowTitleColor,
               fontSize: 10.0,
             ),
           ),

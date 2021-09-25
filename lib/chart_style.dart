@@ -9,15 +9,6 @@ class _ChartColors {
   Color nowPriceDnColor = Color(0xffC15466);
   Color nowPriceTextColor = Color(0xffffffff);
 
-  //深度颜色
-  Color depthBuyColor = Color(0xff60A893);
-  Color depthSellColor = Color(0xffC15866);
-
-  Color infoWindowNormalColor = Color(0xffffffff);
-  Color infoWindowTitleColor = Color(0xffffffff);
-  Color infoWindowUpColor = Color(0xff00ff00);
-  Color infoWindowDnColor = Color(0xffff0000);
-
   //当前显示内最大和最小值的颜色
   Color maxColor = Color(0xffffffff);
   Color minColor = Color(0xffffffff);

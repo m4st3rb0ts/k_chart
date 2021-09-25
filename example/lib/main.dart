@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:k_chart/chart_style.dart';
 import 'package:k_chart/chart_translations.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 
@@ -42,8 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _showNowPrice = true;
   List<DepthEntity>? _bids, _asks;
   bool isChangeUI = false;
-
-  ChartStyle chartStyle = ChartStyle();
 
   @override
   void initState() {
@@ -100,7 +97,6 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Colors.pink,
             child: IndicatorsPanel(
               datas: datas,
-              chartStyle: chartStyle,
               fixedLength: 2,
               translations: kChartTranslations,
               showNowPrice: _showNowPrice,
@@ -144,7 +140,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: DepthChart(
               bids: _bids!,
               asks: _asks!,
-              chartStyle: chartStyle,
             ),
           )
       ],
