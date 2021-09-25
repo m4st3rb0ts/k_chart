@@ -8,7 +8,6 @@ import '../ticker/ticker.dart';
 
 part 'serializers.g.dart';
 
-/// Collection of generated serializers for the built_value chat example.
 @SerializersFor([
   Ticker,
 ])
