@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter & @sh1l0n
+//
+
 import 'package:flutter/material.dart';
 
 import '../chart_style.dart';

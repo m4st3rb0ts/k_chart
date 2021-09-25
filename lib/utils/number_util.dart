@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter
+//
+
 import 'dart:math';
 
 class NumberUtil {

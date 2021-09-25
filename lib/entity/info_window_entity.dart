@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter
+//
+
 import '../entity/k_line_entity.dart';
 
 class InfoWindowEntity {

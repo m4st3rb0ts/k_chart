@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter & @sh1l0n
+//
+
 class ChartTranslations {
   final String date;
   final String open;

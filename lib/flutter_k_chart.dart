@@ -1,8 +1,12 @@
+//
+// Created by @OpenFlutter & @sh1l0n
+//
+
 library flutter_k_chart;
 
-export 'k_chart_widget.dart';
+export 'widgets/k_chart_widget.dart';
 export 'chart_style.dart';
-export 'depth_chart.dart';
+export 'widgets/depth_chart.dart';
 export 'common.dart';
 
 export 'entity/candle_entity.dart';

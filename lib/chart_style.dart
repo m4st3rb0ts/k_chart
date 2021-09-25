@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter
+//
+
 import 'package:flutter/material.dart' show Color;
 
 class _ChartColors {

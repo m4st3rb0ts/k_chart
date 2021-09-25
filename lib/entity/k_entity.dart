@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter
+//
+
 import 'candle_entity.dart';
 import 'kdj_entity.dart';
 import 'macd_entity.dart';

@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter
+//
+
 import '../entity/k_entity.dart';
 
 class KLineEntity extends KEntity {

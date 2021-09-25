@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter & @sh1l0n
+//
+
 import 'dart:math';
 
 import 'package:flutter/material.dart'
@@ -6,7 +10,7 @@ import 'package:flutter/material.dart'
 import '../utils/date_format_util.dart';
 import '../chart_style.dart' show ChartStyle;
 import '../entity/k_line_entity.dart';
-import '../k_chart_widget.dart' show SecondaryIndicator;
+import '../widgets/k_chart_widget.dart' show SecondaryIndicator;
 
 export 'package:flutter/material.dart'
     show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;

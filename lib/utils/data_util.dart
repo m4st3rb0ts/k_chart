@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter
+//
+
 import 'dart:math';
 
 import '../entity/k_line_entity.dart';

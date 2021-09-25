@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter
+//
+
 class DepthEntity {
   double price;
   double vol;

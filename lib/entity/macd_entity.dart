@@ -1,3 +1,7 @@
+//
+// Created by @OpenFlutter
+//
+
 import 'cci_entity.dart';
 import 'kdj_entity.dart';
 import 'rsi_entity.dart';
