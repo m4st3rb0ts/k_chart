@@ -76,9 +76,6 @@ class ChartStyle {
   //蜡烛中间线的宽度
   double candleLineWidth = 1.5;
 
-  //vol柱子宽度
-  double volWidth = 8.5;
-
   //垂直交叉线宽度
   double vCrossWidth = 8.5;
 

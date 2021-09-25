@@ -2,15 +2,12 @@
 // Created by @OpenFlutter & @sh1l0n
 //
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'volume.dart';
 
-import '../../chart_style.dart';
 import '../../common.dart';
 import '../../utils/number_util.dart';
 import '../indicator_renderer.dart';
+import 'volume.dart';
 
 /// Volume indicator
 class VolumeRenderer extends IndicatorRenderer<Volume> {
@@ -20,17 +17,28 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
     required final double minVerticalValue,
     required final int fixedDecimalsLength,
     required final double titlesTopPadding,
-    required this.chartStyle,
+    required this.volumeItemWidth,
+    required final Color gridColor,
+    required this.ma10Color,
+    required this.ma5Color,
+    required this.volColor,
+    required this.dnColor,
+    required this.upColor,
   }) : super(
           displayRect: displayRect,
           titlesTopPadding: titlesTopPadding,
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
           fixedDecimalsLength: fixedDecimalsLength,
-          gridColor: chartStyle.colors.gridColor,
+          gridColor: gridColor,
         );
 
-  final ChartStyle chartStyle;
+  final double volumeItemWidth;
+  final Color ma10Color;
+  final Color ma5Color;
+  final Color volColor;
+  final Color dnColor;
+  final Color upColor;
 
   @override
   void drawChart({
@@ -39,7 +47,7 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
     required final RenderData<Volume> currentValue,
     required final Size size,
   }) {
-    final volumeBarMidWidth = chartStyle.volWidth * 0.5;
+    final volumeBarMidWidth = volumeItemWidth * 0.5;
     final volumeBarTop = (maxVerticalValue - currentValue.data.vol) *
             (displayRect.height / maxVerticalValue) +
         displayRect.top;
@@ -54,8 +62,8 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
           ),
           chartPaint
             ..color = currentValue.data.close > currentValue.data.open
-                ? chartStyle.colors.upColor
-                : chartStyle.colors.dnColor);
+                ? upColor
+                : dnColor);
     }
 
     if (lastValue.data.ma5Volume != 0) {
@@ -64,7 +72,7 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
         currentValue:
             RenderPoint(x: currentValue.x, y: currentValue.data.ma5Volume),
         canvas: canvas,
-        color: chartStyle.colors.ma5Color,
+        color: ma5Color,
       );
     }
 
@@ -79,7 +87,7 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
           y: currentValue.data.ma10Volume,
         ),
         canvas: canvas,
-        color: chartStyle.colors.ma10Color,
+        color: ma10Color,
       );
     }
   }
@@ -95,19 +103,19 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
         TextSpan(
           //TODO: Localize
           text: 'VOL:${NumberUtil.format(value.vol)}    ',
-          style: getTextStyle(color: chartStyle.colors.volColor),
+          style: getTextStyle(color: volColor),
         ),
         if (value.ma5Volume.notNullOrZero)
           TextSpan(
             //TODO: Localize
             text: 'MA5:${NumberUtil.format(value.ma5Volume)}    ',
-            style: getTextStyle(color: chartStyle.colors.ma5Color),
+            style: getTextStyle(color: ma5Color),
           ),
         if (value.ma10Volume.notNullOrZero)
           TextSpan(
             //TODO: Localize
             text: 'MA10:${NumberUtil.format(value.ma10Volume)}    ',
-            style: getTextStyle(color: chartStyle.colors.ma10Color),
+            style: getTextStyle(color: ma10Color),
           ),
       ],
     );
@@ -120,7 +128,7 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
         canvas,
         Offset(
           leftOffset,
-          displayRect.top - chartStyle.childPadding,
+          displayRect.top - titlesTopPadding,
         ));
   }
 
@@ -142,7 +150,7 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
       canvas,
       Offset(
         displayRect.width - rightTextPainter.width,
-        displayRect.top - chartStyle.childPadding,
+        displayRect.top - titlesTopPadding,
       ),
     );
   }

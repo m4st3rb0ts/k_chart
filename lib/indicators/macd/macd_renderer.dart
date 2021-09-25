@@ -2,8 +2,6 @@
 // Created by @OpenFlutter & @sh1l0n
 //
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../indicator_renderer.dart';

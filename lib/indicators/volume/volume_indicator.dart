@@ -5,12 +5,11 @@
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:k_chart/chart_style.dart';
-import 'package:k_chart/entity/k_line_entity.dart';
-import 'package:k_chart/utils/number_util.dart';
 
 import 'dart:ui';
 
+import '../../entity/k_line_entity.dart';
+import '../../utils/number_util.dart';
 import '../indicator.dart';
 import 'volume.dart';
 import 'volume_renderer.dart';
@@ -19,7 +18,14 @@ class VolumeIndicator extends Indicator<Volume> {
   VolumeIndicator({
     required final List<KLineEntity> dataSource,
     required final double height,
-    required this.chartStyle,
+    this.titlesTopPadding = 12,
+    this.volumeItemWidth = 8.5,
+    this.ma10Color = const Color(0xff6CB0A6),
+    this.ma5Color = const Color(0xffC9B885),
+    this.volColor = const Color(0xff4729AE),
+    this.gridColor = const Color(0xff4c5c74),
+    this.upColor = const Color(0xff4DAA90),
+    this.dnColor = const Color(0xffC15466),
   }) : super(dataSource: dataSource, height: height) {
     for (var i = 0; i < dataSource.length; i++) {
       final dataItem = dataSource[i];
@@ -43,7 +49,14 @@ class VolumeIndicator extends Indicator<Volume> {
   VolumeRenderer? get render => _render;
   VolumeRenderer? _render;
 
-  final ChartStyle chartStyle;
+  final double titlesTopPadding;
+  final double volumeItemWidth;
+  final Color ma10Color;
+  final Color ma5Color;
+  final Color volColor;
+  final Color dnColor;
+  final Color upColor;
+  final Color gridColor;
 
   @override
   void updateRender({
@@ -85,11 +98,17 @@ class VolumeIndicator extends Indicator<Volume> {
         size.width,
         height,
       ),
-      titlesTopPadding: chartStyle.childPadding,
+      titlesTopPadding: titlesTopPadding,
       maxVerticalValue: maxValue,
       minVerticalValue: minValue,
       fixedDecimalsLength: fixedDecimalsLength,
-      chartStyle: chartStyle,
+      volumeItemWidth: volumeItemWidth,
+      dnColor: dnColor,
+      gridColor: gridColor,
+      ma10Color: ma10Color,
+      ma5Color: ma5Color,
+      upColor: upColor,
+      volColor: volColor,
     );
   }
 }

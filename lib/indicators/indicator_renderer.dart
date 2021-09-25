@@ -4,8 +4,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../chart_style.dart';
-
 /// Base class for adding chart renders
 abstract class IndicatorRenderer<T> {
   IndicatorRenderer({
