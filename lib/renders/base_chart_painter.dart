@@ -201,31 +201,35 @@ abstract class BaseChartPainter extends CustomPainter {
       -getCurrentOffset(size: size) + leftOffset / horizontalScale;
 
   /// Binary search of the current data index for the current viewport for a giving leftOffset
+  int dataIndexInViewportFor({required final double leftOffset}) {
+    var start = 0;
+    var end = dataSource.length - 1;
 
-  /// Binary search of the current data index for the current viewport for a giving leftOffset
-  int dataIndexInViewportFor({required final double leftOffset}) =>
-      _dataIndexInViewportFor(leftOffset, 0, dataSource.length - 1);
+    int mid = 0;
+    while (start != end) {
+      if (end == start || end == -1) {
+        return start;
+      }
 
-  int _dataIndexInViewportFor(double translateX, int start, int end) {
-    if (end == start || end == -1) {
-      return start;
+      if (end - start == 1) {
+        final startValue = getLeftOffsetByIndex(index: start);
+        final endValue = getLeftOffsetByIndex(index: end);
+        return (leftOffset - startValue).abs() < (leftOffset - endValue).abs()
+            ? start
+            : end;
+      }
+
+      mid = (start + (end - start) * 0.5).floor();
+      final midValue = getLeftOffsetByIndex(index: mid);
+      if (leftOffset < midValue) {
+        end = mid;
+      } else if (leftOffset > midValue) {
+        start = mid;
+      } else {
+        break;
+      }
     }
-    if (end - start == 1) {
-      double startValue = getLeftOffsetByIndex(index: start);
-      double endValue = getLeftOffsetByIndex(index: end);
-      return (translateX - startValue).abs() < (translateX - endValue).abs()
-          ? start
-          : end;
-    }
-    int mid = start + (end - start) ~/ 2;
-    double midValue = getLeftOffsetByIndex(index: mid);
-    if (translateX < midValue) {
-      return _dataIndexInViewportFor(translateX, start, mid);
-    } else if (translateX > midValue) {
-      return _dataIndexInViewportFor(translateX, mid, end);
-    } else {
-      return mid;
-    }
+    return mid;
   }
 
   /// Get the left offset for a giving index
