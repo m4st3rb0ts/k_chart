@@ -20,6 +20,4 @@ class ChartStyle {
 
   //现在价格的线条间隔
   double nowPriceLineSpan = 1;
-
-  final _ChartColors colors = _ChartColors();
 }
