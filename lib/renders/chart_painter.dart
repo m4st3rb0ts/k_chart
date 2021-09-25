@@ -365,7 +365,8 @@ class ChartPainter extends BaseChartPainter {
         return;
       }
     } else {
-      index = dataIndexInViewportFor(leftOffset: currentHorizontalScroll);
+      final offset = getCurrentOffset(size: size);
+      index = dataIndexInViewportFor(leftOffset: -offset);
     }
     //松开显示最后一条数据
     for (final indicator in indicators) {
