@@ -205,7 +205,7 @@ abstract class BaseChartPainter extends CustomPainter {
     var start = 0;
     var end = dataSource.length - 1;
 
-    int mid = 0;
+    int mid = start;
     while (start != end) {
       if (end == start || end == -1) {
         return start;
