@@ -4,7 +4,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../../chart_style.dart';
 import '../indicator_renderer.dart';
 import 'candles_indicator.dart';
 import 'candle.dart';
@@ -18,9 +17,18 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     required this.indicator,
     required this.isTimeLineMode,
     required final int fixedDecimalsLength,
-    required this.chartStyle,
     required this.timelineHorizontalScale,
     required final double titlesTopPadding,
+    required this.candleLineWidth,
+    required this.candleItemWidth,
+    required this.lineFillColor,
+    required this.gridColor,
+    required this.kLineColor,
+    required this.ma5Color,
+    required this.ma10Color,
+    required this.ma30Color,
+    required this.upColor,
+    required this.dnColor,
     this.maFactorsForTitles = const [5, 10, 20],
   }) : super(
           displayRect: displayRect,
@@ -28,13 +36,13 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
           maxVerticalValue: maxVerticalValue,
           minVerticalValue: minVerticalValue,
           fixedDecimalsLength: fixedDecimalsLength,
-          gridColor: chartStyle.colors.gridColor,
+          gridColor: gridColor,
         ) {
     _timelinePaint = Paint()
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-      ..color = chartStyle.colors.kLineColor;
+      ..color = kLineColor;
     _contentRect = Rect.fromLTRB(
       displayRect.left,
       displayRect.top + contentPadding + titlesTopPadding,
@@ -44,7 +52,16 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     verticalScale = _contentRect.height / (maxVerticalValue - minVerticalValue);
   }
 
-  final ChartStyle chartStyle;
+  final double candleLineWidth;
+  final double candleItemWidth;
+  final Color lineFillColor;
+  final Color gridColor;
+  final Color kLineColor;
+  final Color ma5Color;
+  final Color ma10Color;
+  final Color ma30Color;
+  final Color upColor;
+  final Color dnColor;
 
   /// Indicator which together the candle graph should display (MA, BOLL, NONE)
   final CandlesIndicators indicator;
@@ -66,6 +83,17 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
 
   /// Paint to use for time isLine mode
   late Paint _timelinePaint;
+
+  Color _getMAColor(int index) {
+    switch (index % 3) {
+      case 1:
+        return ma10Color;
+      case 2:
+        return ma30Color;
+      default:
+        return ma5Color;
+    }
+  }
 
   @override
   void drawText({
@@ -89,7 +117,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
               // TODO: Localize
               text: 'BOLL:${format(n: value.middle)}    ',
               style: getTextStyle(
-                color: chartStyle.colors.ma5Color,
+                color: ma5Color,
               ),
             ),
           if (value.middle != 0)
@@ -97,7 +125,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
               // TODO: Localize
               text: 'UB:${format(n: value.top)}    ',
               style: getTextStyle(
-                color: chartStyle.colors.ma10Color,
+                color: ma10Color,
               ),
             ),
           if (value.bottom != 0)
@@ -105,7 +133,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
               // TODO: Localize
               text: 'LB:${format(n: value.bottom)}    ',
               style: getTextStyle(
-                color: chartStyle.colors.ma30Color,
+                color: ma30Color,
               ),
             ),
         ],
@@ -136,9 +164,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
           //Localize
           text:
               'MA${maFactorsForTitles[i]}:${format(n: data.maValueList[i])}    ',
-          style: getTextStyle(
-            color: chartStyle.colors.getMAColor(i),
-          ),
+          style: getTextStyle(color: _getMAColor(i)),
         );
         titles.add(title);
       }
@@ -211,7 +237,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
         end: Alignment.bottomCenter,
         tileMode: TileMode.clamp,
         colors: [
-          chartStyle.colors.lineFillColor,
+          lineFillColor,
           Colors.transparent,
         ],
       ).createShader(displayRect);
@@ -257,7 +283,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
             y: currentValue.data.maValueList[i],
           ),
           canvas: canvas,
-          color: chartStyle.colors.getMAColor(i),
+          color: _getMAColor(i),
         );
       }
     }
@@ -274,7 +300,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
           currentValue:
               RenderPoint(x: currentValue.x, y: currentValue.data.top),
           canvas: canvas,
-          color: chartStyle.colors.ma10Color);
+          color: ma10Color);
     }
     if (lastValue.data.middle != 0) {
       drawLine(
@@ -282,7 +308,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
           currentValue:
               RenderPoint(x: currentValue.x, y: currentValue.data.middle),
           canvas: canvas,
-          color: chartStyle.colors.ma5Color);
+          color: ma5Color);
     }
     if (lastValue.data.bottom != 0) {
       drawLine(
@@ -290,7 +316,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
           currentValue:
               RenderPoint(x: currentValue.x, y: currentValue.data.bottom),
           canvas: canvas,
-          color: chartStyle.colors.ma30Color);
+          color: ma30Color);
     }
   }
 
@@ -302,15 +328,15 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     final low = getVerticalPositionForPoint(value: candle.data.low);
     var open = getVerticalPositionForPoint(value: candle.data.open);
     final close = getVerticalPositionForPoint(value: candle.data.close);
-    final candleMidWidth = chartStyle.candleWidth * 0.5;
-    final candleLineMidWidth = chartStyle.candleLineWidth * 0.5;
+    final candleMidWidth = candleItemWidth * 0.5;
+    final candleLineMidWidth = candleLineWidth * 0.5;
 
     if (open >= close) {
       // 实体高度>= CandleLineWidth
-      if (open - close < chartStyle.candleLineWidth) {
-        open = close + chartStyle.candleLineWidth;
+      if (open - close < candleLineWidth) {
+        open = close + candleLineWidth;
       }
-      chartPaint.color = chartStyle.colors.upColor;
+      chartPaint.color = upColor;
       canvas.drawRect(
         Rect.fromLTRB(
           candle.x - candleMidWidth,
@@ -330,10 +356,10 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
         chartPaint,
       );
     } else if (close > open) {
-      if (close - open < chartStyle.candleLineWidth) {
-        open = close - chartStyle.candleLineWidth;
+      if (close - open < candleLineWidth) {
+        open = close - candleLineWidth;
       }
-      chartPaint.color = chartStyle.colors.dnColor;
+      chartPaint.color = dnColor;
       canvas.drawRect(
         Rect.fromLTRB(
           candle.x - candleMidWidth,

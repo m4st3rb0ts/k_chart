@@ -23,7 +23,16 @@ class CandlesIndicator extends Indicator<Candle> {
     required final double height,
     required this.displayTimeLineChart,
     required this.candleIndicator,
-    required this.chartStyle,
+    this.candleLineWidth = 1.5,
+    this.candleItemWidth = 8.5,
+    this.lineFillColor = const Color(0x554C86CD),
+    this.gridColor = const Color(0xff4c5c74),
+    this.kLineColor = const Color(0xff4C86CD),
+    this.ma5Color = const Color(0xffC9B885),
+    this.ma10Color = const Color(0xff6CB0A6),
+    this.ma30Color = const Color(0xff9979C6),
+    this.upColor = const Color(0xff4DAA90),
+    this.dnColor = const Color(0xffC15466),
     this.maDayList = const [5, 10, 20],
   }) : super(dataSource: dataSource, height: height) {
     for (var i = 0; i < dataSource.length; i++) {
@@ -46,12 +55,22 @@ class CandlesIndicator extends Indicator<Candle> {
     }
   }
 
+  final double candleLineWidth;
+  final double candleItemWidth;
+  final Color lineFillColor;
+  final Color gridColor;
+  final Color kLineColor;
+  final Color ma5Color;
+  final Color ma10Color;
+  final Color ma30Color;
+  final Color upColor;
+  final Color dnColor;
+
   List<Candle> _candles = <Candle>[];
   BuiltList<Candle> get data => _candles.toBuiltList();
 
   CandleEntityRender? _render;
   CandleEntityRender? get render => _render;
-  final ChartStyle chartStyle;
 
   final bool displayTimeLineChart;
   final CandlesIndicators candleIndicator;
@@ -137,9 +156,18 @@ class CandlesIndicator extends Indicator<Candle> {
       indicator: candleIndicator,
       isTimeLineMode: displayTimeLineChart,
       fixedDecimalsLength: _fixedDecimalsLength,
-      chartStyle: chartStyle,
       timelineHorizontalScale: scale,
       maFactorsForTitles: maDayList,
+      candleItemWidth: candleItemWidth,
+      candleLineWidth: candleLineWidth,
+      dnColor: dnColor,
+      gridColor: gridColor,
+      kLineColor: kLineColor,
+      lineFillColor: lineFillColor,
+      ma5Color: ma5Color,
+      ma10Color: ma10Color,
+      ma30Color: ma30Color,
+      upColor: upColor,
     );
   }
 

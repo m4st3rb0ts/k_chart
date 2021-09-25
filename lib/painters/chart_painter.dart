@@ -151,7 +151,7 @@ class ChartPainter extends BaseChartPainter {
     required final Canvas canvas,
     required final Size size,
   }) {
-    var textStyle = getTextStyle(color: chartStyle.colors.defaultTextColor);
+    var textStyle = getTextStyle(color: defaultTextColor);
     if (!hideGrid) {
       for (final indicator in indicators) {
         indicator.render?.drawRightText(canvas: canvas, textStyle: textStyle);

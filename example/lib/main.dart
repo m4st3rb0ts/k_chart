@@ -36,9 +36,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool showLoading = true;
   var _mainState = CandlesIndicators.MA;
   bool _volHidden = false;
-  MacdIndicators _secondaryState = MacdIndicators.NONE;
+  var _secondaryState = MacdIndicators.NONE;
   bool isLine = false;
-  bool isChinese = true;
   bool _hideGrid = false;
   bool _showNowPrice = true;
   List<DepthEntity>? _bids, _asks;
@@ -111,7 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 CandlesIndicator(
                   dataSource: datas ?? <KLineEntity>[],
                   height: 300,
-                  chartStyle: chartStyle,
                   displayTimeLineChart: isLine,
                   candleIndicator: _mainState,
                   maDayList: [1, 100, 1000],
@@ -178,27 +176,10 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () => _secondaryState = MacdIndicators.NONE),
         button(_volHidden ? "Show Vol" : "Hide Vol",
             onPressed: () => _volHidden = !_volHidden),
-        button("Change Language", onPressed: () => isChinese = !isChinese),
         button(_hideGrid ? "Show Grid" : "Hide Grid",
             onPressed: () => _hideGrid = !_hideGrid),
         button(_showNowPrice ? "Hide Now Price" : "Show Now Price",
             onPressed: () => _showNowPrice = !_showNowPrice),
-        button("Customize UI", onPressed: () {
-          setState(() {
-            this.isChangeUI = !this.isChangeUI;
-            if (this.isChangeUI) {
-              chartStyle.colors.selectBorderColor = Colors.red;
-              chartStyle.colors.selectFillColor = Colors.red;
-              chartStyle.colors.lineFillColor = Colors.red;
-              chartStyle.colors.kLineColor = Colors.yellow;
-            } else {
-              chartStyle.colors.selectBorderColor = Color(0xff6C7A86);
-              chartStyle.colors.selectFillColor = Color(0xff0D1722);
-              chartStyle.colors.lineFillColor = Color(0x554C86CD);
-              chartStyle.colors.kLineColor = Color(0xff4C86CD);
-            }
-          });
-        }),
       ],
     );
   }
