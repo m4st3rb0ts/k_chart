@@ -112,14 +112,16 @@ class _MyHomePageState extends State<MyHomePage> {
               //`isChinese` is Deprecated, Use `translations` instead.
               isChinese: isChinese,
               hideGrid: _hideGrid,
-              candlesIndicator: CandlesIndicator(
-                dataSource: datas ?? <KLineEntity>[],
-                height: 300,
-                chartStyle: chartStyle,
-                displayTimeLineChart: isLine,
-                candleIndicator: _mainState,
-                maDayList: [1, 100, 1000],
-              ),
+              indicators: [
+                CandlesIndicator(
+                  dataSource: datas ?? <KLineEntity>[],
+                  height: 300,
+                  chartStyle: chartStyle,
+                  displayTimeLineChart: isLine,
+                  candleIndicator: _mainState,
+                  maDayList: [1, 100, 1000],
+                ),
+              ],
             ),
           ),
           if (showLoading)

@@ -5,6 +5,7 @@ import 'package:k_chart/chart_translations.dart';
 import 'package:k_chart/extension/map_ext.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:k_chart/indicators/candles/candles_indicator.dart';
+import 'package:k_chart/indicators/indicator.dart';
 
 import 'renders/chart_painter.dart';
 
@@ -50,11 +51,11 @@ class KChartWidget extends StatefulWidget {
   final Curve flingCurve;
   final Function(bool)? isOnDrag;
   final ChartStyle chartStyle;
-  final CandlesIndicator candlesIndicator;
+  final List<Indicator> indicators;
 
   const KChartWidget({
     required this.datas,
-    required this.candlesIndicator,
+    required this.indicators,
     required this.chartStyle,
     this.secondaryState = SecondaryIndicator.NONE,
     this.onSecondaryTap,
@@ -118,7 +119,7 @@ class _KChartWidgetState extends State<KChartWidget>
       mScaleX = 1.0;
     }
     final _painter = ChartPainter(
-      candlesIndicator: widget.candlesIndicator,
+      indicators: widget.indicators,
       chartStyle: widget.chartStyle,
       dataSource: widget.datas ?? <KLineEntity>[],
       horizontalScale: mScaleX,
@@ -272,7 +273,8 @@ class _KChartWidgetState extends State<KChartWidget>
         stream: mInfoWindowStream?.stream,
         builder: (context, snapshot) {
           if (!isLongPress ||
-              widget.candlesIndicator.displayTimeLineChart ||
+              (widget.indicators.first as CandlesIndicator)
+                  .displayTimeLineChart ||
               !snapshot.hasData ||
               snapshot.data?.kLineEntity == null) return Container();
           KLineEntity entity = snapshot.data!.kLineEntity;

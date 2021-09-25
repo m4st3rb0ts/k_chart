@@ -20,12 +20,12 @@ enum CandlesIndicators { MA, BOLL, NONE }
 class CandlesIndicator extends Indicator<Candle> {
   CandlesIndicator({
     required final List<KLineEntity> dataSource,
-    required final this.height,
+    required final double height,
     required this.displayTimeLineChart,
     required this.candleIndicator,
     required this.chartStyle,
     this.maDayList = const [5, 10, 20],
-  }) : super(dataSource: dataSource) {
+  }) : super(dataSource: dataSource, height: height) {
     for (var i = 0; i < dataSource.length; i++) {
       final dataItem = dataSource[i];
       var candle = Candle((c) => c
@@ -50,8 +50,6 @@ class CandlesIndicator extends Indicator<Candle> {
   CandleEntityRender? _render;
   CandleEntityRender? get render => _render;
   final ChartStyle chartStyle;
-
-  final double height;
 
   final bool displayTimeLineChart;
   final CandlesIndicators candleIndicator;

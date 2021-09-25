@@ -2,7 +2,7 @@ import 'dart:async' show StreamSink;
 
 import 'package:flutter/material.dart';
 import 'package:k_chart/indicators/candles/candle.dart';
-import 'package:k_chart/indicators/candles/candles_indicator.dart';
+import 'package:k_chart/indicators/indicator.dart';
 import 'package:k_chart/utils/number_util.dart';
 
 import '../entity/info_window_entity.dart';
@@ -16,7 +16,7 @@ import '../indicators/volume/volume_renderer.dart';
 
 class ChartPainter extends BaseChartPainter {
   ChartPainter({
-    required this.candlesIndicator,
+    required this.indicators,
     required final ChartStyle chartStyle,
     required final List<KLineEntity> dataSource,
     required final double horizontalScale,
@@ -57,7 +57,7 @@ class ChartPainter extends BaseChartPainter {
   /// Should display volume?
   final bool hideVolumeChart;
 
-  final CandlesIndicator candlesIndicator;
+  final List<Indicator> indicators;
   IndicatorRenderer? mVolRenderer;
   IndicatorRenderer? mSecondaryRenderer;
   StreamSink<InfoWindowEntity?>? sink;
@@ -78,27 +78,28 @@ class ChartPainter extends BaseChartPainter {
       fixedLength =
           NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
     }
-    final volumeGraphHeight =
-        !hideVolumeChart ? candlesIndicator.height * 0.2 : 0;
-    final secondaryGraphHeight = secondaryIndicator != SecondaryIndicator.NONE
-        ? candlesIndicator.height * 0.2
-        : 0;
-    candlesIndicator.updateRender(
-      size: size,
-      displayRectTop: chartStyle.topPadding,
-      scale: horizontalScale,
-      firstIndexToDisplay: mStartIndex,
-      finalIndexToDisplay: mStopIndex,
-    );
+    final volumeGraphHeight = 150.0;
+    final secondaryGraphHeight = 150.0;
+
+    var displayRectTop = chartStyle.topPadding;
+    for (final indicator in indicators) {
+      indicator.updateRender(
+        size: size,
+        displayRectTop: displayRectTop,
+        scale: horizontalScale,
+        firstIndexToDisplay: mStartIndex,
+        finalIndexToDisplay: mStopIndex,
+      );
+      displayRectTop += indicators.first.height + chartStyle.childPadding;
+    }
+
     if (!hideVolumeChart) {
       mVolRenderer = VolumeRenderer(
-        displayRect: Rect.fromLTRB(
+        displayRect: Rect.fromLTWH(
           0,
-          candlesIndicator.render?.displayRect.bottom ??
-              0 + chartStyle.childPadding,
+          displayRectTop,
           size.width,
-          (candlesIndicator.render?.displayRect.bottom ?? 0) +
-              volumeGraphHeight,
+          volumeGraphHeight,
         ),
         maxVerticalValue: mVolMaxValue,
         minVerticalValue: mVolMinValue,
@@ -106,16 +107,15 @@ class ChartPainter extends BaseChartPainter {
         chartStyle: chartStyle,
       );
     }
+
+    displayRectTop += volumeGraphHeight + chartStyle.childPadding;
     if (secondaryIndicator != SecondaryIndicator.NONE) {
       mSecondaryRenderer = MACDEntityRenderer(
-        displayRect: Rect.fromLTRB(
+        displayRect: Rect.fromLTWH(
           0,
-          candlesIndicator.render?.displayRect.bottom ??
-              0 + volumeGraphHeight + chartStyle.childPadding,
+          displayRectTop,
           size.width,
-          (candlesIndicator.render?.displayRect.bottom ?? 0) +
-              volumeGraphHeight +
-              secondaryGraphHeight,
+          secondaryGraphHeight,
         ),
         maxVerticalValue: mSecondaryMaxValue,
         minVerticalValue: mSecondaryMinValue,
@@ -136,13 +136,13 @@ class ChartPainter extends BaseChartPainter {
       colors: bgColor ?? chartStyle.colors.bgColor,
     );
 
-    final Rect mainRect = Rect.fromLTRB(
-        0,
-        0,
-        candlesIndicator.render?.displayRect.right ?? 0,
-        candlesIndicator.render?.displayRect.bottom ?? 0);
-    canvas.drawRect(
-        mainRect, mBgPaint..shader = mBgGradient.createShader(mainRect));
+    for (final indicator in indicators) {
+      final displayRect = indicator.render?.displayRect;
+      if (displayRect != null) {
+        canvas.drawRect(displayRect,
+            mBgPaint..shader = mBgGradient.createShader(displayRect));
+      }
+    }
 
     if (mVolRenderer != null) {
       Rect volRect = Rect.fromLTRB(
@@ -177,7 +177,9 @@ class ChartPainter extends BaseChartPainter {
     required final Size size,
   }) {
     if (!hideGrid) {
-      candlesIndicator.render?.drawGrid(canvas: canvas);
+      for (final indicator in indicators) {
+        indicator.render?.drawGrid(canvas: canvas);
+      }
       mVolRenderer?.drawGrid(canvas: canvas);
       mSecondaryRenderer?.drawGrid(canvas: canvas);
     }
@@ -194,14 +196,16 @@ class ChartPainter extends BaseChartPainter {
       double curX = getLeftOffsetByIndex(index: i);
       double lastX = i == 0 ? curX : getLeftOffsetByIndex(index: i - 1);
 
-      final curCandle = candlesIndicator.data[i];
-      final lastCandle = i == 0 ? curCandle : candlesIndicator.data[i - 1];
-      candlesIndicator.render?.drawChart(
-        lastValue: RenderData<Candle>(data: lastCandle, x: lastX),
-        currentValue: RenderData<Candle>(data: curCandle, x: curX),
-        size: size,
-        canvas: canvas,
-      );
+      for (final indicator in indicators) {
+        final currentItem = indicator.data[i];
+        final lastItem = indicator.data[i == 0 ? i : i - 1];
+        indicator.render?.drawChart(
+          lastValue: RenderData<Candle>(data: lastItem, x: lastX),
+          currentValue: RenderData<Candle>(data: currentItem, x: curX),
+          size: size,
+          canvas: canvas,
+        );
+      }
 
       mVolRenderer?.drawChart(
         lastValue: RenderData<VolumeEntity>(data: lastPoint, x: lastX),
@@ -227,8 +231,9 @@ class ChartPainter extends BaseChartPainter {
   }) {
     var textStyle = getTextStyle(color: chartStyle.colors.defaultTextColor);
     if (!hideGrid) {
-      candlesIndicator.render
-          ?.drawRightText(canvas: canvas, textStyle: textStyle);
+      for (final indicator in indicators) {
+        indicator.render?.drawRightText(canvas: canvas, textStyle: textStyle);
+      }
     }
     mVolRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
     mSecondaryRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
@@ -366,8 +371,10 @@ class ChartPainter extends BaseChartPainter {
       index = dataIndexInViewportFor(leftOffset: currentHorizontalScroll);
     }
     //松开显示最后一条数据
-    candlesIndicator.render?.drawText(
-        canvas: canvas, value: candlesIndicator.data[index], leftOffset: x);
+    for (final indicator in indicators) {
+      indicator.render?.drawText(
+          canvas: canvas, value: indicator.data[index], leftOffset: x);
+    }
     mVolRenderer?.drawText(canvas: canvas, value: customData, leftOffset: x);
     mSecondaryRenderer?.drawText(
         canvas: canvas, value: customData, leftOffset: x);
@@ -375,88 +382,88 @@ class ChartPainter extends BaseChartPainter {
 
   @override
   void drawMaxAndMin({required final Canvas canvas, required final Size size}) {
-    if (candlesIndicator.render?.isTimeLineMode ?? false) {
-      return;
-    }
-    //绘制最大值和最小值
-    double x = translateXtoX(
-        translateX: getLeftOffsetByIndex(
-            index: candlesIndicator.currentItemIndexWithMinValue),
-        size: size);
-    double y = getMainY(candlesIndicator.currentMinLowValue);
-    if (x < size.width / 2) {
-      //画右边
-      TextPainter tp = getTextPainter(
-          "── " +
-              candlesIndicator.currentMinLowValue.toStringAsFixed(fixedLength),
-          chartStyle.colors.minColor);
-      tp.paint(canvas, Offset(x, y - tp.height / 2));
-    } else {
-      TextPainter tp = getTextPainter(
-          candlesIndicator.currentMinLowValue.toStringAsFixed(fixedLength) +
-              " ──",
-          chartStyle.colors.minColor);
-      tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
-    }
-    x = translateXtoX(
-        translateX: getLeftOffsetByIndex(
-            index: candlesIndicator.currentItemIndexWithMaxValue),
-        size: size);
-    y = getMainY(candlesIndicator.currentMaxHighValue);
-    if (x < size.width / 2) {
-      //画右边
-      TextPainter tp = getTextPainter(
-          "── " +
-              candlesIndicator.currentMaxHighValue.toStringAsFixed(fixedLength),
-          chartStyle.colors.maxColor);
-      tp.paint(canvas, Offset(x, y - tp.height / 2));
-    } else {
-      TextPainter tp = getTextPainter(
-          candlesIndicator.currentMaxHighValue.toStringAsFixed(fixedLength) +
-              " ──",
-          chartStyle.colors.maxColor);
-      tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
-    }
+    // if (candlesIndicator.render?.isTimeLineMode ?? false) {
+    //   return;
+    // }
+    // //绘制最大值和最小值
+    // double x = translateXtoX(
+    //     translateX: getLeftOffsetByIndex(
+    //         index: candlesIndicator.currentItemIndexWithMinValue),
+    //     size: size);
+    // double y = getMainY(candlesIndicator.currentMinLowValue);
+    // if (x < size.width / 2) {
+    //   //画右边
+    //   TextPainter tp = getTextPainter(
+    //       "── " +
+    //           candlesIndicator.currentMinLowValue.toStringAsFixed(fixedLength),
+    //       chartStyle.colors.minColor);
+    //   tp.paint(canvas, Offset(x, y - tp.height / 2));
+    // } else {
+    //   TextPainter tp = getTextPainter(
+    //       candlesIndicator.currentMinLowValue.toStringAsFixed(fixedLength) +
+    //           " ──",
+    //       chartStyle.colors.minColor);
+    //   tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
+    // }
+    // x = translateXtoX(
+    //     translateX: getLeftOffsetByIndex(
+    //         index: candlesIndicator.currentItemIndexWithMaxValue),
+    //     size: size);
+    // y = getMainY(candlesIndicator.currentMaxHighValue);
+    // if (x < size.width / 2) {
+    //   //画右边
+    //   TextPainter tp = getTextPainter(
+    //       "── " +
+    //           candlesIndicator.currentMaxHighValue.toStringAsFixed(fixedLength),
+    //       chartStyle.colors.maxColor);
+    //   tp.paint(canvas, Offset(x, y - tp.height / 2));
+    // } else {
+    //   TextPainter tp = getTextPainter(
+    //       candlesIndicator.currentMaxHighValue.toStringAsFixed(fixedLength) +
+    //           " ──",
+    //       chartStyle.colors.maxColor);
+    //   tp.paint(canvas, Offset(x - tp.width, y - tp.height / 2));
+    // }
   }
 
   @override
   void drawNowPrice({required final Canvas canvas, required final Size size}) {
-    if (!showNowPrice) {
-      return;
-    }
+    // if (!showNowPrice) {
+    //   return;
+    // }
 
-    if (dataSource.isEmpty) {
-      return;
-    }
+    // if (dataSource.isEmpty) {
+    //   return;
+    // }
 
-    double value = dataSource.last.close;
-    double y = getMainY(value);
-    //不在视图展示区域不绘制
-    if (y > getMainY(candlesIndicator.currentMinLowValue) ||
-        y < getMainY(candlesIndicator.currentMaxHighValue)) {
-      return;
-    }
-    nowPricePaint
-      ..color = value >= dataSource.last.open
-          ? chartStyle.colors.nowPriceUpColor
-          : chartStyle.colors.nowPriceDnColor;
-    //先画横线
-    double startX = 0;
-    final max = -getCurrentOffset(size: size) + size.width / horizontalScale;
-    final space = chartStyle.nowPriceLineSpan + chartStyle.nowPriceLineLength;
-    while (startX < max) {
-      canvas.drawLine(Offset(startX, y),
-          Offset(startX + chartStyle.nowPriceLineLength, y), nowPricePaint);
-      startX += space;
-    }
-    //再画背景和文本
-    TextPainter tp = getTextPainter(value.toStringAsFixed(fixedLength),
-        chartStyle.colors.nowPriceTextColor);
-    double left = 0;
-    double top = y - tp.height / 2;
-    canvas.drawRect(Rect.fromLTRB(left, top, left + tp.width, top + tp.height),
-        nowPricePaint);
-    tp.paint(canvas, Offset(0, top));
+    // double value = dataSource.last.close;
+    // double y = getMainY(value);
+    // //不在视图展示区域不绘制
+    // if (y > getMainY(candlesIndicator.currentMinLowValue) ||
+    //     y < getMainY(candlesIndicator.currentMaxHighValue)) {
+    //   return;
+    // }
+    // nowPricePaint
+    //   ..color = value >= dataSource.last.open
+    //       ? chartStyle.colors.nowPriceUpColor
+    //       : chartStyle.colors.nowPriceDnColor;
+    // //先画横线
+    // double startX = 0;
+    // final max = -getCurrentOffset(size: size) + size.width / horizontalScale;
+    // final space = chartStyle.nowPriceLineSpan + chartStyle.nowPriceLineLength;
+    // while (startX < max) {
+    //   canvas.drawLine(Offset(startX, y),
+    //       Offset(startX + chartStyle.nowPriceLineLength, y), nowPricePaint);
+    //   startX += space;
+    // }
+    // //再画背景和文本
+    // TextPainter tp = getTextPainter(value.toStringAsFixed(fixedLength),
+    //     chartStyle.colors.nowPriceTextColor);
+    // double left = 0;
+    // double top = y - tp.height / 2;
+    // canvas.drawRect(Rect.fromLTRB(left, top, left + tp.width, top + tp.height),
+    //     nowPricePaint);
+    // tp.paint(canvas, Offset(0, top));
   }
 
   ///画交叉线
@@ -514,7 +521,7 @@ class ChartPainter extends BaseChartPainter {
       displayDateFormats);
 
   double getMainY(double y) =>
-      candlesIndicator.render?.getVerticalPositionForPoint(value: y) ?? 50;
+      indicators.first.render?.getVerticalPositionForPoint(value: y) ?? 50;
 
   /// 点是否在SecondaryRect中
   bool isInSecondaryRect(Offset point) {

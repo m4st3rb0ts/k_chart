@@ -9,7 +9,10 @@ import '../entity/k_line_entity.dart';
 import 'indicator_renderer.dart';
 
 abstract class Indicator<T> {
-  const Indicator({required this.dataSource});
+  const Indicator({
+    required this.dataSource,
+    required this.height,
+  });
 
   final List<KLineEntity> dataSource;
   void updateRender({
@@ -20,6 +23,7 @@ abstract class Indicator<T> {
     required final int finalIndexToDisplay,
   });
 
+  final double height;
   BuiltList<T> get data;
   IndicatorRenderer<T>? get render;
 }
