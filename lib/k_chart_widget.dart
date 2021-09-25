@@ -6,7 +6,7 @@ import 'package:k_chart/flutter_k_chart.dart';
 import 'package:k_chart/indicators/candles/candles_indicator.dart';
 import 'package:k_chart/indicators/indicator.dart';
 
-import 'renders/chart_painter.dart';
+import 'painters/chart_painter.dart';
 
 enum PrimaryIndicator { MA, BOLL, NONE }
 enum SecondaryIndicator { MACD, KDJ, RSI, WR, CCI, NONE }
