@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'ticker.dart';
 import '../indicators/candles/entity/candle_entity.dart';
 import '../indicators/macd/entity/kdj_entity.dart';
@@ -18,6 +16,20 @@ class DataSourceEntity
         WREntity,
         CCIEntity,
         MACDEntity {}
+
+class DataSource {
+  const DataSource({
+    required this.tickers,
+    this.maDayList = const [5, 10, 20],
+    this.n = 20,
+    this.k = 2,
+  });
+
+  final List<Ticker> tickers;
+  final List<int> maDayList;
+  final int n;
+  final k;
+}
 
 // class DataSource {
 //   DataSource(this._data) {
