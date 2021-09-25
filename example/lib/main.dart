@@ -7,6 +7,7 @@ import 'package:k_chart/chart_style.dart';
 import 'package:k_chart/chart_translations.dart';
 import 'package:k_chart/flutter_k_chart.dart';
 import 'package:k_chart/indicators/candles/candles_indicator.dart';
+import 'package:k_chart/indicators/volume/volume_indicator.dart';
 import 'package:k_chart/k_chart_widget.dart';
 
 void main() => runApp(MyApp());
@@ -104,7 +105,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: KChartWidget(
               datas: datas,
               chartStyle: chartStyle,
-              volHidden: _volHidden,
               secondaryState: _secondaryState,
               fixedLength: 2,
               timeFormat: TimeFormat.YEAR_MONTH_DAY,
@@ -122,6 +122,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   candleIndicator: _mainState,
                   maDayList: [1, 100, 1000],
                 ),
+                // if (!_volHidden)
+                //   VolumeIndicator(
+                //     dataSource: datas ?? <KLineEntity>[],
+                //     height: 150,
+                //   ),
               ],
             ),
           ),

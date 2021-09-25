@@ -29,7 +29,6 @@ class TimeFormat {
 
 class KChartWidget extends StatefulWidget {
   final List<KLineEntity>? datas;
-  final bool volHidden;
   final SecondaryIndicator secondaryState;
   final Function()? onSecondaryTap;
   final bool hideGrid;
@@ -59,7 +58,6 @@ class KChartWidget extends StatefulWidget {
     required this.chartStyle,
     this.secondaryState = SecondaryIndicator.NONE,
     this.onSecondaryTap,
-    this.volHidden = true,
     this.hideGrid = false,
     @Deprecated('Use `translations` instead.') this.isChinese = false,
     this.showNowPrice = true,
@@ -126,7 +124,6 @@ class _KChartWidgetState extends State<KChartWidget>
       currentHorizontalScroll: mScrollX,
       selectedHorizontalValue: mSelectX,
       shouldDisplaySelection: isLongPress,
-      hideVolumeChart: widget.volHidden,
       secondaryIndicator: widget.secondaryState,
       hideGrid: widget.hideGrid,
       showNowPrice: widget.showNowPrice,

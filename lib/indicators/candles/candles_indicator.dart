@@ -129,7 +129,7 @@ class CandlesIndicator extends Indicator<Candle> {
         0,
         displayRectTop,
         size.width,
-        height,
+        height + displayRectTop,
       ),
       titleTopPadding: chartStyle.topPadding,
       maxVerticalValue: _maxValue,

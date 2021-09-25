@@ -1,15 +1,15 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'volume.dart';
 
 import '../../chart_style.dart';
-import '../../entity/volume_entity.dart';
 import '../../extension/num_ext.dart';
 import '../../utils/number_util.dart';
 import '../indicator_renderer.dart';
 
 /// Volume indicator
-class VolumeRenderer extends IndicatorRenderer<VolumeEntity> {
+class VolumeRenderer extends IndicatorRenderer<Volume> {
   VolumeRenderer({
     required final Rect displayRect,
     required final double maxVerticalValue,
@@ -27,8 +27,8 @@ class VolumeRenderer extends IndicatorRenderer<VolumeEntity> {
   @override
   void drawChart({
     required final Canvas canvas,
-    required final RenderData<VolumeEntity> lastValue,
-    required final RenderData<VolumeEntity> currentValue,
+    required final RenderData<Volume> lastValue,
+    required final RenderData<Volume> currentValue,
     required final Size size,
   }) {
     final volumeBarMidWidth = chartStyle.volWidth * 0.5;
@@ -50,25 +50,25 @@ class VolumeRenderer extends IndicatorRenderer<VolumeEntity> {
                 : chartStyle.colors.dnColor);
     }
 
-    if (lastValue.data.MA5Volume != 0) {
+    if (lastValue.data.ma5Volume != 0) {
       drawLine(
-        lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.MA5Volume),
+        lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.ma5Volume),
         currentValue:
-            RenderPoint(x: currentValue.x, y: currentValue.data.MA5Volume),
+            RenderPoint(x: currentValue.x, y: currentValue.data.ma5Volume),
         canvas: canvas,
         color: chartStyle.colors.ma5Color,
       );
     }
 
-    if (lastValue.data.MA10Volume != 0) {
+    if (lastValue.data.ma10Volume != 0) {
       drawLine(
         lastValue: RenderPoint(
           x: lastValue.x,
-          y: lastValue.data.MA10Volume,
+          y: lastValue.data.ma10Volume,
         ),
         currentValue: RenderPoint(
           x: currentValue.x,
-          y: currentValue.data.MA10Volume,
+          y: currentValue.data.ma10Volume,
         ),
         canvas: canvas,
         color: chartStyle.colors.ma10Color,
@@ -79,7 +79,7 @@ class VolumeRenderer extends IndicatorRenderer<VolumeEntity> {
   @override
   void drawText({
     required final Canvas canvas,
-    required final VolumeEntity value,
+    required final Volume value,
     required final double leftOffset,
   }) {
     final titles = TextSpan(
@@ -89,16 +89,16 @@ class VolumeRenderer extends IndicatorRenderer<VolumeEntity> {
           text: 'VOL:${NumberUtil.format(value.vol)}    ',
           style: getTextStyle(color: chartStyle.colors.volColor),
         ),
-        if (value.MA5Volume.notNullOrZero)
+        if (value.ma5Volume.notNullOrZero)
           TextSpan(
             //TODO: Localize
-            text: 'MA5:${NumberUtil.format(value.MA5Volume!)}    ',
+            text: 'MA5:${NumberUtil.format(value.ma5Volume!)}    ',
             style: getTextStyle(color: chartStyle.colors.ma5Color),
           ),
-        if (value.MA10Volume.notNullOrZero)
+        if (value.ma10Volume.notNullOrZero)
           TextSpan(
             //TODO: Localize
-            text: 'MA10:${NumberUtil.format(value.MA10Volume!)}    ',
+            text: 'MA10:${NumberUtil.format(value.ma10Volume!)}    ',
             style: getTextStyle(color: chartStyle.colors.ma10Color),
           ),
       ],

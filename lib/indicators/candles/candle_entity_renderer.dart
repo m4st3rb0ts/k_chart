@@ -409,7 +409,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     for (var i = 0; i <= columnSpace; i++) {
       canvas.drawLine(
         Offset(columnSpace * i, titleTopPadding / 3),
-        Offset(columnSpace * i, displayRect.bottom),
+        Offset(columnSpace * i, displayRect.bottom + titleTopPadding),
         gridPaint,
       );
     }
@@ -422,7 +422,12 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     required Gradient gradient,
   }) {
     canvas.drawRect(
-      displayRect,
+      Rect.fromLTWH(
+        displayRect.left,
+        displayRect.top,
+        displayRect.width,
+        displayRect.height + titleTopPadding,
+      ),
       Paint()..shader = gradient.createShader(displayRect),
     );
   }

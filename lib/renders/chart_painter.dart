@@ -12,7 +12,6 @@ import '../utils/date_format_util.dart';
 import 'base_chart_painter.dart';
 import '../indicators/indicator_renderer.dart';
 import '../indicators/macd/macd_entity_renderer.dart';
-import '../indicators/volume/volume_renderer.dart';
 
 class ChartPainter extends BaseChartPainter {
   ChartPainter({
@@ -23,7 +22,6 @@ class ChartPainter extends BaseChartPainter {
     required final double currentHorizontalScroll,
     required final bool shouldDisplaySelection,
     required final double selectedHorizontalValue,
-    required this.hideVolumeChart,
     required final SecondaryIndicator secondaryIndicator,
     this.sink,
     this.hideGrid = false,
@@ -55,10 +53,8 @@ class ChartPainter extends BaseChartPainter {
   }
 
   /// Should display volume?
-  final bool hideVolumeChart;
 
   final List<Indicator> indicators;
-  IndicatorRenderer? mVolRenderer;
   IndicatorRenderer? mSecondaryRenderer;
   StreamSink<InfoWindowEntity?>? sink;
   Color? upColor, dnColor;
@@ -91,21 +87,6 @@ class ChartPainter extends BaseChartPainter {
         finalIndexToDisplay: mStopIndex,
       );
       displayRectTop += indicators.first.height + chartStyle.childPadding;
-    }
-
-    if (!hideVolumeChart) {
-      mVolRenderer = VolumeRenderer(
-        displayRect: Rect.fromLTWH(
-          0,
-          displayRectTop,
-          size.width,
-          volumeGraphHeight,
-        ),
-        maxVerticalValue: mVolMaxValue,
-        minVerticalValue: mVolMinValue,
-        fixedDecimalsLength: fixedLength,
-        chartStyle: chartStyle,
-      );
     }
 
     displayRectTop += volumeGraphHeight + chartStyle.childPadding;
@@ -141,17 +122,6 @@ class ChartPainter extends BaseChartPainter {
           ?.drawBackground(canvas: canvas, size: size, gradient: mBgGradient);
     }
 
-    if (mVolRenderer != null) {
-      Rect volRect = Rect.fromLTRB(
-        0,
-        mVolRenderer?.displayRect.top ?? 0 - chartStyle.childPadding,
-        mVolRenderer?.displayRect.width ?? 0,
-        mVolRenderer?.displayRect.bottom ?? 0,
-      );
-      canvas.drawRect(
-          volRect, mBgPaint..shader = mBgGradient.createShader(volRect));
-    }
-
     if (mSecondaryRenderer != null) {
       Rect secondaryRect = Rect.fromLTRB(
         0,
@@ -177,7 +147,6 @@ class ChartPainter extends BaseChartPainter {
       for (final indicator in indicators) {
         indicator.render?.drawGrid(canvas: canvas);
       }
-      mVolRenderer?.drawGrid(canvas: canvas);
       mSecondaryRenderer?.drawGrid(canvas: canvas);
     }
   }
@@ -203,13 +172,6 @@ class ChartPainter extends BaseChartPainter {
           canvas: canvas,
         );
       }
-
-      mVolRenderer?.drawChart(
-        lastValue: RenderData<VolumeEntity>(data: lastPoint, x: lastX),
-        currentValue: RenderData<VolumeEntity>(data: curPoint, x: curX),
-        size: size,
-        canvas: canvas,
-      );
       mSecondaryRenderer?.drawChart(
         lastValue: RenderData<MACDEntity>(data: lastPoint, x: lastX),
         currentValue: RenderData<MACDEntity>(data: curPoint, x: curX),
@@ -232,7 +194,6 @@ class ChartPainter extends BaseChartPainter {
         indicator.render?.drawRightText(canvas: canvas, textStyle: textStyle);
       }
     }
-    mVolRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
     mSecondaryRenderer?.drawRightText(canvas: canvas, textStyle: textStyle);
   }
 
@@ -373,7 +334,6 @@ class ChartPainter extends BaseChartPainter {
       indicator.render?.drawText(
           canvas: canvas, value: indicator.data[index], leftOffset: x);
     }
-    mVolRenderer?.drawText(canvas: canvas, value: customData, leftOffset: x);
     mSecondaryRenderer?.drawText(
         canvas: canvas, value: customData, leftOffset: x);
   }
