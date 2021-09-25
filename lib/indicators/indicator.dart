@@ -6,7 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 
 import '../entity/k_line_entity.dart';
-import '../renders/base_chart_renderer.dart';
+import 'indicator_renderer.dart';
 
 abstract class Indicator<T> {
   const Indicator({required this.dataSource});
@@ -14,11 +14,12 @@ abstract class Indicator<T> {
   final List<KLineEntity> dataSource;
   void updateRender({
     required final Size size,
+    required final double displayRectTop,
     required final double scale,
     required final int firstIndexToDisplay,
     required final int finalIndexToDisplay,
   });
 
   BuiltList<T> get data;
-  BaseChartRenderer<T>? get render;
+  IndicatorRenderer<T>? get render;
 }

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../chart_style.dart';
 
 /// Base class for adding chart renders
-abstract class BaseChartRenderer<T> {
-  BaseChartRenderer({
+abstract class IndicatorRenderer<T> {
+  IndicatorRenderer({
     required this.displayRect,
     required this.maxVerticalValue,
     required this.minVerticalValue,

@@ -75,6 +75,7 @@ class CandlesIndicator extends Indicator<Candle> {
 
   void updateRender({
     required final Size size,
+    required final double displayRectTop,
     required final double scale,
     required final int firstIndexToDisplay,
     required final int finalIndexToDisplay,
@@ -126,7 +127,7 @@ class CandlesIndicator extends Indicator<Candle> {
     _render = CandleEntityRender(
       displayRect: Rect.fromLTWH(
         0,
-        chartStyle.topPadding,
+        displayRectTop,
         size.width,
         height,
       ),

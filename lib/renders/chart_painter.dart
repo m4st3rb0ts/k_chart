@@ -10,7 +10,7 @@ import '../entity/k_line_entity.dart';
 import '../flutter_k_chart.dart';
 import '../utils/date_format_util.dart';
 import 'base_chart_painter.dart';
-import 'base_chart_renderer.dart';
+import '../indicators/indicator_renderer.dart';
 import '../indicators/macd/macd_entity_renderer.dart';
 import '../indicators/volume/volume_renderer.dart';
 
@@ -58,8 +58,8 @@ class ChartPainter extends BaseChartPainter {
   final bool hideVolumeChart;
 
   final CandlesIndicator candlesIndicator;
-  BaseChartRenderer? mVolRenderer;
-  BaseChartRenderer? mSecondaryRenderer;
+  IndicatorRenderer? mVolRenderer;
+  IndicatorRenderer? mSecondaryRenderer;
   StreamSink<InfoWindowEntity?>? sink;
   Color? upColor, dnColor;
   Color? ma5Color, ma10Color, ma30Color;
@@ -85,6 +85,7 @@ class ChartPainter extends BaseChartPainter {
         : 0;
     candlesIndicator.updateRender(
       size: size,
+      displayRectTop: chartStyle.topPadding,
       scale: horizontalScale,
       firstIndexToDisplay: mStartIndex,
       finalIndexToDisplay: mStopIndex,

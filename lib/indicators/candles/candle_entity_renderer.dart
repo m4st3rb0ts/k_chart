@@ -5,12 +5,12 @@
 import 'package:flutter/material.dart';
 
 import '../../chart_style.dart';
-import '../../renders/base_chart_renderer.dart';
+import '../indicator_renderer.dart';
 import 'candles_indicator.dart';
 import 'candle.dart';
 
 /// Candle data render
-class CandleEntityRender extends BaseChartRenderer<Candle> {
+class CandleEntityRender extends IndicatorRenderer<Candle> {
   CandleEntityRender({
     required final Rect displayRect,
     required final double maxVerticalValue,
