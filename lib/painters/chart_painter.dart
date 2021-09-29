@@ -10,7 +10,6 @@ import 'package:intl/intl.dart' as intl;
 import '../ticker/ticker.dart';
 import '../entity/info_window_entity.dart';
 import '../indicators/indicator.dart';
-import '../../common.dart';
 import 'base_chart_painter.dart';
 
 class ChartPainter extends BaseChartPainter {
@@ -25,7 +24,6 @@ class ChartPainter extends BaseChartPainter {
     this.sink,
     this.hideGrid = false,
     this.showNowPrice = true,
-    this.fixedLength = 2,
     final double pointWidth = 11.0,
     this.nowPriceLineWidth = 1,
     this.childPadding = 12.0,
@@ -84,22 +82,12 @@ class ChartPainter extends BaseChartPainter {
 
   final List<Indicator> indicators;
   StreamSink<InfoWindowEntity?>? sink;
-  Color? upColor, dnColor;
-  Color? ma5Color, ma10Color, ma30Color;
-  Color? volColor;
-  Color? macdColor, difColor, deaColor, jColor;
-  int fixedLength;
   late Paint selectPointPaint, selectorBorderPaint, nowPricePaint;
   final bool hideGrid;
   final bool showNowPrice;
 
   @override
   void initChartRenderer({required final Size size}) {
-    if (dataSource.isNotEmpty) {
-      final t = dataSource.first;
-      fixedLength =
-          NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
-    }
     var displayRectTop = 0.0;
     for (final indicator in indicators) {
       indicator.updateRender(

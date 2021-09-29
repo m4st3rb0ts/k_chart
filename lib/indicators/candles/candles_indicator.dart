@@ -71,7 +71,6 @@ class CandlesIndicator extends Indicator {
   double _minLowValue = double.maxFinite;
   int _itemIndexWithMaxValue = 0;
   int _itemIndexWithMinValue = 0;
-  int _fixedDecimalsLength = 2;
 
   double get currentMaxValue => _maxValue;
   double get currentMinValue => _minValue;
@@ -79,7 +78,6 @@ class CandlesIndicator extends Indicator {
   double get currentMinLowValue => _minLowValue;
   int get currentItemIndexWithMaxValue => _itemIndexWithMaxValue;
   int get currentItemIndexWithMinValue => _itemIndexWithMinValue;
-  int get currentFixedDecimalsLength => _fixedDecimalsLength;
 
   void updateRender({
     required final Size size,
@@ -92,15 +90,6 @@ class CandlesIndicator extends Indicator {
     final normalizedStopIndex = min(data.length, finalIndexToDisplay);
     for (var i = normalizedStartIndex; i < normalizedStopIndex; i++) {
       final item = data[i];
-      _fixedDecimalsLength = max(
-        NumberUtil.getMaxDecimalLength(
-          item.open,
-          item.close,
-          item.high,
-          item.low,
-        ),
-        _fixedDecimalsLength,
-      );
 
       late double maxPrice;
       late double minPrice;
@@ -146,7 +135,7 @@ class CandlesIndicator extends Indicator {
       minVerticalValue: _minValue,
       indicator: candleIndicator,
       isTimeLineMode: displayTimeLineChart,
-      fixedDecimalsLength: _fixedDecimalsLength,
+      fixedDecimalsLength: dataSource.fixedDecimalsLength,
       timelineHorizontalScale: scale,
       maFactorsForTitles: dataSource.maDayList,
       candleItemWidth: candleItemWidth,

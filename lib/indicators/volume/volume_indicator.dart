@@ -47,23 +47,11 @@ class VolumeIndicator extends Indicator {
   }) {
     var maxValue = double.minPositive;
     var minValue = double.maxFinite;
-    var fixedDecimalsLength = 2;
 
     final normalizedStartIndex = max(0, firstIndexToDisplay);
     final normalizedStopIndex = min(data.length, finalIndexToDisplay);
     for (int i = normalizedStartIndex; i <= normalizedStopIndex; i++) {
       final item = data[i];
-
-      fixedDecimalsLength = max(
-        NumberUtil.getMaxDecimalLength(
-          item.open,
-          item.close,
-          0,
-          0,
-        ),
-        fixedDecimalsLength,
-      );
-
       maxValue = max(
         maxValue,
         max(
@@ -96,7 +84,7 @@ class VolumeIndicator extends Indicator {
       titlesTopPadding: titlesTopPadding,
       maxVerticalValue: maxValue,
       minVerticalValue: minValue,
-      fixedDecimalsLength: fixedDecimalsLength,
+      fixedDecimalsLength: dataSource.fixedDecimalsLength,
       volumeItemWidth: volumeItemWidth,
       dnColor: dnColor,
       gridColor: gridColor,

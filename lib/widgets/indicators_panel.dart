@@ -121,7 +121,6 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
       hideGrid: widget.hideGrid,
       showNowPrice: widget.showNowPrice,
       sink: mInfoWindowStream?.sink,
-      fixedLength: widget.fixedLength,
     );
 
     return LayoutBuilder(

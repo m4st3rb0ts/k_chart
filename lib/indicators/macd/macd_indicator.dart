@@ -5,8 +5,6 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:built_collection/built_collection.dart';
-
 import '../../ticker/data_source.dart';
 import '../indicator.dart';
 import 'macd_renderer.dart';
@@ -61,7 +59,6 @@ class MacdIndicator extends Indicator {
   }) {
     var maxValue = double.minPositive;
     var minValue = double.maxFinite;
-    var fixedDecimalsLength = 2;
 
     final normalizedStartIndex = max(0, firstIndexToDisplay);
     final normalizedStopIndex = min(data.length, finalIndexToDisplay);
@@ -124,7 +121,7 @@ class MacdIndicator extends Indicator {
       indicator: indicator,
       maxVerticalValue: maxValue,
       minVerticalValue: minValue,
-      fixedDecimalsLength: fixedDecimalsLength,
+      fixedDecimalsLength: dataSource.fixedDecimalsLength,
       defaultTextColor: defaultTextColor,
       macdColor: macdColor,
       dColor: dColor,

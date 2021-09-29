@@ -7,6 +7,7 @@ import 'dart:math';
 
 import 'package:http/http.dart' as http;
 
+import '../common.dart';
 import 'ticker.dart';
 
 class DataSource {
@@ -17,6 +18,15 @@ class DataSource {
     this.k = 2,
   }) {
     _tickers = <Ticker>[]..addAll(tickers);
+    if (_tickers.isNotEmpty) {
+      final ticker = _tickers.first;
+      _fixedLength = NumberUtil.getMaxDecimalLength(
+        ticker.open,
+        ticker.close,
+        ticker.high,
+        ticker.low,
+      );
+    }
     _calcMA();
     _calcBOLL();
     _calcVolumeMA();
@@ -30,8 +40,15 @@ class DataSource {
   late List<Ticker> _tickers;
   List<Ticker> get tickers => _tickers;
 
+  late int _fixedLength;
+  int get fixedDecimalsLength => _fixedLength;
+
   final List<int> maDayList;
+
+  /// BOLL nday
   final int computeFromStartDayNumber;
+
+  /// BOLL param
   final k;
 
   static Future<DataSource> fromUrl(final String url) async {
