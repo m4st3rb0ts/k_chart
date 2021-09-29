@@ -4,8 +4,6 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:built_collection/built_collection.dart';
-
 import '../ticker/ticker.dart';
 import '../ticker/data_source.dart';
 

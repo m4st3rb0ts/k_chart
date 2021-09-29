@@ -5,8 +5,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+
 import '../../ticker/data_source.dart';
-import '../../common.dart';
 import '../indicator.dart';
 
 import 'candle_entity_renderer.dart';

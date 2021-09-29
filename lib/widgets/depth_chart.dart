@@ -6,8 +6,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import 'package:k_chart/flutter_k_chart.dart';
-
 class DepthChartData {
   double price;
   double vol;

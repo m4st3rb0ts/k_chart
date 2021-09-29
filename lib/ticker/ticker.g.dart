@@ -65,7 +65,7 @@ class _$TickerSerializer implements StructuredSerializer<Ticker> {
     value = object.bollMa;
     if (value != null) {
       result
-        ..add('BOLLMA')
+        ..add('bollMa')
         ..add(serializers.serialize(value,
             specifiedType: const FullType(double)));
     }
@@ -93,14 +93,14 @@ class _$TickerSerializer implements StructuredSerializer<Ticker> {
     value = object.ma10Volume;
     if (value != null) {
       result
-        ..add('MA10Volume')
+        ..add('ma10Volume')
         ..add(serializers.serialize(value,
             specifiedType: const FullType(double)));
     }
     value = object.ma5Volume;
     if (value != null) {
       result
-        ..add('MA5Volume')
+        ..add('ma5Volume')
         ..add(serializers.serialize(value,
             specifiedType: const FullType(double)));
     }
@@ -223,8 +223,8 @@ class _$TickerSerializer implements StructuredSerializer<Ticker> {
                       const FullType(List, const [const FullType(double)]))
               as List<double>;
           break;
-        case 'BOLLMA':
-          result.BOLLMA = serializers.deserialize(value,
+        case 'bollMa':
+          result.bollMa = serializers.deserialize(value,
               specifiedType: const FullType(double)) as double;
           break;
         case 'top':
@@ -239,12 +239,12 @@ class _$TickerSerializer implements StructuredSerializer<Ticker> {
           result.bottom = serializers.deserialize(value,
               specifiedType: const FullType(double)) as double;
           break;
-        case 'MA10Volume':
-          result.MA10Volume = serializers.deserialize(value,
+        case 'ma10Volume':
+          result.ma10Volume = serializers.deserialize(value,
               specifiedType: const FullType(double)) as double;
           break;
-        case 'MA5Volume':
-          result.MA5Volume = serializers.deserialize(value,
+        case 'ma5Volume':
+          result.ma5Volume = serializers.deserialize(value,
               specifiedType: const FullType(double)) as double;
           break;
         case 'k':
@@ -473,12 +473,12 @@ class _$Ticker extends Ticker {
           ..add('ratio', ratio)
           ..add('time', time)
           ..add('maValueList', maValueList)
-          ..add('BOLLMA', bollMa)
+          ..add('bollMa', bollMa)
           ..add('top', top)
           ..add('middle', middle)
           ..add('bottom', bottom)
-          ..add('MA10Volume', ma10Volume)
-          ..add('MA5Volume', ma5Volume)
+          ..add('ma10Volume', ma10Volume)
+          ..add('ma5Volume', ma5Volume)
           ..add('k', k)
           ..add('d', d)
           ..add('j', j)
@@ -536,9 +536,9 @@ class TickerBuilder implements Builder<Ticker, TickerBuilder> {
   set maValueList(List<double>? maValueList) =>
       _$this._maValueList = maValueList;
 
-  double? _BOLLMA;
-  double? get BOLLMA => _$this._BOLLMA;
-  set BOLLMA(double? BOLLMA) => _$this._BOLLMA = BOLLMA;
+  double? _bollMa;
+  double? get bollMa => _$this._bollMa;
+  set bollMa(double? bollMa) => _$this._bollMa = bollMa;
 
   double? _top;
   double? get top => _$this._top;
@@ -552,13 +552,13 @@ class TickerBuilder implements Builder<Ticker, TickerBuilder> {
   double? get bottom => _$this._bottom;
   set bottom(double? bottom) => _$this._bottom = bottom;
 
-  double? _MA10Volume;
-  double? get MA10Volume => _$this._MA10Volume;
-  set MA10Volume(double? MA10Volume) => _$this._MA10Volume = MA10Volume;
+  double? _ma10Volume;
+  double? get ma10Volume => _$this._ma10Volume;
+  set ma10Volume(double? ma10Volume) => _$this._ma10Volume = ma10Volume;
 
-  double? _MA5Volume;
-  double? get MA5Volume => _$this._MA5Volume;
-  set MA5Volume(double? MA5Volume) => _$this._MA5Volume = MA5Volume;
+  double? _ma5Volume;
+  double? get ma5Volume => _$this._ma5Volume;
+  set ma5Volume(double? ma5Volume) => _$this._ma5Volume = ma5Volume;
 
   double? _k;
   double? get k => _$this._k;
@@ -611,12 +611,12 @@ class TickerBuilder implements Builder<Ticker, TickerBuilder> {
       _ratio = $v.ratio;
       _time = $v.time;
       _maValueList = $v.maValueList;
-      _BOLLMA = $v.bollMa;
+      _bollMa = $v.bollMa;
       _top = $v.top;
       _middle = $v.middle;
       _bottom = $v.bottom;
-      _MA10Volume = $v.ma10Volume;
-      _MA5Volume = $v.ma5Volume;
+      _ma10Volume = $v.ma10Volume;
+      _ma5Volume = $v.ma5Volume;
       _k = $v.k;
       _d = $v.d;
       _j = $v.j;
@@ -658,12 +658,12 @@ class TickerBuilder implements Builder<Ticker, TickerBuilder> {
             ratio: ratio,
             time: time,
             maValueList: maValueList,
-            bollMa: BOLLMA,
+            bollMa: bollMa,
             top: top,
             middle: middle,
             bottom: bottom,
-            ma10Volume: MA10Volume,
-            ma5Volume: MA5Volume,
+            ma10Volume: ma10Volume,
+            ma5Volume: ma5Volume,
             k: k,
             d: d,
             j: j,

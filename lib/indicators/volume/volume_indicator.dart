@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'dart:math';
 
 import '../../ticker/data_source.dart';
-import '../../common.dart';
 import '../indicator.dart';
 
 import 'volume_renderer.dart';

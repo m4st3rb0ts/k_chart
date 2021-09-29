@@ -55,7 +55,7 @@ class DataSource {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final result = response.body;
-      final Map parseJson = jsonDecode(result) as Map<String, dynamic>;
+      final parseJson = jsonDecode(result) as Map<String, dynamic>;
       final list = parseJson['data'] as List<dynamic>;
       final tickers = list
           .map((item) => Ticker.fromJson(item as Map<String, dynamic>))
@@ -72,12 +72,12 @@ class DataSource {
     List<double> ma = List<double>.filled(maDayList.length, 0);
 
     if (_tickers.isNotEmpty) {
-      for (int i = 0; i < _tickers.length; i++) {
+      for (var i = 0; i < _tickers.length; i++) {
         final closePrice = _tickers[i].close;
         _tickers[i] = _tickers[i].rebuild(
             (t) => t.maValueList = List<double>.filled(maDayList.length, 0));
 
-        for (int j = 0; j < maDayList.length; j++) {
+        for (var j = 0; j < maDayList.length; j++) {
           ma[j] += closePrice;
           if (i == maDayList[j] - 1) {
             _tickers[i] = _tickers[i]
@@ -100,7 +100,7 @@ class DataSource {
       final entity = tickers[i];
       if (i >= computeFromStartDayNumber) {
         double md = 0;
-        for (int j = i - computeFromStartDayNumber + 1; j <= i; j++) {
+        for (var j = i - computeFromStartDayNumber + 1; j <= i; j++) {
           final c = tickers[j].close;
           final m = entity.bollMa ?? 0;
           final value = c - m;
@@ -120,17 +120,17 @@ class DataSource {
 
   void _calcBOLLMA() {
     double ma = 0;
-    for (int i = 0; i < tickers.length; i++) {
-      Ticker entity = tickers[i];
+    for (var i = 0; i < tickers.length; i++) {
+      final entity = tickers[i];
       ma += entity.close;
       if (i == computeFromStartDayNumber - 1) {
         _tickers[i] = _tickers[i].rebuild(
-          (t) => t..BOLLMA = ma / computeFromStartDayNumber,
+          (t) => t..bollMa = ma / computeFromStartDayNumber,
         );
       } else if (i >= computeFromStartDayNumber) {
         ma -= tickers[i - computeFromStartDayNumber].close;
         _tickers[i] = _tickers[i].rebuild(
-          (t) => t..BOLLMA = ma / computeFromStartDayNumber,
+          (t) => t..bollMa = ma / computeFromStartDayNumber,
         );
       }
     }
@@ -140,39 +140,39 @@ class DataSource {
     double volumeMa5 = 0;
     double volumeMa10 = 0;
 
-    for (int i = 0; i < tickers.length; i++) {
-      Ticker entry = tickers[i];
+    for (var i = 0; i < tickers.length; i++) {
+      final entry = tickers[i];
 
       volumeMa5 += entry.vol;
       volumeMa10 += entry.vol;
 
       if (i == 4) {
         _tickers[i] = _tickers[i].rebuild(
-          (t) => t..MA5Volume = (volumeMa5 / 5),
+          (t) => t..ma5Volume = (volumeMa5 / 5),
         );
       } else if (i > 4) {
         volumeMa5 -= tickers[i - 5].vol;
         _tickers[i] = _tickers[i].rebuild(
-          (t) => t..MA5Volume = (volumeMa5 / 5),
+          (t) => t..ma5Volume = (volumeMa5 / 5),
         );
       } else {
         _tickers[i] = _tickers[i].rebuild(
-          (t) => t..MA5Volume = 0,
+          (t) => t..ma5Volume = 0,
         );
       }
 
       if (i == 9) {
         _tickers[i] = _tickers[i].rebuild(
-          (t) => t..MA10Volume = volumeMa10 / 10,
+          (t) => t..ma10Volume = volumeMa10 / 10,
         );
       } else if (i > 9) {
         volumeMa10 -= tickers[i - 10].vol;
         _tickers[i] = _tickers[i].rebuild(
-          (t) => t..MA10Volume = volumeMa10 / 10,
+          (t) => t..ma10Volume = volumeMa10 / 10,
         );
       } else {
         _tickers[i] = _tickers[i].rebuild(
-          (t) => t..MA10Volume = 0,
+          (t) => t..ma10Volume = 0,
         );
       }
     }
@@ -251,19 +251,19 @@ class DataSource {
     double? rsi;
     double rsiABSEma = 0;
     double rsiMaxEma = 0;
-    for (int i = 0; i < tickers.length; i++) {
-      Ticker entity = tickers[i];
-      final double closePrice = entity.close;
+    for (var i = 0; i < tickers.length; i++) {
+      final entity = tickers[i];
+      final closePrice = entity.close;
       if (i == 0) {
         rsi = 0;
         rsiABSEma = 0;
         rsiMaxEma = 0;
       } else {
-        double Rmax = max(0, closePrice - tickers[i - 1].close.toDouble());
-        double RAbs = (closePrice - tickers[i - 1].close.toDouble()).abs();
+        final rMax = max(0, closePrice - tickers[i - 1].close.toDouble());
+        final rAbs = (closePrice - tickers[i - 1].close.toDouble()).abs();
 
-        rsiMaxEma = (Rmax + (14 - 1) * rsiMaxEma) / 14;
-        rsiABSEma = (RAbs + (14 - 1) * rsiABSEma) / 14;
+        rsiMaxEma = (rMax + (14 - 1) * rsiMaxEma) / 14;
+        rsiABSEma = (rAbs + (14 - 1) * rsiABSEma) / 14;
         rsi = (rsiMaxEma / rsiABSEma) * 100;
       }
       if (i < 13) rsi = null;
@@ -276,15 +276,14 @@ class DataSource {
 
   void _calcWR() {
     double r;
-    for (int i = 0; i < tickers.length; i++) {
-      Ticker entity = tickers[i];
+    for (var i = 0; i < tickers.length; i++) {
       int startIndex = i - 14;
       if (startIndex < 0) {
         startIndex = 0;
       }
       double max14 = double.minPositive;
       double min14 = double.maxFinite;
-      for (int index = startIndex; index <= i; index++) {
+      for (var index = startIndex; index <= i; index++) {
         max14 = max(max14, tickers[index].high);
         min14 = min(min14, tickers[index].low);
       }
@@ -310,19 +309,19 @@ class DataSource {
   void _calcCCI() {
     final size = tickers.length;
     final count = 14;
-    for (int i = 0; i < size; i++) {
+    for (var i = 0; i < size; i++) {
       final kline = tickers[i];
       final tp = (kline.high + kline.low + kline.close) / 3;
       final start = max(0, i - count + 1);
       var amount = 0.0;
       var len = 0;
-      for (int n = start; n <= i; n++) {
+      for (var n = start; n <= i; n++) {
         amount += (tickers[n].high + tickers[n].low + tickers[n].close) / 3;
         len++;
       }
       final ma = amount / len;
       amount = 0.0;
-      for (int n = start; n <= i; n++) {
+      for (var n = start; n <= i; n++) {
         amount +=
             (ma - (tickers[n].high + tickers[n].low + tickers[n].close) / 3)
                 .abs();
