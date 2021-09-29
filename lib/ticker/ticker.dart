@@ -23,6 +23,22 @@ abstract class Ticker implements Built<Ticker, TickerBuilder> {
   int? get time;
 
   List<double>? get maValueList;
+  double? get bollMa;
+  double? get top;
+  double? get middle;
+  double? get bottom;
+  double? get ma10Volume;
+  double? get ma5Volume;
+  double? get k;
+  double? get d;
+  double? get j;
+  double? get diff;
+  double? get dea;
+  double? get macd;
+
+  double? get rsi;
+  double? get r;
+  double? get cci;
 
   static Serializer<Ticker> get serializer => _$tickerSerializer;
 

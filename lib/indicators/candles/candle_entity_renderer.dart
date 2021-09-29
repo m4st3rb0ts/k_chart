@@ -3,13 +3,13 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:k_chart/ticker/ticker.dart';
 
 import '../indicator_renderer.dart';
 import 'candles_indicator.dart';
-import 'candle.dart';
 
 /// Candle data render
-class CandleEntityRender extends IndicatorRenderer<Candle> {
+class CandleEntityRender extends IndicatorRenderer {
   CandleEntityRender({
     required final Rect displayRect,
     required final double maxVerticalValue,
@@ -112,7 +112,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
   @override
   void drawText({
     required final Canvas canvas,
-    required final Candle value,
+    required final Ticker value,
     required final double leftOffset,
   }) {
     if (isTimeLineMode == true) {
@@ -170,14 +170,14 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
     );
   }
 
-  List<InlineSpan> _createMATextSpan({required final Candle data}) {
+  List<InlineSpan> _createMATextSpan({required final Ticker data}) {
     var titles = <InlineSpan>[];
-    for (var i = 0; i < data.maValueList.length; i++) {
-      if (data.maValueList[i] != 0) {
+    final maValueList = data.maValueList ?? <double>[];
+    for (var i = 0; i < maValueList.length; i++) {
+      if (maValueList[i] != 0) {
         final title = TextSpan(
           //Localize
-          text:
-              'MA${maFactorsForTitles[i]}:${format(n: data.maValueList[i])}    ',
+          text: 'MA${maFactorsForTitles[i]}:${format(n: maValueList[i])}    ',
           style: getTextStyle(color: _getMAColor(i)),
         );
         titles.add(title);
@@ -189,8 +189,8 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
   @override
   void drawChart({
     required final Canvas canvas,
-    required final RenderData<Candle> lastValue,
-    required final RenderData<Candle> currentValue,
+    required final RenderData<Ticker> lastValue,
+    required final RenderData<Ticker> currentValue,
     required final Size size,
   }) {
     if (!isTimeLineMode) {
@@ -219,8 +219,8 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
 
   void drawPolyline({
     required final Canvas canvas,
-    required final RenderData<Candle> lastValue,
-    required final RenderData<Candle> currentValue,
+    required final RenderData<Ticker> lastValue,
+    required final RenderData<Ticker> currentValue,
   }) {
     // Start filling point
     final lastXValue = lastValue.x == currentValue.x ? 0.0 : lastValue.x;
@@ -279,22 +279,23 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
 
   void drawMaLine({
     required final Canvas canvas,
-    required final RenderData<Candle> lastValue,
-    required final RenderData<Candle> currentValue,
+    required final RenderData<Ticker> lastValue,
+    required final RenderData<Ticker> currentValue,
   }) {
-    for (var i = 0; i < currentValue.data.maValueList.length; i++) {
+    final maValueList = currentValue.data.maValueList ?? <double>[];
+    for (var i = 0; i < maValueList.length; i++) {
       if (i == 3) {
         break;
       }
-      if (lastValue.data.maValueList[i] != 0) {
+      if (maValueList[i] != 0) {
         drawLine(
           lastValue: RenderPoint(
             x: lastValue.x,
-            y: lastValue.data.maValueList[i],
+            y: maValueList[i],
           ),
           currentValue: RenderPoint(
             x: currentValue.x,
-            y: currentValue.data.maValueList[i],
+            y: maValueList[i],
           ),
           canvas: canvas,
           color: _getMAColor(i),
@@ -305,8 +306,8 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
 
   void drawBollLine({
     required final Canvas canvas,
-    required final RenderData<Candle> lastValue,
-    required final RenderData<Candle> currentValue,
+    required final RenderData<Ticker> lastValue,
+    required final RenderData<Ticker> currentValue,
   }) {
     if (lastValue.data.top != 0) {
       drawLine(
@@ -336,7 +337,7 @@ class CandleEntityRender extends IndicatorRenderer<Candle> {
 
   void drawCandle({
     required final Canvas canvas,
-    required final RenderData<Candle> candle,
+    required final RenderData<Ticker> candle,
   }) {
     final high = getVerticalPositionForPoint(value: candle.data.high);
     final low = getVerticalPositionForPoint(value: candle.data.low);

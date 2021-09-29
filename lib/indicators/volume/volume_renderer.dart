@@ -3,15 +3,13 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:k_chart/indicators/volume/volume.dart';
+import 'package:k_chart/ticker/ticker.dart';
 
-import '../../common.dart';
 import '../../common.dart';
 import '../indicator_renderer.dart';
-import 'volume.dart';
 
 /// Volume indicator
-class VolumeRenderer extends IndicatorRenderer<Volume> {
+class VolumeRenderer extends IndicatorRenderer {
   VolumeRenderer({
     required final Rect displayRect,
     required final double maxVerticalValue,
@@ -44,8 +42,8 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
   @override
   void drawChart({
     required final Canvas canvas,
-    required final RenderData<Volume> lastValue,
-    required final RenderData<Volume> currentValue,
+    required final RenderData<Ticker> lastValue,
+    required final RenderData<Ticker> currentValue,
     required final Size size,
   }) {
     final volumeBarMidWidth = volumeItemWidth * 0.5;
@@ -96,7 +94,7 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
   @override
   void drawText({
     required final Canvas canvas,
-    required final Volume value,
+    required final Ticker value,
     required final double leftOffset,
   }) {
     final titles = TextSpan(
@@ -109,13 +107,13 @@ class VolumeRenderer extends IndicatorRenderer<Volume> {
         if (value.ma5Volume.notNullOrZero)
           TextSpan(
             //TODO: Localize
-            text: 'MA5:${NumberUtil.format(value.ma5Volume)}    ',
+            text: 'MA5:${NumberUtil.format(value.ma5Volume ?? 0)}    ',
             style: getTextStyle(color: ma5Color),
           ),
         if (value.ma10Volume.notNullOrZero)
           TextSpan(
             //TODO: Localize
-            text: 'MA10:${NumberUtil.format(value.ma10Volume)}    ',
+            text: 'MA10:${NumberUtil.format(value.ma10Volume ?? 0)}    ',
             style: getTextStyle(color: ma10Color),
           ),
       ],

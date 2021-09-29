@@ -1,22 +1,18 @@
 //
 // Created by @sh1l0n
 //
-
+import 'dart:ui';
 import 'dart:math';
 
-import 'package:built_collection/built_collection.dart';
-
-import 'dart:ui';
-
-import '../../ticker/ticker.dart';
+import '../../ticker/data_source.dart';
 import '../../common.dart';
 import '../indicator.dart';
-import 'volume.dart';
+
 import 'volume_renderer.dart';
 
-class VolumeIndicator extends Indicator<Volume> {
+class VolumeIndicator extends Indicator {
   VolumeIndicator({
-    required final List<Ticker> dataSource,
+    required final DataSource dataSource,
     required final double height,
     this.titlesTopPadding = 12,
     this.volumeItemWidth = 8.5,
@@ -26,24 +22,7 @@ class VolumeIndicator extends Indicator<Volume> {
     this.gridColor = const Color(0xff4c5c74),
     this.upColor = const Color(0xff4DAA90),
     this.dnColor = const Color(0xffC15466),
-  }) : super(dataSource: dataSource, height: height) {
-    for (var i = 0; i < dataSource.length; i++) {
-      final dataItem = dataSource[i];
-      var candle = Volume(
-        (c) => c
-          ..open = dataItem.open
-          ..close = dataItem.close
-          ..vol = dataItem.vol
-          ..ma5Volume = dataItem.MA5Volume ?? 0
-          ..ma10Volume = dataItem.MA10Volume ?? 0,
-      );
-      _volumes.add(candle);
-    }
-  }
-
-  @override
-  BuiltList<Volume> get data => _volumes.toBuiltList();
-  List<Volume> _volumes = <Volume>[];
+  }) : super(dataSource: dataSource, height: height);
 
   @override
   VolumeRenderer? get render => _render;
@@ -85,10 +64,26 @@ class VolumeIndicator extends Indicator<Volume> {
         fixedDecimalsLength,
       );
 
-      maxValue =
-          max(maxValue, max(item.vol, max(item.ma5Volume, item.ma10Volume)));
-      minValue =
-          min(minValue, min(item.vol, min(item.ma5Volume, item.ma10Volume)));
+      maxValue = max(
+        maxValue,
+        max(
+          item.vol,
+          max(
+            item.ma5Volume ?? -double.maxFinite,
+            item.ma10Volume ?? -double.maxFinite,
+          ),
+        ),
+      );
+      minValue = min(
+        minValue,
+        min(
+          item.vol,
+          min(
+            item.ma5Volume ?? double.maxFinite,
+            item.ma10Volume ?? double.maxFinite,
+          ),
+        ),
+      );
     }
 
     _render = VolumeRenderer(

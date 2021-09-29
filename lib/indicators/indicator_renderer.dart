@@ -4,8 +4,10 @@
 
 import 'package:flutter/material.dart';
 
+import '../ticker/ticker.dart';
+
 /// Base class for adding chart renders
-abstract class IndicatorRenderer<T> {
+abstract class IndicatorRenderer {
   IndicatorRenderer({
     required this.displayRect,
     required this.maxVerticalValue,
@@ -103,7 +105,7 @@ abstract class IndicatorRenderer<T> {
   /// @x the left offset where the text will be painted
   void drawText({
     required final Canvas canvas,
-    required T value,
+    required Ticker value,
     required double leftOffset,
   });
 
@@ -123,8 +125,8 @@ abstract class IndicatorRenderer<T> {
   /// @canvas surface to paint
   void drawChart({
     required final Canvas canvas,
-    required final RenderData<T> lastValue,
-    required final RenderData<T> currentValue,
+    required final RenderData<Ticker> lastValue,
+    required final RenderData<Ticker> currentValue,
     required Size size,
   });
 
@@ -176,6 +178,16 @@ abstract class IndicatorRenderer<T> {
   TextStyle getTextStyle({required final Color color}) {
     return TextStyle(fontSize: 10.0, color: color);
   }
+
+  void drawMaxAndMin({
+    required final Canvas canvas,
+    required final Size size,
+  });
+
+  void drawLastPrice({
+    required final Canvas canvas,
+    required final Size size,
+  });
 }
 
 /// class for drawing points in current render

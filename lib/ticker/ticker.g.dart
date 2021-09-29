@@ -62,6 +62,111 @@ class _$TickerSerializer implements StructuredSerializer<Ticker> {
             specifiedType:
                 const FullType(List, const [const FullType(double)])));
     }
+    value = object.bollMa;
+    if (value != null) {
+      result
+        ..add('BOLLMA')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.top;
+    if (value != null) {
+      result
+        ..add('top')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.middle;
+    if (value != null) {
+      result
+        ..add('middle')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.bottom;
+    if (value != null) {
+      result
+        ..add('bottom')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.ma10Volume;
+    if (value != null) {
+      result
+        ..add('MA10Volume')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.ma5Volume;
+    if (value != null) {
+      result
+        ..add('MA5Volume')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.k;
+    if (value != null) {
+      result
+        ..add('k')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.d;
+    if (value != null) {
+      result
+        ..add('d')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.j;
+    if (value != null) {
+      result
+        ..add('j')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.diff;
+    if (value != null) {
+      result
+        ..add('diff')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.dea;
+    if (value != null) {
+      result
+        ..add('dea')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.macd;
+    if (value != null) {
+      result
+        ..add('macd')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.rsi;
+    if (value != null) {
+      result
+        ..add('rsi')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.r;
+    if (value != null) {
+      result
+        ..add('r')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
+    value = object.cci;
+    if (value != null) {
+      result
+        ..add('cci')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(double)));
+    }
     return result;
   }
 
@@ -118,6 +223,66 @@ class _$TickerSerializer implements StructuredSerializer<Ticker> {
                       const FullType(List, const [const FullType(double)]))
               as List<double>;
           break;
+        case 'BOLLMA':
+          result.BOLLMA = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'top':
+          result.top = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'middle':
+          result.middle = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'bottom':
+          result.bottom = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'MA10Volume':
+          result.MA10Volume = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'MA5Volume':
+          result.MA5Volume = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'k':
+          result.k = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'd':
+          result.d = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'j':
+          result.j = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'diff':
+          result.diff = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'dea':
+          result.dea = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'macd':
+          result.macd = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'rsi':
+          result.rsi = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'r':
+          result.r = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
+        case 'cci':
+          result.cci = serializers.deserialize(value,
+              specifiedType: const FullType(double)) as double;
+          break;
       }
     }
 
@@ -146,6 +311,36 @@ class _$Ticker extends Ticker {
   final int? time;
   @override
   final List<double>? maValueList;
+  @override
+  final double? bollMa;
+  @override
+  final double? top;
+  @override
+  final double? middle;
+  @override
+  final double? bottom;
+  @override
+  final double? ma10Volume;
+  @override
+  final double? ma5Volume;
+  @override
+  final double? k;
+  @override
+  final double? d;
+  @override
+  final double? j;
+  @override
+  final double? diff;
+  @override
+  final double? dea;
+  @override
+  final double? macd;
+  @override
+  final double? rsi;
+  @override
+  final double? r;
+  @override
+  final double? cci;
 
   factory _$Ticker([void Function(TickerBuilder)? updates]) =>
       (new TickerBuilder()..update(updates)).build();
@@ -160,7 +355,22 @@ class _$Ticker extends Ticker {
       this.change,
       this.ratio,
       this.time,
-      this.maValueList})
+      this.maValueList,
+      this.bollMa,
+      this.top,
+      this.middle,
+      this.bottom,
+      this.ma10Volume,
+      this.ma5Volume,
+      this.k,
+      this.d,
+      this.j,
+      this.diff,
+      this.dea,
+      this.macd,
+      this.rsi,
+      this.r,
+      this.cci})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(open, 'Ticker', 'open');
     BuiltValueNullFieldError.checkNotNull(high, 'Ticker', 'high');
@@ -190,7 +400,22 @@ class _$Ticker extends Ticker {
         change == other.change &&
         ratio == other.ratio &&
         time == other.time &&
-        maValueList == other.maValueList;
+        maValueList == other.maValueList &&
+        bollMa == other.bollMa &&
+        top == other.top &&
+        middle == other.middle &&
+        bottom == other.bottom &&
+        ma10Volume == other.ma10Volume &&
+        ma5Volume == other.ma5Volume &&
+        k == other.k &&
+        d == other.d &&
+        j == other.j &&
+        diff == other.diff &&
+        dea == other.dea &&
+        macd == other.macd &&
+        rsi == other.rsi &&
+        r == other.r &&
+        cci == other.cci;
   }
 
   @override
@@ -202,15 +427,37 @@ class _$Ticker extends Ticker {
                     $jc(
                         $jc(
                             $jc(
-                                $jc($jc($jc(0, open.hashCode), high.hashCode),
-                                    low.hashCode),
-                                close.hashCode),
-                            vol.hashCode),
-                        amount.hashCode),
-                    change.hashCode),
-                ratio.hashCode),
-            time.hashCode),
-        maValueList.hashCode));
+                                $jc(
+                                    $jc(
+                                        $jc(
+                                            $jc(
+                                                $jc(
+                                                    $jc(
+                                                        $jc(
+                                                            $jc(
+                                                                $jc(
+                                                                    $jc(
+                                                                        $jc(
+                                                                            $jc($jc($jc($jc($jc($jc($jc(0, open.hashCode), high.hashCode), low.hashCode), close.hashCode), vol.hashCode), amount.hashCode),
+                                                                                change.hashCode),
+                                                                            ratio.hashCode),
+                                                                        time.hashCode),
+                                                                    maValueList.hashCode),
+                                                                bollMa.hashCode),
+                                                            top.hashCode),
+                                                        middle.hashCode),
+                                                    bottom.hashCode),
+                                                ma10Volume.hashCode),
+                                            ma5Volume.hashCode),
+                                        k.hashCode),
+                                    d.hashCode),
+                                j.hashCode),
+                            diff.hashCode),
+                        dea.hashCode),
+                    macd.hashCode),
+                rsi.hashCode),
+            r.hashCode),
+        cci.hashCode));
   }
 
   @override
@@ -225,7 +472,22 @@ class _$Ticker extends Ticker {
           ..add('change', change)
           ..add('ratio', ratio)
           ..add('time', time)
-          ..add('maValueList', maValueList))
+          ..add('maValueList', maValueList)
+          ..add('BOLLMA', bollMa)
+          ..add('top', top)
+          ..add('middle', middle)
+          ..add('bottom', bottom)
+          ..add('MA10Volume', ma10Volume)
+          ..add('MA5Volume', ma5Volume)
+          ..add('k', k)
+          ..add('d', d)
+          ..add('j', j)
+          ..add('diff', diff)
+          ..add('dea', dea)
+          ..add('macd', macd)
+          ..add('rsi', rsi)
+          ..add('r', r)
+          ..add('cci', cci))
         .toString();
   }
 }
@@ -274,6 +536,66 @@ class TickerBuilder implements Builder<Ticker, TickerBuilder> {
   set maValueList(List<double>? maValueList) =>
       _$this._maValueList = maValueList;
 
+  double? _BOLLMA;
+  double? get BOLLMA => _$this._BOLLMA;
+  set BOLLMA(double? BOLLMA) => _$this._BOLLMA = BOLLMA;
+
+  double? _top;
+  double? get top => _$this._top;
+  set top(double? top) => _$this._top = top;
+
+  double? _middle;
+  double? get middle => _$this._middle;
+  set middle(double? middle) => _$this._middle = middle;
+
+  double? _bottom;
+  double? get bottom => _$this._bottom;
+  set bottom(double? bottom) => _$this._bottom = bottom;
+
+  double? _MA10Volume;
+  double? get MA10Volume => _$this._MA10Volume;
+  set MA10Volume(double? MA10Volume) => _$this._MA10Volume = MA10Volume;
+
+  double? _MA5Volume;
+  double? get MA5Volume => _$this._MA5Volume;
+  set MA5Volume(double? MA5Volume) => _$this._MA5Volume = MA5Volume;
+
+  double? _k;
+  double? get k => _$this._k;
+  set k(double? k) => _$this._k = k;
+
+  double? _d;
+  double? get d => _$this._d;
+  set d(double? d) => _$this._d = d;
+
+  double? _j;
+  double? get j => _$this._j;
+  set j(double? j) => _$this._j = j;
+
+  double? _diff;
+  double? get diff => _$this._diff;
+  set diff(double? diff) => _$this._diff = diff;
+
+  double? _dea;
+  double? get dea => _$this._dea;
+  set dea(double? dea) => _$this._dea = dea;
+
+  double? _macd;
+  double? get macd => _$this._macd;
+  set macd(double? macd) => _$this._macd = macd;
+
+  double? _rsi;
+  double? get rsi => _$this._rsi;
+  set rsi(double? rsi) => _$this._rsi = rsi;
+
+  double? _r;
+  double? get r => _$this._r;
+  set r(double? r) => _$this._r = r;
+
+  double? _cci;
+  double? get cci => _$this._cci;
+  set cci(double? cci) => _$this._cci = cci;
+
   TickerBuilder();
 
   TickerBuilder get _$this {
@@ -289,6 +611,21 @@ class TickerBuilder implements Builder<Ticker, TickerBuilder> {
       _ratio = $v.ratio;
       _time = $v.time;
       _maValueList = $v.maValueList;
+      _BOLLMA = $v.bollMa;
+      _top = $v.top;
+      _middle = $v.middle;
+      _bottom = $v.bottom;
+      _MA10Volume = $v.ma10Volume;
+      _MA5Volume = $v.ma5Volume;
+      _k = $v.k;
+      _d = $v.d;
+      _j = $v.j;
+      _diff = $v.diff;
+      _dea = $v.dea;
+      _macd = $v.macd;
+      _rsi = $v.rsi;
+      _r = $v.r;
+      _cci = $v.cci;
       _$v = null;
     }
     return this;
@@ -320,7 +657,22 @@ class TickerBuilder implements Builder<Ticker, TickerBuilder> {
             change: change,
             ratio: ratio,
             time: time,
-            maValueList: maValueList);
+            maValueList: maValueList,
+            bollMa: BOLLMA,
+            top: top,
+            middle: middle,
+            bottom: bottom,
+            ma10Volume: MA10Volume,
+            ma5Volume: MA5Volume,
+            k: k,
+            d: d,
+            j: j,
+            diff: diff,
+            dea: dea,
+            macd: macd,
+            rsi: rsi,
+            r: r,
+            cci: cci);
     replace(_$result);
     return _$result;
   }

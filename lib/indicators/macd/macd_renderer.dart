@@ -3,12 +3,14 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:k_chart/indicators/macd/macd.dart';
+
+import '../../ticker/ticker.dart';
 
 import '../indicator_renderer.dart';
-import 'macd.dart';
 
-class MacdRenderer extends IndicatorRenderer<Macd> {
+enum MacdIndicators { MACD, KDJ, RSI, WR, CCI, NONE }
+
+class MacdRenderer extends IndicatorRenderer {
   MacdRenderer({
     required final Rect displayRect,
     required final double maxVerticalValue,
@@ -53,8 +55,8 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
   @override
   void drawChart({
     required final Canvas canvas,
-    required final RenderData<Macd> lastValue,
-    required final RenderData<Macd> currentValue,
+    required final RenderData<Ticker> lastValue,
+    required final RenderData<Ticker> currentValue,
     required final Size size,
   }) {
     switch (indicator) {
@@ -118,10 +120,10 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
 
   void drawMACD({
     required final Canvas canvas,
-    required final RenderData<Macd> lastValue,
-    required final RenderData<Macd> currentValue,
+    required final RenderData<Ticker> lastValue,
+    required final RenderData<Ticker> currentValue,
   }) {
-    final currentMacdValue = currentValue.data.macd;
+    final currentMacdValue = currentValue.data.macd ?? 0;
     final currentMacdValueNormalized =
         getVerticalPositionForPoint(value: currentMacdValue);
     final macdMidWidth = macdDisplayItemWidth * 0.5;
@@ -147,10 +149,11 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
         chartPaint..color = dnColor,
       );
     }
-    if (lastValue.data.dif != 0) {
+    if (lastValue.data.diff != 0) {
       drawLine(
-        lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.dif),
-        currentValue: RenderPoint(x: currentValue.x, y: currentValue.data.dif),
+        lastValue: RenderPoint(x: lastValue.x, y: lastValue.data.diff ?? 0),
+        currentValue:
+            RenderPoint(x: currentValue.x, y: currentValue.data.diff ?? 0),
         canvas: canvas,
         color: difColor,
       );
@@ -168,7 +171,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
   @override
   void drawText({
     required final Canvas canvas,
-    required final Macd value,
+    required final Ticker value,
     required final double leftOffset,
   }) {
     var titles = <TextSpan>[];
@@ -190,10 +193,10 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
                 color: macdColor,
               ),
             ),
-          if (value.dif != 0)
+          if (value.diff != 0)
             TextSpan(
               //TODO: Localize
-              text: 'DIF:${format(n: value.dif)}    ',
+              text: 'DIF:${format(n: value.diff)}    ',
               style: getTextStyle(
                 color: difColor,
               ),
@@ -225,7 +228,7 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
                 color: kColor,
               ),
             ),
-          if (value.dif != 0)
+          if (value.diff != 0)
             TextSpan(
               //TODO: Localize
               text: 'D:${format(n: value.d)}    ',
@@ -335,4 +338,10 @@ class MacdRenderer extends IndicatorRenderer<Macd> {
       ),
     );
   }
+
+  @override
+  void drawLastPrice({required Canvas canvas, required Size size}) {}
+
+  @override
+  void drawMaxAndMin({required Canvas canvas, required Size size}) {}
 }

@@ -15,7 +15,7 @@ import 'package:k_chart/painters/chart_painter.dart';
 
 class IndicatorsPanel extends StatefulWidget {
   const IndicatorsPanel({
-    required this.datas,
+    required this.dataSource,
     required this.indicators,
     this.onSecondaryTap,
     this.hideGrid = false,
@@ -34,7 +34,7 @@ class IndicatorsPanel extends StatefulWidget {
     this.infoWindowDnColor = const Color(0xffff0000),
   });
 
-  final List<Ticker> datas;
+  final DataSource dataSource;
   final Function()? onSecondaryTap;
   final bool hideGrid;
   final bool showNowPrice;
@@ -78,9 +78,9 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
     mInfoWindowStream = StreamController<InfoWindowEntity?>();
 
     displayDateFormat = DateFormat('MM/dd/yy');
-    if (widget.datas.length > 1) {
-      final firstTime = widget.datas.first.time ?? 0;
-      final secondTime = widget.datas[1].time ?? 0;
+    if (widget.dataSource.tickers.length > 1) {
+      final firstTime = widget.dataSource.tickers.first.time ?? 0;
+      final secondTime = widget.dataSource.tickers[1].time ?? 0;
       final time = (secondTime - firstTime) ~/ 1000;
       if (time >= 24 * 60 * 60 * 28) {
         displayDateFormat = DateFormat('MM/yy');
@@ -105,14 +105,14 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.datas.isEmpty) {
+    if (widget.dataSource.tickers.isEmpty) {
       mScrollX = 0.0;
       mSelectX = 0.0;
       mScaleX = 1.0;
     }
     final _painter = ChartPainter(
       indicators: widget.indicators,
-      dataSource: widget.datas,
+      dataSource: widget.dataSource.tickers,
       displayDateFormat: displayDateFormat,
       horizontalScale: mScaleX,
       currentHorizontalScroll: mScrollX,

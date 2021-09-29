@@ -4,21 +4,18 @@
 
 import 'dart:math';
 
-import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
-
+import '../../ticker/data_source.dart';
 import '../../common.dart';
-import '../../ticker/ticker.dart';
-
 import '../indicator.dart';
-import 'candle.dart';
+
 import 'candle_entity_renderer.dart';
 
 enum CandlesIndicators { MA, BOLL, NONE }
 
-class CandlesIndicator extends Indicator<Candle> {
+class CandlesIndicator extends Indicator {
   CandlesIndicator({
-    required final List<Ticker> dataSource,
+    required final DataSource dataSource,
     required final double height,
     required this.displayTimeLineChart,
     required this.candleIndicator,
@@ -40,27 +37,7 @@ class CandlesIndicator extends Indicator<Candle> {
     this.minColor = const Color(0xffffffff),
     this.nowPriceLineLength = 1,
     this.nowPriceLineSpan = 1,
-    this.maDayList = const [5, 10, 20],
-  }) : super(dataSource: dataSource, height: height) {
-    for (var i = 0; i < dataSource.length; i++) {
-      final dataItem = dataSource[i];
-      var candle = Candle(
-        (c) => c
-          ..open = dataItem.open
-          ..close = dataItem.close
-          ..high = dataItem.high
-          ..low = dataItem.low
-          ..top = dataItem.top ?? 0
-          ..middle = dataItem.middle ?? 0
-          ..bottom = dataItem.bottom ?? 0
-          ..bollMa = dataItem.BOLLMA ?? 0
-          ..maValueList = (dataItem.maValueList?.toList() ?? <double>[])
-              .toBuiltList()
-              .toBuilder(),
-      );
-      _candles.add(candle);
-    }
-  }
+  }) : super(dataSource: dataSource, height: height);
 
   final double titlesTopPadding;
   final double candleLineWidth;
@@ -81,16 +58,12 @@ class CandlesIndicator extends Indicator<Candle> {
   final double nowPriceLineLength;
   final double nowPriceLineSpan;
 
-  List<Candle> _candles = <Candle>[];
-  @override
-  BuiltList<Candle> get data => _candles.toBuiltList();
-
   @override
   CandleEntityRender? get render => _render;
+  CandleEntityRender? _render;
 
   final bool displayTimeLineChart;
   final CandlesIndicators candleIndicator;
-  final List<int> maDayList;
 
   double _maxValue = double.minPositive;
   double _minValue = double.maxFinite;
@@ -132,11 +105,13 @@ class CandlesIndicator extends Indicator<Candle> {
       late double maxPrice;
       late double minPrice;
       if (candleIndicator == CandlesIndicators.MA) {
-        maxPrice = max(item.high, _findMaxMA(maValueList: item.maValueList));
-        minPrice = min(item.low, _findMinMA(maValueList: item.maValueList));
+        maxPrice = max(
+            item.high, _findMaxMA(maValueList: item.maValueList ?? <double>[]));
+        minPrice = min(
+            item.low, _findMinMA(maValueList: item.maValueList ?? <double>[]));
       } else if (candleIndicator == CandlesIndicators.BOLL) {
-        maxPrice = max(item.top, item.high);
-        minPrice = min(item.bottom, item.low);
+        maxPrice = max(item.top ?? -double.maxFinite, item.high);
+        minPrice = min(item.bottom ?? double.maxFinite, item.low);
       } else {
         maxPrice = item.high;
         minPrice = item.low;
@@ -173,7 +148,7 @@ class CandlesIndicator extends Indicator<Candle> {
       isTimeLineMode: displayTimeLineChart,
       fixedDecimalsLength: _fixedDecimalsLength,
       timelineHorizontalScale: scale,
-      maFactorsForTitles: maDayList,
+      maFactorsForTitles: dataSource.maDayList,
       candleItemWidth: candleItemWidth,
       candleLineWidth: candleLineWidth,
       dnColor: dnColor,
@@ -194,7 +169,7 @@ class CandlesIndicator extends Indicator<Candle> {
     );
   }
 
-  double _findMaxMA({required final BuiltList<double> maValueList}) {
+  double _findMaxMA({required final List<double> maValueList}) {
     var result = double.minPositive;
     for (final maValue in maValueList) {
       result = max(result, maValue);
@@ -203,7 +178,7 @@ class CandlesIndicator extends Indicator<Candle> {
   }
 
   // [] Reviewed
-  double _findMinMA({required final BuiltList<double> maValueList}) {
+  double _findMinMA({required final List<double> maValueList}) {
     var result = double.maxFinite;
     for (final maValue in maValueList) {
       result = min(result, maValue == 0 ? double.maxFinite : maValue);

@@ -7,14 +7,13 @@ import 'dart:ui';
 
 import 'package:built_collection/built_collection.dart';
 
-import '../../ticker/ticker.dart';
+import '../../ticker/data_source.dart';
 import '../indicator.dart';
-import 'macd.dart';
 import 'macd_renderer.dart';
 
-class MacdIndicator extends Indicator<Macd> {
+class MacdIndicator extends Indicator {
   MacdIndicator({
-    required final List<Ticker> dataSource,
+    required final DataSource dataSource,
     required this.indicator,
     required final double height,
     this.macdDisplayItemWidth = 3.0,
@@ -30,28 +29,7 @@ class MacdIndicator extends Indicator<Macd> {
     this.upColor = const Color(0xff4DAA90),
     this.dnColor = const Color(0xffC15466),
     this.gridColor = const Color(0xff4c5c74),
-  }) : super(dataSource: dataSource, height: height) {
-    for (var i = 0; i < dataSource.length; i++) {
-      final dataItem = dataSource[i];
-      var macd = Macd(
-        (c) => c
-          ..k = dataItem.k ?? 0
-          ..d = dataItem.d ?? 0
-          ..j = dataItem.j ?? 0
-          ..rsi = dataItem.rsi ?? 0
-          ..r = dataItem.r ?? 0
-          ..cci = dataItem.cci ?? 0
-          ..macd = dataItem.macd ?? 0
-          ..dif = dataItem.dif ?? 0
-          ..dea = dataItem.dea ?? 0,
-      );
-      _macd.add(macd);
-    }
-  }
-
-  @override
-  BuiltList<Macd> get data => _macd.toBuiltList();
-  List<Macd> _macd = <Macd>[];
+  }) : super(dataSource: dataSource, height: height);
 
   final MacdIndicators indicator;
 
@@ -90,20 +68,44 @@ class MacdIndicator extends Indicator<Macd> {
     for (var i = normalizedStartIndex; i < normalizedStopIndex; i++) {
       final item = data[i];
       if (indicator == MacdIndicators.MACD) {
-        maxValue = max(maxValue, max(item.macd, max(item.dif, item.dea)));
-        minValue = min(minValue, min(item.macd, min(item.dif, item.dea)));
+        maxValue = max(
+          maxValue,
+          max(
+            item.macd ?? 0,
+            max(item.diff ?? -double.maxFinite, item.dea ?? -double.maxFinite),
+          ),
+        );
+        minValue = min(
+          minValue,
+          min(
+            item.macd ?? 0,
+            min(item.diff ?? -double.maxFinite, item.dea ?? double.maxFinite),
+          ),
+        );
       } else if (indicator == MacdIndicators.KDJ) {
-        maxValue = max(maxValue, max(item.k, max(item.d, item.j)));
-        minValue = min(minValue, min(item.k, min(item.d, item.j)));
+        maxValue = max(
+          maxValue,
+          max(
+            item.k ?? 0,
+            max(item.d ?? -double.maxFinite, item.j ?? -double.maxFinite),
+          ),
+        );
+        minValue = min(
+          minValue,
+          min(
+            item.k ?? 0,
+            min(item.d ?? double.maxFinite, item.j ?? double.maxFinite),
+          ),
+        );
       } else if (indicator == MacdIndicators.RSI) {
-        maxValue = max(maxValue, item.rsi);
-        minValue = min(minValue, item.rsi);
+        maxValue = max(maxValue, item.rsi ?? -double.maxFinite);
+        minValue = min(minValue, item.rsi ?? double.maxFinite);
       } else if (indicator == MacdIndicators.WR) {
         maxValue = 0;
         minValue = -100;
       } else if (indicator == MacdIndicators.CCI) {
-        maxValue = max(maxValue, item.cci);
-        minValue = min(minValue, item.cci);
+        maxValue = max(maxValue, item.cci ?? -double.maxFinite);
+        minValue = min(minValue, item.cci ?? double.maxFinite);
       } else {
         maxValue = 0;
         minValue = 0;

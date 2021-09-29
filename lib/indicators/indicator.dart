@@ -2,19 +2,22 @@
 // Created by @sh1l0n
 //
 
-import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 
+import 'package:built_collection/built_collection.dart';
+
 import '../ticker/ticker.dart';
+import '../ticker/data_source.dart';
+
 import 'indicator_renderer.dart';
 
-abstract class Indicator<T> {
+abstract class Indicator {
   const Indicator({
     required this.dataSource,
     required this.height,
   });
 
-  final List<Ticker> dataSource;
+  final DataSource dataSource;
   void updateRender({
     required final Size size,
     required final double displayRectTop,
@@ -23,10 +26,10 @@ abstract class Indicator<T> {
     required final int finalIndexToDisplay,
   });
 
-  RenderData<T> getRenderData(final T data, final double dx) =>
-      RenderData<T>(data: data, x: dx);
+  RenderData<Ticker> getRenderData(final Ticker data, final double dx) =>
+      RenderData<Ticker>(data: data, x: dx);
 
   final double height;
-  BuiltList<T> get data;
-  IndicatorRenderer<T>? get render;
+  List<Ticker> get data => dataSource.tickers;
+  IndicatorRenderer? get render;
 }
