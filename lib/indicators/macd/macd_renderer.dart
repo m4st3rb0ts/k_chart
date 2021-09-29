@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 import '../../ticker/ticker.dart';
 
 import '../indicator_renderer.dart';
-
-enum MacdIndicators { MACD, KDJ, RSI, WR, CCI, NONE }
+import 'macd_indicator.dart';
 
 class MacdRenderer extends IndicatorRenderer {
   MacdRenderer({

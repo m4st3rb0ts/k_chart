@@ -9,6 +9,8 @@ import '../../ticker/data_source.dart';
 import '../indicator.dart';
 import 'macd_renderer.dart';
 
+enum MacdIndicators { MACD, KDJ, RSI, WR, CCI, NONE }
+
 class MacdIndicator extends Indicator {
   MacdIndicator({
     required final DataSource dataSource,

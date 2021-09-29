@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:k_chart/chart_translations.dart';
 
 import 'package:k_chart/flutter_k_chart.dart';
-import 'package:k_chart/indicators/macd/macd_renderer.dart';
 
 void main() => runApp(MyApp());
 
