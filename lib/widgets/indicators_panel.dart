@@ -63,7 +63,7 @@ class IndicatorsPanel extends StatefulWidget {
 class _IndicatorsPanelState extends State<IndicatorsPanel>
     with TickerProviderStateMixin {
   double mScaleX = 1.0, mScrollX = 0.0, mSelectX = 0.0;
-  StreamController<InfoWindowData?>? mInfoWindowStream;
+  StreamController<InfoWindowEntity?>? mInfoWindowStream;
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;

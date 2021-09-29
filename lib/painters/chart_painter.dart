@@ -239,8 +239,9 @@ class ChartPainter extends BaseChartPainter {
     double y = getMainY(point.close);
     double x;
     bool isLeft = false;
-    if (translateXtoX(
-            translateX: getLeftOffsetByIndex(index: index), size: size) <
+
+    if (computeTranslationFor(
+            leftOffset: getLeftOffsetByIndex(index: index), size: size) <
         size.width / 2) {
       isLeft = false;
       x = 1;
@@ -272,8 +273,8 @@ class ChartPainter extends BaseChartPainter {
     TextPainter dateTp = getTextPainter(getDate(point.time), crossTextColor);
     textWidth = dateTp.width;
     r = textHeight / 2;
-    x = translateXtoX(
-        translateX: getLeftOffsetByIndex(index: index), size: size);
+    x = computeTranslationFor(
+        leftOffset: getLeftOffsetByIndex(index: index), size: size);
     y = size.height - bottomPadding;
 
     if (x < textWidth + 2 * w1) {

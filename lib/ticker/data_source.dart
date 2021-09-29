@@ -314,7 +314,7 @@ class DataSource {
       _tickers[i] = _tickers[i].rebuild(
         (t) => t..cci = ((tp - ma) / 0.015 / md),
       );
-      if (kline.cci!.isNaN) {
+      if (kline.cci?.isNaN ?? false) {
         _tickers[i] = _tickers[i].rebuild(
           (t) => t..cci = 0.0,
         );

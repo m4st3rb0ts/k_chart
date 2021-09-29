@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:k_chart/chart_translations.dart';
 
 import 'package:k_chart/flutter_k_chart.dart';
+import 'package:k_chart/indicators/macd/macd_renderer.dart';
 
 void main() => runApp(MyApp());
 
@@ -98,24 +98,24 @@ class _MyHomePageState extends State<MyHomePage> {
               final BuildContext context,
               final AsyncSnapshot<DataSource> snapshot,
             ) {
+              final dataSource = snapshot.data ?? DataSource(tickers: []);
               return IndicatorsPanel(
-                datas: snapshot.data?.tickers ?? <Ticker>[],
+                dataSource: dataSource,
                 fixedLength: 2,
                 translations: kChartTranslations,
                 showNowPrice: _showNowPrice,
                 hideGrid: _hideGrid,
                 indicators: [
                   CandlesIndicator(
-                    dataSource: datas ?? <Ticker>[],
+                    dataSource: dataSource,
                     height: 200,
                     displayTimeLineChart: isLine,
                     candleIndicator: _mainState,
-                    maDayList: [1, 100, 1000],
                   ),
-                  // VolumeIndicator(
-                  //   height: 150,
-                  //   dataSource: datas ?? <Ticker>[],
-                  // ),
+                  VolumeIndicator(
+                    height: 150,
+                    dataSource: dataSource,
+                  ),
                 ],
               );
             },
