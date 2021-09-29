@@ -271,7 +271,6 @@ class IndicatorPainter extends CustomPainter {
         ),
       );
 
-  @override
   void initChartRenderer({required final Size size}) {
     var displayRectTop = 0.0;
     for (final indicator in indicators) {
@@ -286,7 +285,6 @@ class IndicatorPainter extends CustomPainter {
     }
   }
 
-  @override
   void drawBackground(
       {required final Canvas canvas, required final Size size}) {
     Paint mBgPaint = Paint();
@@ -306,7 +304,6 @@ class IndicatorPainter extends CustomPainter {
         dateRect, mBgPaint..shader = mBgGradient.createShader(dateRect));
   }
 
-  @override
   void drawGrid({
     required final Canvas canvas,
     required final Size size,
@@ -322,7 +319,6 @@ class IndicatorPainter extends CustomPainter {
     }
   }
 
-  @override
   void drawChart({required final Canvas canvas, required final Size size}) {
     canvas.save();
     canvas.translate(getCurrentOffset(size: size) * horizontalScale, 0.0);
@@ -345,7 +341,6 @@ class IndicatorPainter extends CustomPainter {
     canvas.restore();
   }
 
-  @override
   void drawRightText({
     required final Canvas canvas,
     required final Size size,
@@ -364,7 +359,6 @@ class IndicatorPainter extends CustomPainter {
     }
   }
 
-  @override
   void drawDate({required final Canvas canvas, required final Size size}) {
     double columnSpace = size.width / numberOfGridColumns;
     double startX = getLeftOffsetByIndex(index: mStartIndex) - pointWidth * 0.5;
@@ -393,7 +387,6 @@ class IndicatorPainter extends CustomPainter {
     }
   }
 
-  @override
   void drawCrossLineText(
       {required final Canvas canvas, required final Size size}) {
     final index = getIndexForSelectedHorizontalValue(size: size);
@@ -470,7 +463,6 @@ class IndicatorPainter extends CustomPainter {
     sink?.add(IndicatorPainterInfoWindowData(point, isLeft: isLeft));
   }
 
-  @override
   void drawText({
     required final Canvas canvas,
     required final Size size,
@@ -498,7 +490,6 @@ class IndicatorPainter extends CustomPainter {
     }
   }
 
-  @override
   void drawMaxAndMin({required final Canvas canvas, required final Size size}) {
     // if (candlesIndicator.render?.isTimeLineMode ?? false) {
     //   return;
@@ -544,7 +535,6 @@ class IndicatorPainter extends CustomPainter {
     // }
   }
 
-  @override
   void drawNowPrice({required final Canvas canvas, required final Size size}) {
     // if (!showNowPrice) {
     //   return;
