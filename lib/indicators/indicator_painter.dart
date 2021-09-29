@@ -2,29 +2,40 @@
 // Created by @OpenFlutter & @sh1l0n
 //
 
-import 'dart:async' show StreamSink;
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
 
-import '../ticker/ticker.dart';
-import '../entity/info_window_entity.dart';
-import '../indicators/indicator.dart';
-import 'base_chart_painter.dart';
+import 'indicator.dart';
 
-class ChartPainter extends BaseChartPainter {
-  ChartPainter({
+import '../ticker/ticker.dart';
+
+import 'dart:async' show StreamSink;
+
+class IndicatorPainterInfoWindowData {
+  Ticker kLineEntity;
+  bool isLeft;
+
+  IndicatorPainterInfoWindowData(
+    this.kLineEntity, {
+    this.isLeft = false,
+  });
+}
+
+class IndicatorPainter extends CustomPainter {
+  IndicatorPainter({
+    required this.dataSource,
     required this.indicators,
-    required final List<Ticker> dataSource,
-    required final intl.DateFormat displayDateFormat,
-    required final double horizontalScale,
-    required final double currentHorizontalScroll,
-    required final bool shouldDisplaySelection,
-    required final double selectedHorizontalValue,
+    required this.displayDateFormat,
+    required this.selectedHorizontalValue,
+    this.horizontalScale = 1.0,
+    this.currentHorizontalScroll = 0.0,
+    this.shouldDisplaySelection = false,
     this.sink,
     this.hideGrid = false,
     this.showNowPrice = true,
-    final double pointWidth = 11.0,
+    this.pointWidth = 11.0,
     this.nowPriceLineWidth = 1,
     this.childPadding = 12.0,
     this.topPadding = 30.0,
@@ -42,15 +53,7 @@ class ChartPainter extends BaseChartPainter {
     this.vCrossWidth = 8.5,
     this.hCrossColor = const Color(0xffffffff),
     this.hCrossWidth = 0.5,
-  }) : super(
-          pointWidth: pointWidth,
-          dataSource: dataSource,
-          displayDateFormat: displayDateFormat,
-          horizontalScale: horizontalScale,
-          currentHorizontalScroll: currentHorizontalScroll,
-          shouldDisplaySelection: shouldDisplaySelection,
-          selectedHorizontalValue: selectedHorizontalValue,
-        ) {
+  }) : super() {
     selectPointPaint = Paint()
       ..isAntiAlias = true
       ..strokeWidth = 0.5
@@ -81,10 +84,192 @@ class ChartPainter extends BaseChartPainter {
   final double hCrossWidth;
 
   final List<Indicator> indicators;
-  StreamSink<InfoWindowEntity?>? sink;
+  StreamSink<IndicatorPainterInfoWindowData?>? sink;
   late Paint selectPointPaint, selectorBorderPaint, nowPricePaint;
   final bool hideGrid;
   final bool showNowPrice;
+
+  final double pointWidth;
+
+  /// Data to display in the graph
+  final List<Ticker> dataSource;
+
+  /// Time format for display dates
+  final intl.DateFormat displayDateFormat;
+
+  /// current scale
+  final double horizontalScale;
+
+  // current position in the graph
+  final double currentHorizontalScroll;
+
+  // If want to display data from a selected point
+  final bool shouldDisplaySelection;
+
+  // selected horizontal value in this case the dates
+  final double selectedHorizontalValue;
+
+  double maxHorizontalScrollWidth({required final Size size}) {
+    final dataWidth = -dataSource.length * pointWidth +
+        size.width / horizontalScale -
+        pointWidth * 0.5;
+    return dataWidth >= 0 ? 0.0 : dataWidth.abs();
+  }
+
+  // TODO: Review
+  /// Last size of the latest painted canvas
+  Size get lastPaintedSize => _lastPaintedSize;
+  Size _lastPaintedSize = Size.zero;
+
+  //TOREVIEW GOING DOWN
+  int mStartIndex = 0;
+  int mStopIndex = 0;
+
+  double getCurrentOffset({required final Size size}) {
+    return currentHorizontalScroll - maxHorizontalScrollWidth(size: size);
+  }
+
+  // [] Reviewed
+  @override
+  void paint(Canvas canvas, Size size) {
+    _lastPaintedSize = size;
+    canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
+
+    mStartIndex = dataIndexInViewportFor(
+        leftOffset: translateToCurrentViewport(leftOffset: 0, size: size));
+    mStopIndex = dataIndexInViewportFor(
+        leftOffset:
+            translateToCurrentViewport(leftOffset: size.width, size: size));
+
+    initChartRenderer(size: size);
+
+    canvas.save();
+    canvas.scale(1, 1);
+    drawBackground(canvas: canvas, size: size);
+    drawGrid(canvas: canvas, size: size);
+    if (dataSource.isNotEmpty) {
+      drawChart(canvas: canvas, size: size);
+      drawRightText(canvas: canvas, size: size);
+      drawDate(canvas: canvas, size: size);
+
+      drawText(
+          canvas: canvas,
+          data: dataSource[
+              dataIndexInViewportFor(leftOffset: currentHorizontalScroll)],
+          x: 5,
+          size: size);
+      drawMaxAndMin(canvas: canvas, size: size);
+      drawNowPrice(canvas: canvas, size: size);
+
+      if (shouldDisplaySelection) {
+        drawCrossLine(canvas: canvas, size: size);
+        drawCrossLineText(canvas: canvas, size: size);
+      }
+    }
+    canvas.restore();
+  }
+
+  // [] Reviewed
+  void calculateValue({required final Size size}) {
+    if (dataSource.isEmpty) {
+      return;
+    }
+
+    mStartIndex = dataIndexInViewportFor(
+        leftOffset: translateToCurrentViewport(leftOffset: 0, size: size));
+    mStopIndex = dataIndexInViewportFor(
+        leftOffset:
+            translateToCurrentViewport(leftOffset: size.width, size: size));
+  }
+
+  /// Translate a leftOffset position to the current viewport
+  double translateToCurrentViewport(
+          {required final double leftOffset, required final Size size}) =>
+      -getCurrentOffset(size: size) + leftOffset / horizontalScale;
+
+  /// Binary search of the current data index for the current viewport for a giving leftOffset
+  int dataIndexInViewportFor({required final double leftOffset}) {
+    var start = 0;
+    var end = dataSource.length - 1;
+
+    int mid = start;
+    while (start != end) {
+      if (end == start || end == -1) {
+        return start;
+      }
+
+      if (end - start == 1) {
+        final startValue = getLeftOffsetByIndex(index: start);
+        final endValue = getLeftOffsetByIndex(index: end);
+        return (leftOffset - startValue).abs() < (leftOffset - endValue).abs()
+            ? start
+            : end;
+      }
+
+      mid = (start + (end - start) * 0.5).floor();
+      final midValue = getLeftOffsetByIndex(index: mid);
+      if (leftOffset < midValue) {
+        end = mid;
+      } else if (leftOffset > midValue) {
+        start = mid;
+      } else {
+        break;
+      }
+    }
+    return mid;
+  }
+
+  /// Get the left offset for a giving index
+  /// @param index
+  double getLeftOffsetByIndex({required final int index}) =>
+      //*0.5 Prevent the first and last bars from displaying incorrectly
+      index * pointWidth + pointWidth * 0.5;
+
+  /// Get the data item by an index
+  /// @param index
+  Ticker? getDataItemByIndex({required final int index}) {
+    if (index >= 0 && index < dataSource.length) {
+      return dataSource[index];
+    } else {
+      return null;
+    }
+  }
+
+  /// Gets the index of the current selected horizontal value
+  int getIndexForSelectedHorizontalValue({required final Size size}) {
+    final selectedIndex = dataIndexInViewportFor(
+      leftOffset: translateToCurrentViewport(
+        leftOffset: selectedHorizontalValue,
+        size: size,
+      ),
+    );
+    if (selectedIndex < mStartIndex) {
+      return mStartIndex;
+    } else if (selectedIndex > mStopIndex) {
+      return mStopIndex;
+    } else {
+      return selectedIndex;
+    }
+  }
+
+  /// Get the current offset for the leftOffset gived by param
+  double computeTranslationFor(
+          {required final double leftOffset, required final Size size}) =>
+      (leftOffset + getCurrentOffset(size: size)) * horizontalScale;
+
+  // [] Reviewed
+  // Duplicated in base chart rendered
+  TextStyle getTextStyle({required final Color color}) =>
+      TextStyle(fontSize: 10.0, color: color);
+
+  @override
+  bool shouldRepaint(IndicatorPainter oldDelegate) => true;
+
+  String getDate(final int? date) => displayDateFormat.format(
+        DateTime.fromMillisecondsSinceEpoch(
+          date ?? DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
 
   @override
   void initChartRenderer({required final Size size}) {
@@ -282,7 +467,7 @@ class ChartPainter extends BaseChartPainter {
 
     dateTp.paint(canvas, Offset(x - textWidth / 2, y));
     //长按显示这条数据详情
-    sink?.add(InfoWindowEntity(point, isLeft: isLeft));
+    sink?.add(IndicatorPainterInfoWindowData(point, isLeft: isLeft));
   }
 
   @override

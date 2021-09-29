@@ -4,8 +4,8 @@
 
 library flutter_k_chart;
 
-export 'widgets/indicators_panel.dart';
-export 'widgets/depth_chart.dart';
+export 'indicators_panel.dart';
+export 'depth_chart.dart';
 export 'common.dart';
 export 'ticker/ticker.dart';
 export 'ticker/data_source.dart';

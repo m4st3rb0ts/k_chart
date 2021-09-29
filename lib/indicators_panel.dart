@@ -6,12 +6,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:k_chart/chart_translations.dart';
-import 'package:k_chart/entity/info_window_entity.dart';
-import 'package:k_chart/flutter_k_chart.dart';
-import 'package:k_chart/indicators/candles/candles_indicator.dart';
-import 'package:k_chart/indicators/indicator.dart';
-import 'package:k_chart/painters/chart_painter.dart';
+
+import 'chart_translations.dart';
+import 'ticker/data_source.dart';
+import 'ticker/ticker.dart';
+import 'indicators/candles/candles_indicator.dart';
+import 'indicators/indicator.dart';
+import 'indicators/indicator_painter.dart';
 
 class IndicatorsPanel extends StatefulWidget {
   const IndicatorsPanel({
@@ -63,7 +64,7 @@ class IndicatorsPanel extends StatefulWidget {
 class _IndicatorsPanelState extends State<IndicatorsPanel>
     with TickerProviderStateMixin {
   double mScaleX = 1.0, mScrollX = 0.0, mSelectX = 0.0;
-  StreamController<InfoWindowEntity?>? mInfoWindowStream;
+  StreamController<IndicatorPainterInfoWindowData?>? mInfoWindowStream;
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;
@@ -75,7 +76,7 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
   @override
   void initState() {
     super.initState();
-    mInfoWindowStream = StreamController<InfoWindowEntity?>();
+    mInfoWindowStream = StreamController<IndicatorPainterInfoWindowData?>();
 
     displayDateFormat = DateFormat('MM/dd/yy');
     if (widget.dataSource.tickers.length > 1) {
@@ -110,7 +111,7 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
       mSelectX = 0.0;
       mScaleX = 1.0;
     }
-    final _painter = ChartPainter(
+    final _painter = IndicatorPainter(
       indicators: widget.indicators,
       dataSource: widget.dataSource.tickers,
       displayDateFormat: displayDateFormat,
@@ -253,8 +254,8 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
 
   void notifyChanged() => setState(() {});
 
-  Widget _buildInfoDialog(final ChartPainter painter) {
-    return StreamBuilder<InfoWindowEntity?>(
+  Widget _buildInfoDialog(final IndicatorPainter painter) {
+    return StreamBuilder<IndicatorPainterInfoWindowData?>(
         stream: mInfoWindowStream?.stream,
         builder: (context, snapshot) {
           if (!isLongPress ||
@@ -262,7 +263,7 @@ class _IndicatorsPanelState extends State<IndicatorsPanel>
                   .displayTimeLineChart ||
               !snapshot.hasData ||
               snapshot.data?.kLineEntity == null) return Container();
-          Ticker entity = snapshot.data!.kLineEntity;
+          final Ticker entity = snapshot.data!.kLineEntity;
           double upDown = entity.change ?? entity.close - entity.open;
           double upDownPercent = entity.ratio ?? (upDown / entity.open) * 100;
           infos = [
